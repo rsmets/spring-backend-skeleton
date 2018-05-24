@@ -1,0 +1,1 @@
+Skeleton for backend spring projects. My hope is I can reuse this as base spring-ing off point for more pointed projects.
