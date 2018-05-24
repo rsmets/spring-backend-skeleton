@@ -9,5 +9,5 @@ public interface IClient {
      * @param example
      * @return
      */
-    public BaseResponse doAction(Object example);
+    BaseResponse doAction(Object example);
 }

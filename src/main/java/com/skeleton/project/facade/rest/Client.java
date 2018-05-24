@@ -20,8 +20,11 @@ public class Client extends AbstractRestfulClient implements IClient {
 	public BaseResponse doAction(Object example) {
 		String url = _baseUrl + _actionPath + example;
 
+		// TODO add Hystrix to the project to handle external calls gracefully
 		BaseResponse response = _restTemplate.getForObject(url, BaseResponse.class);
-		
+
+		// it's a bird, it's a plane, it's... actually nothing
+
 		return response;
 	}
 	

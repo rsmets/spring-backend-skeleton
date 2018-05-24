@@ -1,6 +1,7 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -12,4 +13,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseResponse {
 
+    @ApiModelProperty(value = "example", required = true)
+    private Object example;
 }
