@@ -1,19 +1,14 @@
 package com.skeleton.project.facade.rest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.domain.QueryResponse;
+import com.skeleton.project.engine.ICoreEngine;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.skeleton.project.engine.ICoreEngine;
 
 @RestController
 @Api("QueryApi")
@@ -37,7 +32,7 @@ public class QueryController {
 		QueryResponse result = QueryResponse.builder()
 				.example(baseResponse.getExample())
 				.build();
-		
+
 		return result;
 	}
 }
