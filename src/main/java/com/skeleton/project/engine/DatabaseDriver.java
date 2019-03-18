@@ -35,9 +35,8 @@ public class DatabaseDriver {
 
         // I know there is a cleaner way todo this... but this works for now
         if (database == null) {
-            log.info("init db interface");
+            log.debug("init db interface");
 
-            // todo abstract away and move host info the env var and/or props
             MongoClient mongoClient = MongoClients.create(
                     MongoClientSettings.builder()
                             .applyToClusterSettings(builder ->
