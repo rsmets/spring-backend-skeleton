@@ -1,9 +1,11 @@
 package com.skeleton.project.facade.rest;
 
 import com.skeleton.project.domain.BaseResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class Client extends AbstractRestfulClient implements IClient {
 		
@@ -23,7 +25,7 @@ public class Client extends AbstractRestfulClient implements IClient {
 		// TODO add Hystrix to the project to handle external calls gracefully
 		String response = _restTemplate.getForObject(url, String.class);
 
-		// it's a bird, it's a plane, it's... actually nothing
+		log.info("Response from external services: " + response);
 
 		return BaseResponse.builder().example(response).build();
 	}
