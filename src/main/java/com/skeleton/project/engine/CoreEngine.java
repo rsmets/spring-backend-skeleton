@@ -1,21 +1,16 @@
 package com.skeleton.project.engine;
 
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.skeleton.project.domain.BaseResponse;
+import com.skeleton.project.domain.User;
 import com.skeleton.project.facade.rest.IClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
-import java.util.Arrays;
+import java.io.IOException;
 
 @Service
 @Slf4j
@@ -53,6 +48,15 @@ public class CoreEngine implements ICoreEngine{
 
 		Document doc = userCollection.find().first();
 		log.info("doc from db: " + doc.toJson());
+
+		ObjectMapper mapper = new ObjectMapper();
+		User user = null;
+		try {
+			user = mapper.readValue(doc.toJson(), User.class);
+			log.info("doc from jacksonified db: " + user.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		return userCollection;
 	}
