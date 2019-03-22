@@ -1,17 +1,20 @@
-package com.skeleton.project.domain;
+package com.skeleton.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object for the User collection
+ */
+
 @Data
-@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class User {
 
     @JsonProperty("_id")
@@ -38,6 +41,4 @@ public class User {
 //    Boolean primary;
 //    Date updatedAt;
 //    Date createdAt;
-
-
 }
