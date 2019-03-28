@@ -1,11 +1,8 @@
 package com.skeleton.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
 
 import java.util.List;
@@ -39,5 +36,19 @@ public class User {
 //    Date updatedAt;
 //    Date createdAt;
 
+    public static User convertFromDto(com.skeleton.project.dto.User dto){
+        User result = User.builder()
+                .id(dto.getId())
+                .primaryEmail(dto.getPrimaryEmail())
+                .username(dto.getUsername())
+                .lastName(dto.getLastName())
+                .firstName(dto.getFirstName())
+                .primaryPhone(dto.getPrimaryPhone())
+                .type(dto.getType())
+                .emails(Email.convertFromDtos(dto.getEmails()))
+                .phones(Phone.convertFromDtos(dto.getPhones()))
+                .build();
 
+        return result;
+    }
 }

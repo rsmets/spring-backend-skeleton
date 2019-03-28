@@ -6,22 +6,37 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
 
+import java.util.Date;
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class Email {
+public class KeyRelationship {
 
     @ObjectId
     String id;
 
-    String email;
-    Boolean primary;
-    String verificationCode;
-    Boolean verified;
-    User user;
+    Date endDate;
+    Date startDate;
+    boolean expirationDateUses;
+    List<Integer> repeatPattern; // todo make object
+    Integer repeatType;
+    Integer repeatInterval;
+    Date expirationDate;
+    Pointer reference;
+    List<Schedule> schedule;
 
-//    Date updatedAt;
-//    Date createdAt;
+    String pendingFirstName;
+    String pendingEmailInvite;
+    String smsUnlockCode;
+
+    User user;
+    Role role;
+    Lock key;
+
+    Date updatedAt;
+    Date createdAt;
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -39,4 +54,3 @@ public class Email {
         this.id = id;
     }
 }
-

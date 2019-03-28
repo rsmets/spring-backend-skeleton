@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
@@ -30,8 +33,20 @@ public class Email {
                 .verificationCode(dto.getVerificationCode())
                 .primary(dto.getPrimary())
                 .verified(dto.getVerified())
-                .user(dto.getUser())
+                .user(dto.getUser() != null ? User.convertFromDto(dto.getUser()) : null)
                 .build();
+
+        return result;
+    }
+
+    // RJS I know there is away to abstract this... but going the ugly route for now
+    public static List<Email> convertFromDtos(List<com.skeleton.project.dto.Email> dtos){
+        List<Email> result = new ArrayList<>();
+
+        for (com.skeleton.project.dto.Email dto : dtos) {
+            result.add(convertFromDto(dto));
+        }
+
 
         return result;
     }

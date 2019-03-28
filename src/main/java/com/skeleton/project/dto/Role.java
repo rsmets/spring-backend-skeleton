@@ -9,19 +9,14 @@ import org.mongojack.ObjectId;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
-public class Email {
+public class Role {
 
     @ObjectId
     String id;
 
-    String email;
-    Boolean primary;
-    String verificationCode;
-    Boolean verified;
-    User user;
+    String name;
+    int roleId;
 
-//    Date updatedAt;
-//    Date createdAt;
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -39,4 +34,3 @@ public class Email {
         this.id = id;
     }
 }
-
