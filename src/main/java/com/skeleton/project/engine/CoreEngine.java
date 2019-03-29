@@ -3,17 +3,23 @@ package com.skeleton.project.engine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.util.JSON;
 import com.skeleton.project.domain.BaseResponse;
+import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.dto.User;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.mongojack.JacksonDBCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -32,7 +38,9 @@ public class CoreEngine implements ICoreEngine{
 			BaseResponse response = _client.doAction(example);
 
 			User user = (User) getDbObject(example);
-//			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
+			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
+
+			insertDbObject(null);
 
 			return BaseResponse.builder().example(user).build();
 
@@ -42,6 +50,30 @@ public class CoreEngine implements ICoreEngine{
 
 		return null;
 
+	}
+
+	private void insertDbObject(Object obj){
+//		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
+//
+//		com.skeleton.project.domain.User user = (com.skeleton.project.domain.User) getDbFullObject(null);
+//
+////		log.info("user full obj to string " + user.toString());
+////		DBObject dbObject = (DBObject) JSON.parse(user.toString());
+//
+//		Document document = new Document("primaryPhone", "+1111");
+
+//		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("UserGroup");
+		DBCollection userCollection = database.getDB().getCollection("UserGroup");
+		Document document = new Document("name", "+222");
+
+		ObjectMapper oMapper = new ObjectMapper();
+		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
+		Map<String, Object> map = oMapper.convertValue(userGroup, Map.class);
+//		DBObject dbObject = (DBObject) JSON.parse(map.toString());
+
+//		userCollection.insertOne(document);
+		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userCollection, UserGroup.class, String.class);
+		collection.insert(userGroup);
 	}
 
 	private Object getDbObject(Object search) {

@@ -2,6 +2,8 @@ package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.TreeNode;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -11,10 +13,12 @@ import java.util.List;
 
 @Data
 @Builder
+@Entity
 public class UserGroup { //todo extend an abstract group class that has a notion of a tree node
 
     @JsonProperty("_id")
     @ObjectId
+    @Id
     String id;
 
     List<String> lockIds;
