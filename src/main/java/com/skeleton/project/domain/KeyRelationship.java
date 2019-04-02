@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,4 +37,40 @@ public class KeyRelationship {
 
     Date updatedAt;
     Date createdAt;
+
+
+    public static KeyRelationship convertFromDto(com.skeleton.project.dto.KeyRelationship dto){
+        KeyRelationship result = KeyRelationship.builder()
+                .id(dto.getId())
+                .endDate(dto.getEndDate())
+                .startDate(dto.getStartDate())
+                .expirationDateUses(dto.isExpirationDateUses())
+                .repeatPattern(dto.getRepeatPattern())
+                .repeatType(dto.getRepeatType())
+                .repeatInterval(dto.getRepeatInterval())
+                .expirationDate(dto.getExpirationDate())
+                .reference(dto.getReference())
+                .schedule(Schedule.convertFromDtos(dto.getSchedule()))
+                .pendingFirstName(dto.getPendingFirstName())
+                .pendingEmailInvite(dto.getPendingEmailInvite())
+                .smsUnlockCode(dto.getSmsUnlockCode())
+                .user(User.convertFromDto(dto.getUser()))
+                .role(Role.convertFromDto(dto.getRole()))
+                .updatedAt(dto.getUpdatedAt())
+                .createdAt(dto.getCreatedAt())
+                .build();
+
+        return result;
+    }
+
+    // RJS I know there is away to abstract this... but going the ugly route for now
+    public static List<KeyRelationship> convertFromDtos(List<com.skeleton.project.dto.KeyRelationship> dtos){
+        List<KeyRelationship> result = new ArrayList<>();
+
+        for (com.skeleton.project.dto.KeyRelationship dto : dtos) {
+            result.add(convertFromDto(dto));
+        }
+
+        return result;
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -48,6 +49,17 @@ public class User {
                 .emails(Email.convertFromDtos(dto.getEmails()))
                 .phones(Phone.convertFromDtos(dto.getPhones()))
                 .build();
+
+        return result;
+    }
+
+    // RJS I know there is away to abstract this... but going the ugly route for now
+    public static List<User> convertFromDtos(List<com.skeleton.project.dto.User> dtos){
+        List<User> result = new ArrayList<>();
+
+        for (com.skeleton.project.dto.User dto : dtos) {
+            result.add(convertFromDto(dto));
+        }
 
         return result;
     }

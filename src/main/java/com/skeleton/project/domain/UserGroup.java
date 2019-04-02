@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,4 +31,32 @@ public class UserGroup { //todo extend an abstract group class that has a notion
     // special user level abilities
     boolean canRemoteUnlock;
     boolean canUnlockUntil;
+
+    public static UserGroup convertFromDto(com.skeleton.project.dto.UserGroup dto){
+        UserGroup result = UserGroup.builder()
+                .id(dto.getId())
+                .lockIds(dto.getLockIds())
+                .schedule(Schedule.convertFromDto(dto.getSchedule()))
+                .owner(User.convertFromDto(dto.getOwner()))
+                .admins(User.convertFromDtos(dto.getAdmins()))
+                .users(User.convertFromDtos(dto.getUsers()))
+                .keyRelationship(dto.getKeyRelationship())
+                .expirationDate(dto.getExpirationDate())
+                .updatedAt(dto.getUpdatedAt())
+                .createdAt(dto.getCreatedAt())
+                .build();
+
+        return result;
+    }
+
+    // RJS I know there is away to abstract this... but going the ugly route for now
+    public static List<UserGroup> convertFromDtos(List<com.skeleton.project.dto.UserGroup> dtos){
+        List<UserGroup> result = new ArrayList<>();
+
+        for (com.skeleton.project.dto.UserGroup dto : dtos) {
+            result.add(convertFromDto(dto));
+        }
+
+        return result;
+    }
 }
