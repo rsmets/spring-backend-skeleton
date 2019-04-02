@@ -40,10 +40,11 @@ public class UserGroup { //todo extend an abstract group class that has a notion
                 .owner(User.convertFromDto(dto.getOwner()))
                 .admins(User.convertFromDtos(dto.getAdmins()))
                 .users(User.convertFromDtos(dto.getUsers()))
-                .keyRelationship(dto.getKeyRelationship())
-                .expirationDate(dto.getExpirationDate())
-                .updatedAt(dto.getUpdatedAt())
-                .createdAt(dto.getCreatedAt())
+                .keyRelationship(KeyRelationship.convertFromDto(dto.getKeyRelationship()))
+                .groupParent(dto.getGroupParent())
+                .groupChildren(dto.getGroupChildren())
+                .canRemoteUnlock(dto.isCanRemoteUnlock())
+                .canUnlockUntil(dto.isCanRemoteUnlock())
                 .build();
 
         return result;
