@@ -27,6 +27,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
     List<User> admins;
     List<User> users;
     KeyRelationship keyRelationship;
+    String name;
 
     // todo put this stuff the parent class
     TreeNode groupParent;
@@ -49,6 +50,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
                 .groupChildren(dto.getGroupChildren())
                 .canRemoteUnlock(dto.isCanRemoteUnlock())
                 .canUnlockUntil(dto.isCanRemoteUnlock())
+                .name(dto.getName())
                 .build();
 
         return result;

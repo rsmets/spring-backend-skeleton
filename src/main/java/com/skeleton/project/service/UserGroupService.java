@@ -4,6 +4,7 @@ import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.engine.DatabaseDriver;
+import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,16 +63,25 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
+    public String createUserGroup(UserGroup userGroup) {
+        Key key = _database.getDatastore().save(userGroup);
+
+        return (String)key.getId();
+    }
+
+    @Override
     public UserGroup getUserGroup(String objectId) {
         final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
+//        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
-        final List<UserGroup> userGroups = query
-                .field("_id").equalIgnoreCase(objectId)
-                .asList(); //todo figure out how to query for one.
+        final UserGroup userGroups = query
+                .field("_id").equal(objectId)
+                .get(); //todo figure out how to query for one.
 
         log.info("Got users with id " + objectId + ": " + userGroups);
 
-        return userGroups.get(0); //rjs this should always be one entry
+//        return userGroups.get(0); //rjs this should always be one entry
+        return userGroups;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.skeleton.project.service;
 
 import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.UserGroup;
+import dev.morphia.Key;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public interface IUserGroupService {
      */
     UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, Schedule schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception;
 
+    String createUserGroup(UserGroup userGroup);
     /**
      * Gets existing user group
      * @param objectId

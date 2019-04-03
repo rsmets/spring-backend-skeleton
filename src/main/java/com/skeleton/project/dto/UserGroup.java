@@ -25,6 +25,7 @@ public class UserGroup {
     List<User> admins;
     List<User> users;
     KeyRelationship keyRelationship;
+    String name;
 
     // todo put this stuff the parent class
     TreeNode groupParent;

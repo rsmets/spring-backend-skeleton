@@ -12,6 +12,9 @@ import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.dto.User;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
+import com.skeleton.project.service.IUserGroupService;
+import com.skeleton.project.service.IUserService;
+import dev.morphia.Key;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.mongojack.JacksonDBCollection;
@@ -30,6 +33,9 @@ public class CoreEngine implements ICoreEngine{
 
 	@Autowired
 	DatabaseDriver database;
+
+	@Autowired
+	IUserGroupService userGroupService;
 
 	@Override
 	public BaseResponse executeAction(Object example) {
@@ -74,9 +80,40 @@ public class CoreEngine implements ICoreEngine{
 //		userCollection.insertOne(document);
 		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userCollection, UserGroup.class, String.class);
 		collection.insert(userGroup);
+
+		userGroup.setCanUnlockUntil(false);
+		userGroup.setCanRemoteUnlock(false);
+		userGroup.setName("lolz");
+		String key = userGroupService.createUserGroup(userGroup);
+		UserGroup grabbed = userGroupService.getUserGroup(key);
+		UserGroup g2 = getUserGroupObject(key);
 	}
 
-	private Object getDbObject(Object search) {
+	private UserGroup getUserGroupObject(String search) {
+		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
+
+		Document doc = userCollection.find().first();
+		log.info("doc from db: " + doc.toJson());
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		User user = null;
+		try {
+			user = mapper.readValue(doc.toJson(), User.class);
+			log.info("doc from jacksonified db: " + user.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		DBCollection userGroupCollection = database.getDB().getCollection("UserGroup");
+		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
+//		UserGroup ug = collection.findOneById(search);
+		UserGroup ug = collection.findOne();
+		log.info("user group from jacksonified db: " + ug);
+		return ug;
+	}
+
+	private User getDbObject(Object search) {
 		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
 
 		Document doc = userCollection.find().first();
