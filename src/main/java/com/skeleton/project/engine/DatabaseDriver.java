@@ -7,6 +7,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -34,6 +36,9 @@ public class DatabaseDriver {
     private String _dbName;
 
     private MongoDatabase _database;
+    private com.mongodb.MongoClient _mongoClient;
+    private Datastore _datastore;
+    private final Morphia morphia = new Morphia();
     private DB _db;
 
     public MongoDatabase getDatabase(){
@@ -66,6 +71,7 @@ public class DatabaseDriver {
             log.debug("init db interface");
 
             com.mongodb.MongoClient mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+            _mongoClient = mongoClient;
 //            MongoClient mongoClient = MongoClients.create(
 //                    MongoClientSettings.builder()
 //                            .applyToClusterSettings(builder ->
@@ -82,5 +88,16 @@ public class DatabaseDriver {
         }
 
         return _db;
+    }
+
+    public Datastore getDatastore() {
+        if (_mongoClient == null) {
+            _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+        }
+
+        if (_datastore == null)
+            _datastore = morphia.createDatastore(_mongoClient, "nexkey");
+
+        return _datastore;
     }
 }
