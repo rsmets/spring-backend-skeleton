@@ -57,7 +57,7 @@ public class UserGroupService implements IUserGroupService {
                 .users(users)
                 .canRemoteUnlock(canUsersRemoteUnlock)
                 .canUnlockUntil(canUsersUnlockUntil)
-                .schedule(schedule)
+//                .schedule(schedule)
                 .build();
 
         _database.getDatastore().save(userGroup);
