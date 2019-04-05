@@ -27,6 +27,9 @@ public class Email {
 //    Date createdAt
 
     public static Email convertFromDto(com.skeleton.project.dto.Email dto){
+        if (dto == null)
+            return null;
+
         Email result = Email.builder()
                 .id(dto.getId())
                 .email(dto.getEmail())
@@ -42,6 +45,9 @@ public class Email {
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<Email> convertFromDtos(List<com.skeleton.project.dto.Email> dtos){
         List<Email> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.Email dto : dtos) {
             result.add(convertFromDto(dto));

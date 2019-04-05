@@ -40,6 +40,9 @@ public class KeyRelationship {
 
 
     public static KeyRelationship convertFromDto(com.skeleton.project.dto.KeyRelationship dto){
+        if (dto == null)
+            return null;
+
         KeyRelationship result = KeyRelationship.builder()
                 .id(dto.getId())
                 .endDate(dto.getEndDate())
@@ -66,6 +69,9 @@ public class KeyRelationship {
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<KeyRelationship> convertFromDtos(List<com.skeleton.project.dto.KeyRelationship> dtos){
         List<KeyRelationship> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.KeyRelationship dto : dtos) {
             result.add(convertFromDto(dto));

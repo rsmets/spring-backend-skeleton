@@ -21,6 +21,9 @@ public class Role {
 
 
     public static Role convertFromDto(com.skeleton.project.dto.Role dto){
+        if (dto == null)
+            return null;
+
         Role result = Role.builder()
                 .id(dto.getId())
                 .name(dto.getName())

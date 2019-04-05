@@ -38,6 +38,9 @@ public class User {
 //    Date createdAt;
 
     public static User convertFromDto(com.skeleton.project.dto.User dto){
+        if (dto == null)
+            return null;
+
         User result = User.builder()
                 .id(dto.getId())
                 .primaryEmail(dto.getPrimaryEmail())
@@ -56,6 +59,9 @@ public class User {
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<User> convertFromDtos(List<com.skeleton.project.dto.User> dtos){
         List<User> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.User dto : dtos) {
             result.add(convertFromDto(dto));

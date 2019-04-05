@@ -32,6 +32,9 @@ public class Schedule {
     Date createdAt;
 
     public static Schedule convertFromDto(com.skeleton.project.dto.Schedule dto){
+        if (dto == null)
+            return null;
+
         Schedule result = Schedule.builder()
                 .id(dto.getId())
                 .reference(dto.getReference())
@@ -51,6 +54,9 @@ public class Schedule {
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<Schedule> convertFromDtos(List<com.skeleton.project.dto.Schedule> dtos){
         List<Schedule> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.Schedule dto : dtos) {
             result.add(convertFromDto(dto));

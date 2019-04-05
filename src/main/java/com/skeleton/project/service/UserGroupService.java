@@ -84,6 +84,21 @@ public class UserGroupService implements IUserGroupService {
         return userGroups;
     }
 
+//    @Override
+//    public UserGroup getUserGroup(Long objectId) {
+//        final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
+////        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
+//
+//        final UserGroup userGroups = query
+//                .field("_id").equal(objectId)
+//                .get(); //todo figure out how to query for one.
+//
+//        log.info("Got users with id " + objectId + ": " + userGroups);
+//
+////        return userGroups.get(0); //rjs this should always be one entry
+//        return userGroups;
+//    }
+
     @Override
     public UserGroup modifyUserGroup(UserGroup userGroup) {
         return null;

@@ -28,6 +28,13 @@ public interface IUserGroupService {
      */
     UserGroup getUserGroup(String objectId);
 
+//    /**
+//     * Gets existing user group
+//     * @param objectId
+//     * @return
+//     */
+//    UserGroup getUserGroup(Long objectId);
+
     /**
      * Modified existing user group
      * @param userGroup - with settings wanted to persist

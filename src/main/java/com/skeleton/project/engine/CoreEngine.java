@@ -83,7 +83,7 @@ public class CoreEngine implements ICoreEngine{
 
 		userGroup.setCanUnlockUntil(false);
 		userGroup.setCanRemoteUnlock(false);
-		userGroup.setName("lolz");
+		userGroup.setName("haha");
 		String key = userGroupService.createUserGroup(userGroup);
 		UserGroup grabbed = userGroupService.getUserGroup(key);
 		UserGroup g2 = getUserGroupObject(key);
@@ -106,11 +106,12 @@ public class CoreEngine implements ICoreEngine{
 		}
 
 		DBCollection userGroupCollection = database.getDB().getCollection("UserGroup");
-		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
-//		UserGroup ug = collection.findOneById(search);
-		UserGroup ug = collection.findOne();
+		JacksonDBCollection<com.skeleton.project.dto.UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, com.skeleton.project.dto.UserGroup.class, String.class);
+		com.skeleton.project.dto.UserGroup ug = collection.findOneById(search);
+//		com.skeleton.project.dto.UserGroup ug = collection.findOne();
 		log.info("user group from jacksonified db: " + ug);
-		return ug;
+
+		return UserGroup.convertFromDto(ug);
 	}
 
 	private User getDbObject(Object search) {

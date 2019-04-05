@@ -26,6 +26,9 @@ public class Phone {
 //    Date createdAt;
 
     public static Phone convertFromDto(com.skeleton.project.dto.Phone dto){
+        if (dto == null)
+            return null;
+
         Phone result = Phone.builder()
                 .id(dto.getId())
                 .phone(dto.getPhone())
@@ -41,6 +44,9 @@ public class Phone {
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<Phone> convertFromDtos(List<com.skeleton.project.dto.Phone> dtos){
         List<Phone> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.Phone dto : dtos) {
             result.add(convertFromDto(dto));

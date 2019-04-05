@@ -38,6 +38,9 @@ public class UserGroup { //todo extend an abstract group class that has a notion
     boolean canUnlockUntil;
 
     public static UserGroup convertFromDto(com.skeleton.project.dto.UserGroup dto){
+        if (dto == null)
+            return null;
+
         UserGroup result = UserGroup.builder()
                 .id(dto.getId())
                 .lockIds(dto.getLockIds())
@@ -59,6 +62,9 @@ public class UserGroup { //todo extend an abstract group class that has a notion
     // RJS I know there is away to abstract this... but going the ugly route for now
     public static List<UserGroup> convertFromDtos(List<com.skeleton.project.dto.UserGroup> dtos){
         List<UserGroup> result = new ArrayList<>();
+
+        if (dtos == null)
+            return result;
 
         for (com.skeleton.project.dto.UserGroup dto : dtos) {
             result.add(convertFromDto(dto));

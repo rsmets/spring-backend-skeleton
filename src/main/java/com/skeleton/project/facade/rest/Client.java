@@ -23,8 +23,9 @@ public class Client extends AbstractRestfulClient implements IClient {
 		String url = _baseUrl + _actionPath + example;
 
 		// TODO add Hystrix to the project to handle external calls gracefully
-		String response = _restTemplate.getForObject(url, String.class);
+//		String response = _restTemplate.getForObject(url, String.class);
 
+		String response = "no internet";
 		log.info("Response from external services: " + response);
 
 		return BaseResponse.builder().example(response).build();
