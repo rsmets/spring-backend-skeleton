@@ -1,29 +1,20 @@
 package com.skeleton.project.engine;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.util.JSON;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.dto.User;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
 import com.skeleton.project.service.IUserGroupService;
-import com.skeleton.project.service.IUserService;
-import dev.morphia.Key;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.mongojack.JacksonDBCollection;
-import org.mongojack.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -47,7 +38,7 @@ public class CoreEngine implements ICoreEngine{
 			User user = (User) getDbObject(example);
 			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
 
-			insertDbObject(null);
+			insertAndGrabDbObject(example);
 
 			return BaseResponse.builder().example(user).build();
 
@@ -59,40 +50,12 @@ public class CoreEngine implements ICoreEngine{
 
 	}
 
-	private void insertDbObject(Object obj){
-//		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
-//
-//		com.skeleton.project.domain.User user = (com.skeleton.project.domain.User) getDbFullObject(null);
-//
-////		log.info("user full obj to string " + user.toString());
-////		DBObject dbObject = (DBObject) JSON.parse(user.toString());
-//
-//		Document document = new Document("primaryPhone", "+1111");
-
-//		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("UserGroup");
-		DBCollection userCollection = database.getDB().getCollection("UserGroup");
-		Document document = new Document("name", "+222");
-
-		ObjectMapper oMapper = new ObjectMapper();
+	private void insertAndGrabDbObject(Object obj){
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
-		userGroup.setName("first");
+		userGroup.setName((String)obj);
 
-		Map<String, Object> map = oMapper.convertValue(userGroup, Map.class);
-//		DBObject dbObject = (DBObject) JSON.parse(map.toString());
-
-//		userCollection.insertOne(document);
-		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userCollection, UserGroup.class, String.class);
-		WriteResult writeResult = collection.insert(userGroup);
-		String newObjId = (String)writeResult.getSavedId();
-
+		String newObjId = userGroupService.createUserGroup(userGroup);
 		UserGroup grabbed = userGroupService.getUserGroup(newObjId);
-
-		userGroup.setCanUnlockUntil(false);
-		userGroup.setCanRemoteUnlock(false);
-		userGroup.setName("haha");
-
-//		String key = userGroupService.createUserGroup(userGroup);
-//		UserGroup grabbed = userGroupService.getUserGroup(key);
 	}
 
 	private User getDbObject(Object search) {
