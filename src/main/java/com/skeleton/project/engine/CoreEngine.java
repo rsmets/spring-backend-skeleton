@@ -18,6 +18,7 @@ import dev.morphia.Key;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.mongojack.JacksonDBCollection;
+import org.mongojack.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,44 +75,24 @@ public class CoreEngine implements ICoreEngine{
 
 		ObjectMapper oMapper = new ObjectMapper();
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
+		userGroup.setName("first");
+
 		Map<String, Object> map = oMapper.convertValue(userGroup, Map.class);
 //		DBObject dbObject = (DBObject) JSON.parse(map.toString());
 
 //		userCollection.insertOne(document);
 		JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userCollection, UserGroup.class, String.class);
-		collection.insert(userGroup);
+		WriteResult writeResult = collection.insert(userGroup);
+		String newObjId = (String)writeResult.getSavedId();
+
+		UserGroup grabbed = userGroupService.getUserGroup(newObjId);
 
 		userGroup.setCanUnlockUntil(false);
 		userGroup.setCanRemoteUnlock(false);
 		userGroup.setName("haha");
-		String key = userGroupService.createUserGroup(userGroup);
-		UserGroup grabbed = userGroupService.getUserGroup(key);
-		UserGroup g2 = getUserGroupObject(key);
-	}
 
-	private UserGroup getUserGroupObject(String search) {
-		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
-
-		Document doc = userCollection.find().first();
-		log.info("doc from db: " + doc.toJson());
-
-		ObjectMapper mapper = new ObjectMapper();
-
-		User user = null;
-		try {
-			user = mapper.readValue(doc.toJson(), User.class);
-			log.info("doc from jacksonified db: " + user.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		DBCollection userGroupCollection = database.getDB().getCollection("UserGroup");
-		JacksonDBCollection<com.skeleton.project.dto.UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, com.skeleton.project.dto.UserGroup.class, String.class);
-		com.skeleton.project.dto.UserGroup ug = collection.findOneById(search);
-//		com.skeleton.project.dto.UserGroup ug = collection.findOne();
-		log.info("user group from jacksonified db: " + ug);
-
-		return UserGroup.convertFromDto(ug);
+//		String key = userGroupService.createUserGroup(userGroup);
+//		UserGroup grabbed = userGroupService.getUserGroup(key);
 	}
 
 	private User getDbObject(Object search) {
