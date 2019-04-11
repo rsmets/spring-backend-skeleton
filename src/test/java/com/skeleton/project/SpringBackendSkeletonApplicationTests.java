@@ -76,4 +76,9 @@ public class SpringBackendSkeletonApplicationTests {
 		}
 
 	}
+
+	@Test
+	public void getUser() {
+		User dbUser = userService.getUser("3l6FvM305C");
+	}
 }

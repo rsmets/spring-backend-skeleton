@@ -65,7 +65,7 @@ public class UserService implements IUserService {
 
     private User getWithParse(String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-        query.getInBackground("3l6FvM305C", new GetCallback<ParseObject>() {
+        query.getInBackground(objectId, new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject user, ParseException e) {
                 if (e == null) {

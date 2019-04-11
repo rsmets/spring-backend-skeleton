@@ -7,6 +7,7 @@ import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseClassName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity
+@ParseClassName("UserGroup")
 public class UserGroup { //todo extend an abstract group class that has a notion of a tree node
 
     @JsonProperty("_id")
