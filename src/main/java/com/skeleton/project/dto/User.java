@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mongojack.Id;
 import org.mongojack.ObjectId;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class User {
 
     @JsonProperty("_id")
     @ObjectId
+    @Id
     String id;
 
     String primaryEmail;

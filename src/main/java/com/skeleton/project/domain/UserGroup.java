@@ -22,7 +22,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
     String id;
 
     List<String> lockIds;
-//    Schedule schedule;
+    Schedule schedule;
     User owner;
     List<User> admins;
     List<User> users;
@@ -44,7 +44,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
         UserGroup result = UserGroup.builder()
                 .id(dto.getId())
                 .lockIds(dto.getLockIds())
-//                .schedule(Schedule.convertFromDto(dto.getSchedule()))
+                .schedule(Schedule.convertFromDto(dto.getSchedule()))
                 .owner(User.convertFromDto(dto.getOwner()))
                 .admins(User.convertFromDtos(dto.getAdmins()))
                 .users(User.convertFromDtos(dto.getUsers()))

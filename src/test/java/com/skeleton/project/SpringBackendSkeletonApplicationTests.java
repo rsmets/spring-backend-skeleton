@@ -1,8 +1,11 @@
 package com.skeleton.project;
 
 import com.skeleton.project.domain.Schedule;
+import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.service.IUserGroupService;
+import com.skeleton.project.service.IUserService;
+import dev.morphia.Key;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +24,9 @@ public class SpringBackendSkeletonApplicationTests {
 
 	@Autowired
 	IUserGroupService userGroupService;
+
+	@Autowired
+	IUserService userService;
 
 	@Test
 	public void createUserGroup() {
@@ -44,7 +50,30 @@ public class SpringBackendSkeletonApplicationTests {
 			e.printStackTrace();
 		}
 
-
 	}
 
+	@Test
+	public void createUser() {
+
+		User user = User.builder()
+				.primaryPhone("+12024047575")
+				.primaryEmail("test@test.com")
+				.username("username2")
+				.firstName("Frank")
+				.lastName("Farina")
+				.type(0)
+				.build();
+
+		try {
+			Key key = userService.createUser(user);
+
+			User dbUser = userService.getUser((String)key.getId());
+
+			Assert.assertEquals(user, dbUser);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

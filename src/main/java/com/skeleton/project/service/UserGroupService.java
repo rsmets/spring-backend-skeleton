@@ -67,8 +67,8 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public String createUserGroup(UserGroup userGroup) {
-        return createUserGroupWithMongoJack(userGroup);
-//        return createUserGroupWithMorphia(userGroup);
+//        return createUserGroupWithMongoJack(userGroup);
+        return createUserGroupWithMorphia(userGroup);
     }
 
     private String createUserGroupWithMongoJack(UserGroup userGroup) {

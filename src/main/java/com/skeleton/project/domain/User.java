@@ -1,6 +1,8 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -10,10 +12,12 @@ import java.util.List;
 
 @Data
 @Builder
+@Entity("_User")
 public class User {
 
     @JsonProperty("_id")
     @ObjectId
+    @Id
     String id;
 
     String primaryEmail;

@@ -64,6 +64,11 @@ public class DatabaseDriver {
         return _database;
     }
 
+    /**
+     * Returns old Deprecated MongoDb Object DB but MongoJack still requires it as far as I can tell.
+     *
+     * @return @DB
+     */
     public DB getDB(){
 
         // I know there is a cleaner way todo this... but this works for now
