@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.client.MongoCollection;
 import com.skeleton.project.domain.BaseResponse;
+import com.skeleton.project.domain.KeyRelationship;
 import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
+import com.skeleton.project.service.IKeyRelationshipService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,9 @@ public class CoreEngine implements ICoreEngine{
 	@Autowired
 	IUserService userService;
 
+	@Autowired
+	IKeyRelationshipService keyRelationshipService;
+
 	@Override
 	public BaseResponse executeAction(Object example) {
 
@@ -43,10 +48,13 @@ public class CoreEngine implements ICoreEngine{
 
 			insertAndGrabDbObject(example);
 
-			User user = userService.getUser("3l6FvM305C");
+//			User user = userService.getUser("3l6FvM305C");
+//			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
+			KeyRelationship kr = keyRelationshipService.getKeyRelationshp("01CeqFk4Jp");
 
-			return BaseResponse.builder().example(user).build();
 
+//			return BaseResponse.builder().example(user).build();
+			return null;
 		} catch (Exception e) {
 			log.error("That request did not work... ", e);
 		}

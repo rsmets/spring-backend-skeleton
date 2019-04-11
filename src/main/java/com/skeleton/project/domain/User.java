@@ -8,6 +8,7 @@ import lombok.Data;
 import org.mongojack.ObjectId;
 import org.parse4j.ParseClassName;
 import org.parse4j.ParseObject;
+import org.parse4j.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @Entity("_User")
 @ParseClassName("_User")
-public class User extends ParseObject {
+public class User extends ParseUser {
 
     @JsonProperty("_id")
     @ObjectId

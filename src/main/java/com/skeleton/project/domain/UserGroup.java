@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
 import org.parse4j.ParseClassName;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @Entity
 @ParseClassName("UserGroup")
-public class UserGroup { //todo extend an abstract group class that has a notion of a tree node
+public class UserGroup extends ParseObject { //todo extend an abstract group class that has a notion of a tree node
 
     @JsonProperty("_id")
     @ObjectId

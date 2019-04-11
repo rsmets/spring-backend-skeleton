@@ -5,6 +5,7 @@ import com.skeleton.project.dto.Pointer;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class KeyRelationship {
+public class KeyRelationship extends ParseObject {
     @JsonProperty("_id")
     @ObjectId
     String id;

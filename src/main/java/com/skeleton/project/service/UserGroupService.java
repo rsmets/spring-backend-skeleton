@@ -10,6 +10,10 @@ import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.WriteResult;
+import org.parse4j.ParseException;
+import org.parse4j.ParseObject;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,8 +94,29 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup getUserGroup(String objectId) {
-        return getUserGroupWithMongoJack(objectId);
+        return getWithParse(objectId);
+//        return getUserGroupWithMongoJack(objectId);
 //        return getUserGroupWithMorphia(objectId);
+    }
+
+    private UserGroup getWithParse(String objectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("UserGroup");
+        query.getInBackground(objectId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject result, ParseException e) {
+                if (e == null) {
+                    if (result != null)
+                        log.info("doc from parseified db: " + result.toString());
+                    else
+                        log.warn("no dice getting any results");
+                } else {
+                    // something went wrong
+                    log.error("Something went wrong", e);
+                }
+            }
+        });
+
+        return null;
     }
 
     private UserGroup getUserGroupWithMongoJack(String objectId){

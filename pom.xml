@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>com.github.thiagolocatelli</groupId>
 			<artifactId>parse4j</artifactId>
-			<version>1.4</version>
+			<version>1.5-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -125,6 +125,12 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
+		<repository>
+			<id>myMavenRepoRead</id>
+			<url>${myMavenRepoReadUrl}</url>
+		</repository>
+
 	</repositories>
 
 	<pluginRepositories>
@@ -145,6 +151,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 
 </project>

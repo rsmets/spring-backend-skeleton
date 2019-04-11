@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class Email {
+public class Email extends ParseObject {
     @JsonProperty("_id")
     @ObjectId
     String id;

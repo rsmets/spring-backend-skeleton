@@ -5,6 +5,7 @@ import com.skeleton.project.dto.Pointer;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class Schedule {
+public class Schedule extends ParseObject {
     @JsonProperty("_id")
     @ObjectId
     String id;
@@ -25,7 +26,7 @@ public class Schedule {
     Integer repeatInterval;
     Date expirationDate;
 
-    // could point to a KeyRelationship or UserGroup object. Maybe those classes should extend abstract reference?
+    // could point to a KeyRelationshipService or UserGroup object. Maybe those classes should extend abstract reference?
     Pointer reference;
 
     Date updatedAt;

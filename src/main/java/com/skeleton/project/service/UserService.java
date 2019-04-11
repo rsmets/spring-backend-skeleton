@@ -67,10 +67,12 @@ public class UserService implements IUserService {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
         query.getInBackground(objectId, new GetCallback<ParseObject>() {
             @Override
-            public void done(ParseObject user, ParseException e) {
+            public void done(ParseObject result, ParseException e) {
                 if (e == null) {
-                    // object will be your game score
-                    log.info("doc from parseified db: " + user.toString());
+                    if (result != null)
+                        log.info("doc from parseified db: " + result.toString());
+                     else
+                        log.warn("no dice getting any results");
                 } else {
                     // something went wrong
                     log.error("Something went wrong", e);

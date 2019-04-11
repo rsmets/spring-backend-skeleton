@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Builder
-public class Role {
+public class Role extends ParseObject {
 
     @JsonProperty("_id")
     @ObjectId
