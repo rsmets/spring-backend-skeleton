@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity("_User")
-public class User {
+public class User extends ParseObject {
 
     @JsonProperty("_id")
     @ObjectId

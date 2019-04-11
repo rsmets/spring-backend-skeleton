@@ -2,12 +2,15 @@ package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
 import com.skeleton.project.domain.User;
-import com.skeleton.project.dto.KeyRelationship;
 import com.skeleton.project.engine.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.mongojack.JacksonDBCollection;
+import org.parse4j.ParseException;
+import org.parse4j.ParseObject;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +49,8 @@ public class UserService implements IUserService {
     @Override
     public User getUser(String objectId) {
 //        return getUserWithMorpha(objectId);
-        return getUserWithMongoJack(objectId);
+//        return getUserWithMongoJack(objectId);
+        return getWithParse(objectId);
     }
 
     private User getUserWithMongoJack(String objectId) {
@@ -59,7 +63,25 @@ public class UserService implements IUserService {
         return com.skeleton.project.domain.User.convertFromDto(user);
     }
 
-    private User getUserWithMorpha(String objectId) {
+    private User getWithParse(String objectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
+        query.getInBackground("3l6FvM305C", new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject user, ParseException e) {
+                if (e == null) {
+                    // object will be your game score
+                    log.info("doc from parseified db: " + user.toString());
+                } else {
+                    // something went wrong
+                    log.error("Something went wrong", e);
+                }
+            }
+        });
+
+        return null;
+    }
+
+    private User getWithMorphia(String objectId) {
         final Query<User> query = _database.getDatastore().createQuery(User.class);
 
         final List<User> users = query
