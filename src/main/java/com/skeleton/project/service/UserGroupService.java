@@ -94,8 +94,8 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup getUserGroup(String objectId) {
-        return getWithParse(objectId);
-//        return getUserGroupWithMongoJack(objectId);
+//        return getWithParse(objectId);
+        return getUserGroupWithMongoJack(objectId);
 //        return getUserGroupWithMorphia(objectId);
     }
 
@@ -130,17 +130,18 @@ public class UserGroupService implements IUserGroupService {
     }
 
     private UserGroup getUserGroupWithMorphia(String objectId){
-        final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
+        final Query<com.skeleton.project.dto.UserGroup> query = _database.getDatastore().createQuery(com.skeleton.project.dto.UserGroup.class);
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
-        final UserGroup userGroups = query
+        final com.skeleton.project.dto.UserGroup userGroups = query
                 .field("_id").equal(objectId)
                 .get(); //todo figure out how to query for one.
 
         log.info("Got users with id " + objectId + ": " + userGroups);
 
 //        return userGroups.get(0); //rjs this should always be one entry
-        return userGroups;
+//        return userGroups;
+        return UserGroup.convertFromDto(userGroups);
     }
 
     @Override

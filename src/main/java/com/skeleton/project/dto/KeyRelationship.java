@@ -1,9 +1,11 @@
 package com.skeleton.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.mongojack.Id;
 import org.mongojack.ObjectId;
 
 import java.util.Date;
@@ -15,6 +17,8 @@ import java.util.List;
 public class KeyRelationship {
 
     @ObjectId
+    @JsonProperty("_id")
+    @Id
     String id;
 
     Date endDate;
@@ -45,12 +49,17 @@ public class KeyRelationship {
     // ******************************************************************************
 
     @JsonSetter("objectId")
-    private void setObjectId(String id) {
+    public void setObjectId(String id) {
         this.id = id;
     }
 
+    @ObjectId
     @JsonSetter("_id")
-    private void setId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
+
+    @ObjectId
+    @JsonSetter("_id")
+    public String getId() { return this.id;}
 }

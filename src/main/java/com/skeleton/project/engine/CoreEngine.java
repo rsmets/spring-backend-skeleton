@@ -46,15 +46,16 @@ public class CoreEngine implements ICoreEngine{
 
 			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
 
-			insertAndGrabDbObject(example);
+//			insertAndGrabUserGroupObject(example);
+			insertAndGrabKeyRelationshipObject(example);
 
 //			User user = userService.getUser("3l6FvM305C");
 //			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
-			KeyRelationship kr = keyRelationshipService.getKeyRelationshp("01CeqFk4Jp");
+			KeyRelationship kr = keyRelationshipService.getKeyRelationshp("Y92hlMA0z4");
 
 
-//			return BaseResponse.builder().example(user).build();
-			return null;
+			return BaseResponse.builder().example(kr).build();
+//			return null;
 		} catch (Exception e) {
 			log.error("That request did not work... ", e);
 		}
@@ -67,12 +68,19 @@ public class CoreEngine implements ICoreEngine{
 		return userService.getUser(objId);
 	}
 
-	private void insertAndGrabDbObject(Object obj){
+	private void insertAndGrabUserGroupObject(Object obj){
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
 		userGroup.setName((String)obj);
 
 		String newObjId = userGroupService.createUserGroup(userGroup);
 		UserGroup grabbed = userGroupService.getUserGroup(newObjId);
+	}
+
+	private void insertAndGrabKeyRelationshipObject(Object obj){
+		KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
+
+		keyRelationshipService.createKeyRelationship(kr);
+
 	}
 
 	private Object getDbFullObject(Object search) {
