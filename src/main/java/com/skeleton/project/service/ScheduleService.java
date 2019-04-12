@@ -1,15 +1,25 @@
 package com.skeleton.project.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBCollection;
 import com.skeleton.project.domain.Schedule;
+import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.dto.KeyRelationship;
 import com.skeleton.project.engine.DatabaseDriver;
 import dev.morphia.Key;
+import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.mongojack.JacksonDBCollection;
+import org.parse4j.ParseException;
+import org.parse4j.ParseObject;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -30,7 +40,9 @@ public class ScheduleService implements IScheduleService {
 
     @Override
     public Schedule getSchedule(String objectId) {
-        return getScheduleWithMongoJack(objectId);
+        return getWithMorphia(objectId);
+//        return getScheduleWithMongoJack(objectId);
+//        return getWithParse(objectId);
     }
 
     @Override
@@ -44,6 +56,24 @@ public class ScheduleService implements IScheduleService {
         return key;
     }
 
+    private Schedule getWithMorphia(String objectId) {
+        final Query<com.skeleton.project.dto.Schedule> query = _database.getDatastore().createQuery(com.skeleton.project.dto.Schedule.class);
+
+        final List<com.skeleton.project.dto.Schedule> users = query
+                .field("_id").equalIgnoreCase(objectId)
+                .asList(); //todo figure out how to query for one.
+
+        log.info("Got schedule with id " + objectId + ": " + users);
+
+        Schedule result = Schedule.convertFromDto(users.get(0));
+        return result; //rjs this should always be one entry
+    }
+
+    /**
+     * Only works for new objects with 24 char objects ids. Barfs with the 10 char object ids.
+     * @param objectId
+     * @return
+     */
     private Schedule getScheduleWithMongoJack(String objectId){
         DBCollection krCollection = _database.getDB().getCollection("Schedule");
         JacksonDBCollection<com.skeleton.project.dto.Schedule, String> collection = JacksonDBCollection.wrap(krCollection, com.skeleton.project.dto.Schedule.class, String.class);
@@ -52,5 +82,42 @@ public class ScheduleService implements IScheduleService {
         log.info("key relationship from jacksonified db: " + schedule);
 
         return Schedule.convertFromDto(schedule);
+    }
+
+    private Schedule getWithParse(String objectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Schedule");
+        try {
+            ParseObject result = query.get(objectId);
+            if (result != null)
+                log.info("doc from parseified db: " + result.toString());
+            else
+                log.warn("no dice getting any results");
+
+            log.info(result.toString());
+            log.info(result.getParseData().toString());
+
+            com.skeleton.project.dto.Schedule dto = new ObjectMapper().readValue(result.getParseData().toString(), com.skeleton.project.dto.Schedule.class);
+            Schedule schedue = com.skeleton.project.domain.Schedule.convertFromDto(dto);
+            return schedue;
+
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+//        query.getInBackground(objectId, new GetCallback<ParseObject>() {
+//            @Override
+//            public void done(ParseObject result, ParseException e) {
+//                if (e == null) {
+//                    if (result != null)
+//                        log.info("doc from parseified db: " + result.toString());
+//                    else
+//                        log.warn("no dice getting any results");
+//                } else {
+//                    // something went wrong
+//                    log.error("Something went wrong", e);
+//                }
+//            }
+//        });
+
+        return null;
     }
 }

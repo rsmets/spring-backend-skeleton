@@ -30,8 +30,11 @@ public class UserGroupService implements IUserGroupService {
     @Autowired
     IUserService _userService;
 
+    @Autowired
+    IScheduleService _scheduleService;
+
     @Override
-    public UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, Schedule schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception {
+    public UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, List<Schedule> schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception {
         List<User> admins = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
@@ -61,7 +64,7 @@ public class UserGroupService implements IUserGroupService {
                 .users(users)
                 .canRemoteUnlock(canUsersRemoteUnlock)
                 .canUnlockUntil(canUsersUnlockUntil)
-//                .schedule(schedule)
+                .schedule(schedule)
                 .build();
 
         _database.getDatastore().save(userGroup);
@@ -71,6 +74,25 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public String createUserGroup(UserGroup userGroup) {
+
+        // Need to handle making and saving the nested objects first
+        List<Schedule> schedulesInflated = new ArrayList<>();
+        List<Schedule> schedules = userGroup.getSchedule();
+        for(Schedule schedule : schedules) {
+            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
+            schedulesInflated.add(schedulePopulated);
+        }
+
+        List<User> usersInflated = new ArrayList<>();
+        List<User> users = userGroup.getUsers();
+        for(User user : users) {
+            User userPopulated = _userService.getUser(user.getObjectId());
+            usersInflated.add(userPopulated);
+        }
+
+        userGroup.setSchedule(schedulesInflated);
+        userGroup.setUsers(usersInflated);
+
 //        return createUserGroupWithMongoJack(userGroup);
         return createUserGroupWithMorphia(userGroup);
     }

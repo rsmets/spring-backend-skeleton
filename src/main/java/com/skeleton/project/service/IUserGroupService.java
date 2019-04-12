@@ -18,7 +18,7 @@ public interface IUserGroupService {
      * @param canUsersUnlockUntil
      * @return
      */
-    UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, Schedule schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception;
+    UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, List<Schedule> schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception;
 
     String createUserGroup(UserGroup userGroup);
     /**

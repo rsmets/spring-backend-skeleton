@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -33,18 +34,30 @@ public class SpringBackendSkeletonApplicationTests {
 
 		List<String> adminIds = new ArrayList<>();
 		List<String> lockIds = new ArrayList<>();
-		Schedule schedule = Schedule.builder().repeatType(0).build();
+		Schedule schedule = Schedule.builder().id("GnOHW6uvA8").build(); //TODO need to save to db first
+		Schedule schedule2 = Schedule.builder().id("3nxeEYEJi7").build(); //TODO need to save to db first
+		List<Schedule> schedules = Arrays.asList(schedule, schedule2);
 		List<String> userIds = new ArrayList<>();
 		boolean canUsersRemoteUnlock = true ;
 		boolean canUsersUnlockUntil = false;
 
-		UserGroup userGroup = null;
+		UserGroup userGroupToAdd = UserGroup.builder()
+				.name("TestGroup")
+				.canRemoteUnlock(canUsersRemoteUnlock)
+				.canUnlockUntil(canUsersUnlockUntil)
+				.lockIds(lockIds)
+//				.admins(adminIds);
+				.schedule(schedules)
+				.build();
 		try {
-			userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedule, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
+//			UserGroup userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedules, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
+//			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
+//			Assert.assertEquals(userGroup, dbUserGroup);
 
-			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
+			String id = userGroupService.createUserGroup(userGroupToAdd);
+			UserGroup dbUserGroup = userGroupService.getUserGroup(id);
 
-			Assert.assertEquals(userGroup, dbUserGroup);
+			Assert.assertEquals(userGroupToAdd, dbUserGroup);
 
 		} catch (Exception e) {
 			e.printStackTrace();

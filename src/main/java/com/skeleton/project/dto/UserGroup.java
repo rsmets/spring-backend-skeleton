@@ -20,7 +20,7 @@ public class UserGroup {
     String id;
 
     List<String> lockIds;
-    Schedule schedule;
+    List<Schedule> schedule;
     User owner;
     List<User> admins;
     List<User> users;

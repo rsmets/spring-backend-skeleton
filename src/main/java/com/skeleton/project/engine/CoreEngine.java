@@ -47,11 +47,11 @@ public class CoreEngine implements ICoreEngine{
 			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
 
 //			insertAndGrabUserGroupObject(example);
-			insertAndGrabKeyRelationshipObject(example);
+//			insertAndGrabKeyRelationshipObject(example);
 
 //			User user = userService.getUser("3l6FvM305C");
 //			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
-			KeyRelationship kr = keyRelationshipService.getKeyRelationshp("Y92hlMA0z4");
+			KeyRelationship kr = keyRelationshipService.getKeyRelationshp("3dy7V2SSoN");
 
 
 			return BaseResponse.builder().example(kr).build();

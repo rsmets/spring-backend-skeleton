@@ -14,13 +14,14 @@ import java.util.List;
 @Data
 @Builder
 public class Schedule extends ParseObject {
+
     @JsonProperty("_id")
     @ObjectId
     String id;
 
     Date endDate;
     Date startDate;
-    boolean expirationDateUses;
+    boolean expirationDateUsesNumOccurrences;
     List<Integer> repeatPattern; // todo make object
     Integer repeatType;
     Integer repeatInterval;
@@ -37,16 +38,17 @@ public class Schedule extends ParseObject {
             return null;
 
         Schedule result = Schedule.builder()
-                .id(dto.getId())
+                .id(dto.get_id())
                 .reference(dto.getReference())
                 .endDate(dto.getEndDate())
                 .startDate(dto.getStartDate())
-                .expirationDateUses(dto.isExpirationDateUses())
+                .expirationDateUsesNumOccurrences(dto.getExpirationDateUsesNumOccurrences())
                 .repeatPattern(dto.getRepeatPattern())
                 .repeatInterval(dto.getRepeatInterval())
                 .expirationDate(dto.getExpirationDate())
-                .updatedAt(dto.getUpdatedAt())
-                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.get_updated_at())
+                .createdAt(dto.get_created_at())
+                .repeatType(dto.getRepeatType())
                 .build();
 
         return result;

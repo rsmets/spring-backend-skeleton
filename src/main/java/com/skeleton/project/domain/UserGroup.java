@@ -25,7 +25,7 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
     String id;
 
     List<String> lockIds;
-    Schedule schedule;
+    List<Schedule> schedule;
     User owner;
     List<User> admins;
     List<User> users;
@@ -47,7 +47,7 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
         UserGroup result = UserGroup.builder()
                 .id(dto.getId())
                 .lockIds(dto.getLockIds())
-                .schedule(Schedule.convertFromDto(dto.getSchedule()))
+                .schedule(Schedule.convertFromDtos(dto.getSchedule()))
                 .owner(User.convertFromDto(dto.getOwner()))
                 .admins(User.convertFromDtos(dto.getAdmins()))
                 .users(User.convertFromDtos(dto.getUsers()))

@@ -62,9 +62,9 @@ public class KeyRelationshipService implements IKeyRelationshipService {
 
     @Override
     public com.skeleton.project.domain.KeyRelationship getKeyRelationshp(String objectId) {
-        return getKeyRelationshipWithMongoJack(objectId);
+//        return getKeyRelationshipWithMongoJack(objectId);
 //        return getWithParse(objectId);
-//        return getKeyRWithMorphia(objectId);
+        return getKeyRWithMorphia(objectId);
     }
 
     @Override
