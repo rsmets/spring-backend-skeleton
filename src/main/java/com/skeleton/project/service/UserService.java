@@ -10,6 +10,7 @@ import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
 import org.parse4j.ParseObject;
 import org.parse4j.ParseQuery;
+import org.parse4j.ParseUser;
 import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,9 +49,9 @@ public class UserService implements IUserService {
 
     @Override
     public User getUser(String objectId) {
-//        return getUserWithMorpha(objectId);
+        return getWithMorphia(objectId);
 //        return getUserWithMongoJack(objectId);
-        return getWithParse(objectId);
+//        return getWithParse(objectId);
     }
 
     private User getUserWithMongoJack(String objectId) {
@@ -84,14 +85,18 @@ public class UserService implements IUserService {
     }
 
     private User getWithMorphia(String objectId) {
-        final Query<User> query = _database.getDatastore().createQuery(User.class);
+        final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
 
-        final List<User> users = query
+        final List<com.skeleton.project.dto.User> users = query
                 .field("_id").equalIgnoreCase(objectId)
                 .asList(); //todo figure out how to query for one.
 
         log.info("Got users with id " + objectId + ": " + users);
 
-        return users.get(0); //rjs this should always be one entry
+        if (users.isEmpty())
+            return null;
+
+        User result = User.convertFromDto(users.get(0)); //rjs this should always be one entry
+        return result;
     }
 }

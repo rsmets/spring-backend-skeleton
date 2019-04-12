@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import dev.morphia.annotations.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
@@ -16,8 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Schedule {
 
-    @ObjectId
+//    @ObjectId
     @JsonProperty("_id")
+    @Id
     String _id;
 
     Date endDate;

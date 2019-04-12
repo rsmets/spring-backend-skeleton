@@ -33,12 +33,18 @@ public class SpringBackendSkeletonApplicationTests {
 	public void createUserGroup() {
 
 		List<String> adminIds = new ArrayList<>();
+
 		List<String> lockIds = new ArrayList<>();
-		Schedule schedule = Schedule.builder().id("GnOHW6uvA8").build(); //TODO need to save to db first
-		Schedule schedule2 = Schedule.builder().id("3nxeEYEJi7").build(); //TODO need to save to db first
+
+		Schedule schedule = Schedule.builder().id("GnOHW6uvA8").build();
+		Schedule schedule2 = Schedule.builder().id("3nxeEYEJi7").build();
 		List<Schedule> schedules = Arrays.asList(schedule, schedule2);
-		List<String> userIds = new ArrayList<>();
-		boolean canUsersRemoteUnlock = true ;
+
+		User user = User.builder().id("pKPes1hdQE").build();
+		User user2 = User.builder().id("FgJCRVDiB5").build();
+		List<User> users = Arrays.asList(user, user2);
+
+		boolean canUsersRemoteUnlock = true;
 		boolean canUsersUnlockUntil = false;
 
 		UserGroup userGroupToAdd = UserGroup.builder()
@@ -46,6 +52,7 @@ public class SpringBackendSkeletonApplicationTests {
 				.canRemoteUnlock(canUsersRemoteUnlock)
 				.canUnlockUntil(canUsersUnlockUntil)
 				.lockIds(lockIds)
+				.users(users)
 //				.admins(adminIds);
 				.schedule(schedules)
 				.build();
@@ -66,6 +73,11 @@ public class SpringBackendSkeletonApplicationTests {
 	}
 
 	@Test
+	public void getUser() {
+		User dbUser = userService.getUser("3l6FvM305C");
+	}
+
+//	@Test
 	public void createUser() {
 
 		User user = User.builder()
@@ -90,8 +102,5 @@ public class SpringBackendSkeletonApplicationTests {
 
 	}
 
-	@Test
-	public void getUser() {
-		User dbUser = userService.getUser("3l6FvM305C");
-	}
+
 }

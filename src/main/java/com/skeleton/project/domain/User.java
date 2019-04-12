@@ -50,15 +50,15 @@ public class User extends ParseUser {
             return null;
 
         User result = User.builder()
-                .id(dto.getId())
+                .id(dto.get_id())
                 .primaryEmail(dto.getPrimaryEmail())
                 .username(dto.getUsername())
                 .lastName(dto.getLastName())
                 .firstName(dto.getFirstName())
                 .primaryPhone(dto.getPrimaryPhone())
                 .type(dto.getType())
-                .emails(Email.convertFromDtos(dto.getEmails()))
-                .phones(Phone.convertFromDtos(dto.getPhones()))
+//                .emails(Email.convertFromDtos(dto.getEmails()))
+//                .phones(Phone.convertFromDtos(dto.getPhones()))
                 .build();
 
         return result;

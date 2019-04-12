@@ -2,10 +2,12 @@ package com.skeleton.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mongojack.Id;
 import org.mongojack.ObjectId;
+import org.parse4j.ParseClassName;
 
 import java.util.List;
 
@@ -16,12 +18,13 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
+@Entity("_User")
 public class User {
 
     @JsonProperty("_id")
-    @ObjectId
+//    @ObjectId
     @Id
-    String id;
+    String _id;
 
     String primaryEmail;
     String username;
@@ -31,8 +34,8 @@ public class User {
     int type;
 
 
-    List<Email> emails;
-    List<Phone> phones;
+//    List<Email> emails;
+//    List<Phone> phones;
 
 //    String password;
 //    String emailCode;

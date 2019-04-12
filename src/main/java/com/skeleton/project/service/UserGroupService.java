@@ -33,6 +33,9 @@ public class UserGroupService implements IUserGroupService {
     @Autowired
     IScheduleService _scheduleService;
 
+    /**
+     * @see IUserGroupService#createUserGroup(List, List, List, List, boolean, boolean)
+     */
     @Override
     public UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, List<Schedule> schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception {
         List<User> admins = new ArrayList<>();
@@ -72,6 +75,9 @@ public class UserGroupService implements IUserGroupService {
         return userGroup;
     }
 
+    /**
+     * @see IUserGroupService#createUserGroup(UserGroup) 
+     */
     @Override
     public String createUserGroup(UserGroup userGroup) {
 
@@ -86,7 +92,7 @@ public class UserGroupService implements IUserGroupService {
         List<User> usersInflated = new ArrayList<>();
         List<User> users = userGroup.getUsers();
         for(User user : users) {
-            User userPopulated = _userService.getUser(user.getObjectId());
+            User userPopulated = _userService.getUser(user.getId());
             usersInflated.add(userPopulated);
         }
 

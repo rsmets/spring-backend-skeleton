@@ -9,11 +9,11 @@ import java.util.List;
 public interface IUserGroupService {
 
     /**
-     * Creates a new user group
+     * Creates a new user group with inflated Schedule and User attributes
      * @param adminIds
      * @param lockIds
-     * @param schedule
-     * @param userIds
+     * @param schedule note: must be already saved Schedule objects
+     * @param userIds note: must be already saved User objects
      * @param canUsersRemoteUnlock
      * @param canUsersUnlockUntil
      * @return
