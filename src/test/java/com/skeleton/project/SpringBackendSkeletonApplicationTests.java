@@ -53,7 +53,7 @@ public class SpringBackendSkeletonApplicationTests {
 				.canUnlockUntil(canUsersUnlockUntil)
 				.lockIds(lockIds)
 				.users(users)
-//				.admins(adminIds);
+				.admins(new ArrayList<>())
 				.schedule(schedules)
 				.build();
 		try {
@@ -61,8 +61,8 @@ public class SpringBackendSkeletonApplicationTests {
 //			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
 //			Assert.assertEquals(userGroup, dbUserGroup);
 
-			String id = userGroupService.createUserGroup(userGroupToAdd);
-			UserGroup dbUserGroup = userGroupService.getUserGroup(id);
+			UserGroup obj = userGroupService.createUserGroup(userGroupToAdd);
+			UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
 
 			Assert.assertEquals(userGroupToAdd, dbUserGroup);
 

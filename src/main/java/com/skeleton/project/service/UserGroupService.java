@@ -8,6 +8,7 @@ import com.skeleton.project.engine.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.WriteResult;
 import org.parse4j.ParseException;
@@ -76,10 +77,10 @@ public class UserGroupService implements IUserGroupService {
     }
 
     /**
-     * @see IUserGroupService#createUserGroup(UserGroup) 
+     * @see IUserGroupService#createUserGroup(UserGroup)
      */
     @Override
-    public String createUserGroup(UserGroup userGroup) {
+    public UserGroup createUserGroup(UserGroup userGroup) {
 
         // Need to handle making and saving the nested objects first
         List<Schedule> schedulesInflated = new ArrayList<>();
@@ -114,17 +115,17 @@ public class UserGroupService implements IUserGroupService {
         return newObjId;
     }
 
-    private String createUserGroupWithMorphia(UserGroup userGroup) {
+    private UserGroup createUserGroupWithMorphia(UserGroup userGroup) {
         Key key = _database.getDatastore().save(userGroup);
 
-        return (String)key.getId();
+        return userGroup;
     }
 
     @Override
     public UserGroup getUserGroup(String objectId) {
 //        return getWithParse(objectId);
-        return getUserGroupWithMongoJack(objectId);
-//        return getUserGroupWithMorphia(objectId);
+//        return getUserGroupWithMongoJack(objectId);
+        return getUserGroupWithMorphia(objectId);
     }
 
     private UserGroup getWithParse(String objectId) {
@@ -162,14 +163,18 @@ public class UserGroupService implements IUserGroupService {
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
         final com.skeleton.project.dto.UserGroup userGroups = query
-                .field("_id").equal(objectId)
+                .disableValidation()
+                .field("_id").equalIgnoreCase(new ObjectId(objectId))
                 .get(); //todo figure out how to query for one.
 
+        final com.skeleton.project.dto.UserGroup ug = _database.getDatastore().get(com.skeleton.project.dto.UserGroup.class, new ObjectId(objectId));
+
         log.info("Got users with id " + objectId + ": " + userGroups);
+        log.info("Got users with id " + objectId + ": " + ug);
 
 //        return userGroups.get(0); //rjs this should always be one entry
 //        return userGroups;
-        return UserGroup.convertFromDto(userGroups);
+        return UserGroup.convertFromDto(ug);
     }
 
     @Override

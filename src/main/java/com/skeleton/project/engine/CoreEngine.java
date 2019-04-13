@@ -72,8 +72,8 @@ public class CoreEngine implements ICoreEngine{
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
 		userGroup.setName((String)obj);
 
-		String newObjId = userGroupService.createUserGroup(userGroup);
-		UserGroup grabbed = userGroupService.getUserGroup(newObjId);
+		UserGroup newObj = userGroupService.createUserGroup(userGroup);
+		UserGroup grabbed = userGroupService.getUserGroup(newObj.getId());
 	}
 
 	private void insertAndGrabKeyRelationshipObject(Object obj){

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.TreeNode;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -11,6 +12,8 @@ import org.parse4j.ParseClassName;
 import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -19,18 +22,22 @@ import java.util.List;
 @ParseClassName("UserGroup")
 public class UserGroup extends ParseObject { //todo extend an abstract group class that has a notion of a tree node
 
-    @JsonProperty("_id")
     @ObjectId
     @Id
     String id;
 
-    List<String> lockIds;
-    List<Schedule> schedule;
+    List<String> lockIds = Collections.emptyList();
+    List<Schedule> schedule = Collections.emptyList();
     User owner;
-    List<User> admins;
-    List<User> users;
+    List<User> admins = Collections.emptyList();
+    List<User> users = Collections.emptyList();
     KeyRelationship keyRelationship;
     String name;
+
+    @Property("_updated_at")
+    Date updatedAt;
+    @Property("_created_at")
+    Date createdAt;
 
     // todo put this stuff the parent class
     TreeNode groupParent;
@@ -52,11 +59,15 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
                 .admins(User.convertFromDtos(dto.getAdmins()))
                 .users(User.convertFromDtos(dto.getUsers()))
                 .keyRelationship(KeyRelationship.convertFromDto(dto.getKeyRelationship()))
-                .groupParent(dto.getGroupParent())
-                .groupChildren(dto.getGroupChildren())
-                .canRemoteUnlock(dto.isCanRemoteUnlock())
-                .canUnlockUntil(dto.isCanUnlockUntil())
+//                .groupParent(dto.getGroupParent())
+//                .groupChildren(dto.getGroupChildren())
+//                .canRemoteUnlock(dto.isCanRemoteUnlock())
+//                .canUnlockUntil(dto.isCanUnlockUntil())
+                .canRemoteUnlock(dto.getCanRemoteUnlock())
+                .canUnlockUntil(dto.getCanUnlockUntil())
                 .name(dto.getName())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
                 .build();
 
         return result;

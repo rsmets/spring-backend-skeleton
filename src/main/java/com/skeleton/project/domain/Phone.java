@@ -7,6 +7,7 @@ import org.mongojack.ObjectId;
 import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -23,15 +24,15 @@ public class Phone extends ParseObject {
     User user;
 
 //    ValidationInfo validationInfo;
-//    Date updatedAt;
-//    Date createdAt;
+    Date updatedAt;
+    Date createdAt;
 
     public static Phone convertFromDto(com.skeleton.project.dto.Phone dto){
         if (dto == null)
             return null;
 
         Phone result = Phone.builder()
-                .id(dto.getId())
+                .id(dto.get_id())
                 .phone(dto.getPhone())
                 .verificationCode(dto.getVerificationCode())
                 .primary(dto.getPrimary())

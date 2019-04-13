@@ -1,18 +1,24 @@
 package com.skeleton.project.dto;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
 
+import java.util.Date;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
+@Entity
 public class Email {
 
-    @ObjectId
-    String id;
+    @Id
+    String _id;
 
     String email;
     Boolean primary;
@@ -20,8 +26,8 @@ public class Email {
     Boolean verified;
     User user;
 
-//    Date updatedAt;
-//    Date createdAt;
+    Date _updated_at;
+    Date _created_at;
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -30,13 +36,18 @@ public class Email {
     // ******************************************************************************
 
     @JsonSetter("objectId")
-    private void setObjectId(String id) {
-        this.id = id;
+    public void setObjectId(String id) {
+        this._id = id;
     }
 
     @JsonSetter("_id")
-    private void setId(String id) {
-        this.id = id;
+    public void setId(String id) {
+        this._id = id;
+    }
+
+    @JsonGetter("_id")
+    public String getId() {
+        return this._id;
     }
 }
 

@@ -20,7 +20,7 @@ public interface IUserGroupService {
      */
     UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, List<Schedule> schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception;
 
-    String createUserGroup(UserGroup userGroup);
+    UserGroup createUserGroup(UserGroup userGroup);
     /**
      * Gets existing user group
      * @param objectId

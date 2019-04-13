@@ -87,7 +87,9 @@ public class UserService implements IUserService {
     private User getWithMorphia(String objectId) {
         final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
 
+
         final List<com.skeleton.project.dto.User> users = query
+                .disableValidation()
                 .field("_id").equalIgnoreCase(objectId)
                 .asList(); //todo figure out how to query for one.
 

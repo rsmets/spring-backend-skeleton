@@ -1,6 +1,9 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.skeleton.project.dto.Pointer;
+import com.skeleton.project.utils.Utils;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import lombok.Builder;
@@ -32,7 +35,10 @@ public class User extends ParseUser {
     int type;
 
 
+    @Embedded
     List<Email> emails;
+
+    @Embedded
     List<Phone> phones;
 
 //    String password;
@@ -49,14 +55,34 @@ public class User extends ParseUser {
         if (dto == null)
             return null;
 
+        // Need to inflate the Pointers (Emails and Phones)
+        // Opting to not do the full obj grab because pretty sure not needed. Just populating the objectIds
+        List<Phone> phones = new ArrayList<>();
+        List<Email> emails = new ArrayList<>();
+
+        //TODO RJS need to figure out a way to handle the parse list of pointers vs the mongo list object json blobs...
+        // Pointer does not work with the actual email object
+
+        for (Pointer point : Utils.nullGuard(dto.getPhones())) {
+            Phone phone = Phone.builder().id(point.getObjectId()).build();
+            phones.add(phone);
+        }
+
+        for (Pointer point : Utils.nullGuard(dto.getEmails())) {
+            Email email = Email.builder().id(point.getObjectId()).build();
+            emails.add(email);
+        }
+
         User result = User.builder()
-                .id(dto.get_id())
+                .id(dto.getId())
                 .primaryEmail(dto.getPrimaryEmail())
                 .username(dto.getUsername())
                 .lastName(dto.getLastName())
                 .firstName(dto.getFirstName())
                 .primaryPhone(dto.getPrimaryPhone())
                 .type(dto.getType())
+                .emails(emails)
+                .phones(phones)
 //                .emails(Email.convertFromDtos(dto.getEmails()))
 //                .phones(Phone.convertFromDtos(dto.getPhones()))
                 .build();
