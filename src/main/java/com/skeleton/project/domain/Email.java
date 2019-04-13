@@ -2,6 +2,7 @@ package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -15,6 +16,7 @@ import java.util.List;
 @Builder
 public class Email extends ParseObject {
     @JsonProperty("_id")
+    @Property("_id")
     @ObjectId
     String id;
 
@@ -31,8 +33,11 @@ public class Email extends ParseObject {
         if (dto == null)
             return null;
 
+        // handling case where the email could be pointer (from parse world) or a json object blob
+        String id = dto.getObjectId() == null ? dto.getId() : dto.getObjectId();
+
         Email result = Email.builder()
-                .id(dto.getId())
+                .id(id)
                 .email(dto.getEmail())
                 .verificationCode(dto.getVerificationCode())
                 .primary(dto.getPrimary())

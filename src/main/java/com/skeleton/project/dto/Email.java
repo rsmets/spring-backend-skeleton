@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mongojack.ObjectId;
 
 import java.util.Date;
 
@@ -17,6 +17,7 @@ import java.util.Date;
 @Entity
 public class Email {
 
+    @Property("_id")
     @Id
     String _id;
 
@@ -35,10 +36,18 @@ public class Email {
     // object ('objectId')
     // ******************************************************************************
 
-    @JsonSetter("objectId")
-    public void setObjectId(String id) {
-        this._id = id;
-    }
+    String objectId;
+    String className;
+
+//    @JsonSetter("objectId")
+//    public void setObjectId(String id) {
+//        this.id = id;
+//    }
+//
+//    @JsonGetter("objectId")
+//    public String getObjectId() {
+//        return this.id;
+//    }
 
     @JsonSetter("_id")
     public void setId(String id) {

@@ -36,10 +36,11 @@ public class User {
     String primaryPhone;
     int type;
 
-    @Embedded
-    List<Pointer> emails;
-    @Embedded
-    List<Pointer> phones;
+    // Can not get the pointer from parse world to play simultaniously nice with the json blob object world ignoring for now
+//    @Embedded
+//    List<Email> emails;
+//    @Embedded
+//    List<Pointer> phones;
 
 //    String password;
 //    String emailCode;

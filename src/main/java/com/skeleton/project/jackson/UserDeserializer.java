@@ -56,8 +56,8 @@ public class UserDeserializer extends StdDeserializer {
                 .primaryPhone(primaryPhone)
                 .primaryEmail(primaryEmail)
                 .type(type)
-                .phones(phones)
-                .emails(emails)
+//                .phones(phones)
+//                .emails(emails)
                 .build();
 
         log.debug("full populated user obj: " + res.toString());

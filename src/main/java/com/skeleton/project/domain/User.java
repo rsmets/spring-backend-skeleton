@@ -35,11 +35,11 @@ public class User extends ParseUser {
     int type;
 
 
-    @Embedded
-    List<Email> emails;
-
-    @Embedded
-    List<Phone> phones;
+//    @Embedded
+//    List<Email> emails;
+//
+//    @Embedded
+//    List<Phone> phones;
 
 //    String password;
 //    String emailCode;
@@ -63,15 +63,20 @@ public class User extends ParseUser {
         //TODO RJS need to figure out a way to handle the parse list of pointers vs the mongo list object json blobs...
         // Pointer does not work with the actual email object
 
-        for (Pointer point : Utils.nullGuard(dto.getPhones())) {
-            Phone phone = Phone.builder().id(point.getObjectId()).build();
-            phones.add(phone);
-        }
-
-        for (Pointer point : Utils.nullGuard(dto.getEmails())) {
-            Email email = Email.builder().id(point.getObjectId()).build();
-            emails.add(email);
-        }
+//        for (Pointer point : Utils.nullGuard(dto.getPhones())) {
+//            Phone phone = Phone.builder().id(point.getObjectId()).build();
+//            phones.add(phone);
+//        }
+//
+//        for (com.skeleton.project.dto.Email point : Utils.nullGuard(dto.getEmails())) {
+//            Email email = Email.builder().id(point.getObjectId()).build();
+//            if (point.getObjectId() == null) {
+//                email = Email.builder().id(point.getId()).build();
+//            }
+////            Email email = Email.builder().id(point.getObjectId()).build();
+////            Email email = Email.builder().id(point.getId()).build();
+//            emails.add(email);
+//        }
 
         User result = User.builder()
                 .id(dto.getId())
@@ -81,8 +86,8 @@ public class User extends ParseUser {
                 .firstName(dto.getFirstName())
                 .primaryPhone(dto.getPrimaryPhone())
                 .type(dto.getType())
-                .emails(emails)
-                .phones(phones)
+//                .emails(emails)
+//                .phones(phones)
 //                .emails(Email.convertFromDtos(dto.getEmails()))
 //                .phones(Phone.convertFromDtos(dto.getPhones()))
                 .build();
