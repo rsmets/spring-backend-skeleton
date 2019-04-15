@@ -43,6 +43,7 @@ public class UserGroup {
 
     @Embedded
     KeyRelationship keyRelationship;
+
     String name;
 
     // todo put this stuff the parent class
@@ -50,8 +51,8 @@ public class UserGroup {
 //    List<TreeNode> groupChildren;
 
     // special user level abilities
-    Boolean canRemoteUnlock;
-    Boolean canUnlockUntil;
+    boolean canRemoteUnlock;
+    boolean canUnlockUntil;
 
     @Property("_updated_at")
     Date updatedAt;

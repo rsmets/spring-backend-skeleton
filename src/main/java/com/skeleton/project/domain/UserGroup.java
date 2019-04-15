@@ -1,7 +1,10 @@
 package com.skeleton.project.domain;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
@@ -11,10 +14,7 @@ import org.mongojack.ObjectId;
 import org.parse4j.ParseClassName;
 import org.parse4j.ParseObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Builder
@@ -61,10 +61,10 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
                 .keyRelationship(KeyRelationship.convertFromDto(dto.getKeyRelationship()))
 //                .groupParent(dto.getGroupParent())
 //                .groupChildren(dto.getGroupChildren())
-//                .canRemoteUnlock(dto.isCanRemoteUnlock())
-//                .canUnlockUntil(dto.isCanUnlockUntil())
-                .canRemoteUnlock(dto.getCanRemoteUnlock())
-                .canUnlockUntil(dto.getCanUnlockUntil())
+                .canRemoteUnlock(dto.isCanRemoteUnlock())
+                .canUnlockUntil(dto.isCanUnlockUntil())
+//                .canRemoteUnlock(dto.getCanRemoteUnlock())
+//                .canUnlockUntil(dto.getCanUnlockUntil())
                 .name(dto.getName())
                 .createdAt(dto.getCreatedAt())
                 .updatedAt(dto.getUpdatedAt())

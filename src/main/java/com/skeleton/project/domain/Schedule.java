@@ -21,6 +21,7 @@ public class Schedule extends ParseObject {
 
     @JsonProperty("_id")
     @ObjectId
+    @Property("_id")
     @Id
     String id;
 

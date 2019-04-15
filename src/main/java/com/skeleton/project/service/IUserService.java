@@ -10,4 +10,6 @@ public interface IUserService {
     Key createUser(User user);
 
     User getUser(final String objectId);
+
+    User getUserByPhone(final String phoneNumber);
 }

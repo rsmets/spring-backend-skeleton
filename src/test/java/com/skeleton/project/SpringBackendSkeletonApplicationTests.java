@@ -74,7 +74,16 @@ public class SpringBackendSkeletonApplicationTests {
 
 	@Test
 	public void getUser() {
+
 		User dbUser = userService.getUser("3l6FvM305C");
+		Assert.assertEquals(dbUser.getLastName(), "Smets");
+	}
+
+	@Test
+	public void getUserByPhoneNumber() {
+
+		User dbUser = userService.getUserByPhone("+14044327575");
+		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
 //	@Test

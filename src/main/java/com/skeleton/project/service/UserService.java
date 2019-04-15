@@ -54,6 +54,25 @@ public class UserService implements IUserService {
 //        return getWithParse(objectId);
     }
 
+    @Override
+    public User getUserByPhone(String phoneNumber) {
+        final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
+
+
+        final List<com.skeleton.project.dto.User> users = query
+                .disableValidation()
+                .filter("primaryPhone", phoneNumber)
+                .asList(); //todo figure out how to query for one.
+
+        log.info("Got users with phoneNumber " + phoneNumber + ": " + users);
+
+        if (users.isEmpty())
+            return null;
+
+        User result = User.convertFromDto(users.get(0)); //rjs this should always be one entry
+        return result;
+    }
+
     private User getUserWithMongoJack(String objectId) {
         DBCollection userCollection = _database.getDB().getCollection("_User");
         JacksonDBCollection<com.skeleton.project.dto.User, String> collection = JacksonDBCollection.wrap(userCollection, com.skeleton.project.dto.User.class, String.class);

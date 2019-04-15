@@ -39,6 +39,24 @@ public class CoreEngine implements ICoreEngine{
 	IKeyRelationshipService keyRelationshipService;
 
 	@Override
+	public UserGroup createUserGroup(UserGroup userGroup) {
+		return userGroupService.createUserGroup(userGroup);
+	}
+
+	@Override
+	public UserGroup getUserGroup(String id) {
+		return userGroupService.getUserGroup(id);
+	}
+
+	@Override
+	public UserGroup deleteUserGroup(String id) {
+//		return userGroupService.deleteUser(id);
+
+		//TODO
+		return null;
+	}
+
+	@Override
 	public BaseResponse executeAction(Object example) {
 
 		try{
