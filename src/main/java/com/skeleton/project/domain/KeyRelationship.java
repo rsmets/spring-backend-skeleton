@@ -2,6 +2,7 @@ package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skeleton.project.dto.Pointer;
+import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -36,9 +37,10 @@ public class KeyRelationship extends ParseObject {
     Role role;
     Lock key;
 
+    @Property("_updated_at")
     Date updatedAt;
+    @Property("_created_at")
     Date createdAt;
-
 
     public static KeyRelationship convertFromDto(com.skeleton.project.dto.KeyRelationship dto){
         if (dto == null)

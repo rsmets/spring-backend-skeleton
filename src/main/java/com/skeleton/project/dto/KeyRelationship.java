@@ -3,6 +3,7 @@ package com.skeleton.project.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.Id;
@@ -39,7 +40,9 @@ public class KeyRelationship {
     Role role;
     Lock key;
 
+    @Property("_updated_at")
     Date updatedAt;
+    @Property("_created_at")
     Date createdAt;
 
     // ******************************************************************************

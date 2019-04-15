@@ -55,7 +55,6 @@ public class DatabaseDriver {
 
 //            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
 //                    fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-
 //            MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry())
 
             _database = mongoClient.getDatabase(_dbName);
@@ -67,8 +66,12 @@ public class DatabaseDriver {
     /**
      * Returns old Deprecated MongoDb Object DB but MongoJack still requires it as far as I can tell.
      *
+     * 4/15/19 although opting against using MongoJack (in favor of Morphia) leaving here @deprecated
+     * in case it is ever useful.
+     *
      * @return @DB
      */
+    @Deprecated
     public DB getDB(){
 
         // I know there is a cleaner way todo this... but this works for now
@@ -77,18 +80,7 @@ public class DatabaseDriver {
 
             com.mongodb.MongoClient mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
             _mongoClient = mongoClient;
-//            MongoClient mongoClient = MongoClients.create(
-//                    MongoClientSettings.builder()
-//                            .applyToClusterSettings(builder ->
-//                                builder.hosts(Arrays.asList(new ServerAddress(_dbHost, _dbPort))))
-//                            .build());
 
-//            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-//                    fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-
-//            MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry())
-
-//            database = mongoClient.getDatabase(_dbName);
             _db = mongoClient.getDB(_dbName);
         }
 

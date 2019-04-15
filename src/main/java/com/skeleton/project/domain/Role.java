@@ -1,6 +1,7 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
@@ -14,7 +15,7 @@ import java.util.List;
 public class Role extends ParseObject {
 
     @JsonProperty("_id")
-    @ObjectId
+    @Id
     String id;
 
     String name;

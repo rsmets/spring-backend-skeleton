@@ -36,7 +36,7 @@ public class User {
     String primaryPhone;
     int type;
 
-    // Can not get the pointer from parse world to play simultaniously nice with the json blob object world ignoring for now
+    // Can not get the pointer from parse world to play simultaneously nice with the json blob object world ignoring for now
 //    @Embedded
 //    List<Email> emails;
 //    @Embedded
