@@ -2,6 +2,9 @@ package com.skeleton.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
@@ -9,13 +12,15 @@ import org.mongojack.ObjectId;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
+@Entity
 public class Role {
 
-    @ObjectId
+    @Property("_id")
+    @Id
     String id;
 
     String name;
-    int roleId;
+    int roleID;
 
 
     // ******************************************************************************

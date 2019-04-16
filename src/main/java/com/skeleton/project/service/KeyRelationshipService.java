@@ -66,9 +66,8 @@ public class KeyRelationshipService implements IKeyRelationshipService {
     }
 
     @Override
-    public List<com.skeleton.project.domain.KeyRelationship> findKeyRelationshipsByUser(String userObjectId) {
+    public List<com.skeleton.project.domain.KeyRelationship> getKeyRelationshipsByUser(String userObjectId) {
         final Query<com.skeleton.project.dto.KeyRelationship> query = _database.getDatastore().createQuery(com.skeleton.project.dto.KeyRelationship.class);
-
 
         final String pointerString = "_User$" + userObjectId;
         final List<com.skeleton.project.dto.KeyRelationship> krs = query
@@ -82,6 +81,30 @@ public class KeyRelationshipService implements IKeyRelationshipService {
             return null;
 
         List<com.skeleton.project.domain.KeyRelationship> result = com.skeleton.project.domain.KeyRelationship.convertFromDtos(krs);
+        return result;
+    }
+
+    @Override
+    public com.skeleton.project.domain.KeyRelationship getKeyRelationship(String userObjectId, String lockObjectId) {
+        final Query<com.skeleton.project.dto.KeyRelationship> query = _database.getDatastore().createQuery(com.skeleton.project.dto.KeyRelationship.class);
+
+        final String userPointerString = "_User$" + userObjectId;
+        final String keyPointerString = "Lock$" + lockObjectId;
+
+        final List<com.skeleton.project.dto.KeyRelationship> krs = query
+                .disableValidation()
+                .filter("_p_user", userPointerString)
+                .filter("_p_key", keyPointerString)
+                .asList();
+
+        log.info("Got key relationship with user " + userObjectId + " and lockObject : " + lockObjectId + ": " + krs);
+
+        if (krs.isEmpty())
+            return null;
+        else if (krs.size() > 1)
+            log.error("This should only ever return one, instead got multiple!");
+
+        com.skeleton.project.domain.KeyRelationship result = com.skeleton.project.domain.KeyRelationship.convertFromDto(krs.get(0)); //should only ever be one
         return result;
     }
 

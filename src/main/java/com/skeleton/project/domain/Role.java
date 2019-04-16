@@ -21,7 +21,6 @@ public class Role extends ParseObject {
     String name;
     int roleId;
 
-
     public static Role convertFromDto(com.skeleton.project.dto.Role dto){
         if (dto == null)
             return null;
@@ -29,7 +28,7 @@ public class Role extends ParseObject {
         Role result = Role.builder()
                 .id(dto.getId())
                 .name(dto.getName())
-                .roleId(dto.getRoleId())
+                .roleId(dto.getRoleID())
                 .build();
 
         return result;

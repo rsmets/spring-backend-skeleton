@@ -13,7 +13,9 @@ public interface IKeyRelationshipService {
 
     KeyRelationship getKeyRelationship(String objectId);
 
-    List<KeyRelationship> findKeyRelationshipsByUser(String userObjectId);
+    List<KeyRelationship> getKeyRelationshipsByUser(String userObjectId);
+
+    KeyRelationship getKeyRelationship(String userObjectId, String lockObjectId);
 
     Boolean deleteKeyRelationship(KeyRelationship keyRelationship);
 }

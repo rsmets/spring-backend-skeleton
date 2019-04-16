@@ -3,6 +3,7 @@ package com.skeleton.project.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Property;
 import lombok.Data;
@@ -37,8 +38,14 @@ public class KeyRelationship {
     String pendingEmailInvite;
     String smsUnlockCode;
 
+    @Embedded
     User user;
+
+    @Embedded
     Role role;
+    @Property("_p_role")
+    String roleObjectId;
+    @Embedded
     Lock key;
 
     @Property("_updated_at")

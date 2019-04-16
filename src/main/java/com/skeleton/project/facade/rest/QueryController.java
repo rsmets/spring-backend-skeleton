@@ -53,7 +53,10 @@ public class QueryController {
 		UserGroup result = _coreEngine.createUserGroup(input);
 		log.info("new user group: " + result.toString());
 
-		return result.getId() ;
+		if (result == null)
+			return "";
+
+		return result.getId();
 	}
 
 	@GetMapping("/v1.0/get/userGroup/{id}")

@@ -93,7 +93,7 @@ public class UserGroupService implements IUserGroupService {
         List<User> usersInflated = new ArrayList<>();
         List<User> users = userGroup.getUsers();
         for(User user : users) {
-            User userPopulated = _userService.getUser(user.getId());
+            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
             usersInflated.add(userPopulated);
         }
 

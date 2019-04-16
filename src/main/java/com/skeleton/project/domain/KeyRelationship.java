@@ -62,6 +62,7 @@ public class KeyRelationship extends ParseObject {
                 .smsUnlockCode(dto.getSmsUnlockCode())
                 .user(User.convertFromDto(dto.getUser()))
                 .role(Role.convertFromDto(dto.getRole()))
+//                .role(Role.convertFromDto(dto.getRoleObjectId()))  //RJS due to the pointer being a string would need to TODO roleService todo db retrieval
                 .updatedAt(dto.getUpdatedAt())
                 .createdAt(dto.getCreatedAt())
                 .build();
