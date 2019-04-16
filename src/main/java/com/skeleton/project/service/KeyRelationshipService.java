@@ -3,6 +3,7 @@ package com.skeleton.project.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBCollection;
 import com.skeleton.project.dto.KeyRelationship;
+import com.skeleton.project.dto.User;
 import com.skeleton.project.engine.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -57,10 +59,30 @@ public class KeyRelationshipService implements IKeyRelationshipService {
     }
 
     @Override
-    public com.skeleton.project.domain.KeyRelationship getKeyRelationshp(String objectId) {
+    public com.skeleton.project.domain.KeyRelationship getKeyRelationship(String objectId) {
 //        return getKeyRelationshipWithMongoJack(objectId);
 //        return getWithParse(objectId);
         return getKeyRWithMorphia(objectId);
+    }
+
+    @Override
+    public List<com.skeleton.project.domain.KeyRelationship> findKeyRelationshipsByUser(String userObjectId) {
+        final Query<com.skeleton.project.dto.KeyRelationship> query = _database.getDatastore().createQuery(com.skeleton.project.dto.KeyRelationship.class);
+
+
+        final String pointerString = "_User$" + userObjectId;
+        final List<com.skeleton.project.dto.KeyRelationship> krs = query
+                .disableValidation()
+                .filter("_p_user", pointerString)
+                .asList();
+
+        log.info("Got key relationships with user " + userObjectId + ": " + krs);
+
+        if (krs.isEmpty())
+            return null;
+
+        List<com.skeleton.project.domain.KeyRelationship> result = com.skeleton.project.domain.KeyRelationship.convertFromDtos(krs);
+        return result;
     }
 
     @Override
