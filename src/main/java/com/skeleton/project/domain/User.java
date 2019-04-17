@@ -19,8 +19,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity("_User")
-@ParseClassName("_User")
-public class User extends ParseUser {
+public class User {
 
     @JsonProperty("_id")
     @ObjectId

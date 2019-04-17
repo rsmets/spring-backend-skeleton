@@ -103,7 +103,7 @@ public class CoreEngine implements ICoreEngine{
 		userGroup.setName((String)obj);
 
 		UserGroup newObj = userGroupService.createUserGroup(userGroup);
-		UserGroup grabbed = userGroupService.getUserGroup(newObj.getId());
+		UserGroup grabbed = userGroupService.getUserGroup(newObj.getId().toHexString());
 	}
 
 	private void insertAndGrabKeyRelationshipObject(Object obj){

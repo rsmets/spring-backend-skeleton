@@ -161,8 +161,7 @@ public class UserGroupService implements IUserGroupService {
 
         final com.skeleton.project.dto.UserGroup ug = _database.getDatastore().get(com.skeleton.project.dto.UserGroup.class, new ObjectId(objectId));
 
-        log.info("Got users with id " + objectId + ": " + userGroups);
-        log.info("Got users with id " + objectId + ": " + ug);
+        log.info("Got user group with id " + objectId + ": " + ug);
 
 //        return userGroups.get(0); //rjs this should always be one entry
 //        return userGroups;

@@ -1,5 +1,7 @@
 package com.skeleton.project.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.TreeNode;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -15,12 +17,13 @@ import java.util.*;
 @Data
 @Builder
 @Entity
-@ParseClassName("UserGroup")
-public class UserGroup extends ParseObject { //todo extend an abstract group class that has a notion of a tree node
+public class UserGroup {
+//@ParseClassName("UserGroup")
+//public class UserGroup extends ParseObject { //todo extend an abstract group class that has a notion of a tree node
 
     @ObjectId
     @Id
-    String id;
+    org.bson.types.ObjectId id;
 
     User owner;
     String name;
@@ -49,7 +52,7 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
             return null;
 
         UserGroup result = UserGroup.builder()
-                .id(dto.getId())
+                .id(new org.bson.types.ObjectId(dto.getId()))
                 .lockIds(dto.getLockIds())
                 .schedule(Schedule.convertFromDtos(dto.getSchedule()))
                 .owner(User.convertFromDto(dto.getOwner()))

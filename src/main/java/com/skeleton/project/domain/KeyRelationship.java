@@ -1,13 +1,15 @@
 package com.skeleton.project.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skeleton.project.dto.Pointer;
+import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
-import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +17,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class KeyRelationship extends ParseObject {
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonInclude(JsonInclude.Include.NON_NULL) // lots of null by design. May want to remove if the node world or client side is expecting some
+public class KeyRelationship {
 
     @JsonProperty("_id")
     @Property("_id")

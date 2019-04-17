@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity("Schedule")
-public class Schedule extends ParseObject {
+public class Schedule {
 
     @JsonProperty("_id")
     @ObjectId
