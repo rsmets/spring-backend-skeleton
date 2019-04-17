@@ -2,6 +2,7 @@ package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.skeleton.project.dto.Pointer;
+import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,11 @@ import java.util.List;
 @Data
 @Builder
 public class KeyRelationship extends ParseObject {
+
     @JsonProperty("_id")
+    @Property("_id")
     @ObjectId
+    @Id
     String id;
 
     Date endDate;
@@ -32,6 +36,9 @@ public class KeyRelationship extends ParseObject {
     String pendingFirstName;
     String pendingEmailInvite;
     String smsUnlockCode;
+    String userGroupId;
+
+//    UserGroup userGroup;
 
     User user;
     Role role;
@@ -65,6 +72,8 @@ public class KeyRelationship extends ParseObject {
 //                .role(Role.convertFromDto(dto.getRoleObjectId()))  //RJS due to the pointer being a string would need to TODO roleService todo db retrieval
                 .updatedAt(dto.getUpdatedAt())
                 .createdAt(dto.getCreatedAt())
+                .userGroupId(dto.getUserGroupId())
+//                .userGroup(UserGroup.convertFromDto(dto.getUserGroup())) // RJS tried to use mongo dbRef object but struggled to get to decode... the id will do for grabs / tracking.
                 .build();
 
         return result;

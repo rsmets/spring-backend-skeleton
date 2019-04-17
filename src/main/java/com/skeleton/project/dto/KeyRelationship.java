@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Property;
+import dev.morphia.annotations.Reference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.Id;
@@ -38,6 +39,11 @@ public class KeyRelationship {
     String pendingFirstName;
     String pendingEmailInvite;
     String smsUnlockCode;
+    String userGroupId;
+
+    // RJS tried to use mongo dbRef object but struggled to get to decode... the id will do for grabs / tracking.
+//    @Reference
+//    UserGroup userGroup;
 
     @Embedded
     User user;

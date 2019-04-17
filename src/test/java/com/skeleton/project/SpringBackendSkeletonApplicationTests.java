@@ -1,8 +1,10 @@
 package com.skeleton.project;
 
+import com.skeleton.project.domain.KeyRelationship;
 import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
+import com.skeleton.project.service.IKeyRelationshipService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
 import dev.morphia.Key;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -28,6 +31,9 @@ public class SpringBackendSkeletonApplicationTests {
 
 	@Autowired
 	IUserService userService;
+
+	@Autowired
+	IKeyRelationshipService keyRelationshipService;
 
 	@Test
 	public void createUserGroup() {
@@ -55,6 +61,7 @@ public class SpringBackendSkeletonApplicationTests {
 				.users(users)
 				.admins(new ArrayList<>())
 				.schedule(schedules)
+				.keyRelationships(Collections.emptyList())
 				.build();
 		try {
 //			UserGroup userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedules, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
@@ -84,6 +91,13 @@ public class SpringBackendSkeletonApplicationTests {
 
 		User dbUser = userService.getUserByPhone("+14044327575");
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
+	}
+
+	@Test
+	public void getKeyRelationship() {
+
+		KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
+		Assert.assertEquals(kr.getId(), "3dy7V2SSoN");
 	}
 
 //	@Test

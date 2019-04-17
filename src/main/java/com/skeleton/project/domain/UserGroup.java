@@ -1,10 +1,6 @@
 package com.skeleton.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.JsonNode;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
@@ -87,4 +83,26 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
 
         return result;
     }
+
+    // RJS not worth the effort will just pass id's back for now. Hopefully can implement GRPC sooner than later to get around this.
+//    public static com.skeleton.project.dto.UserGroup convertToDto(UserGroup obj){
+//        if (obj == null)
+//            return null;
+//
+//        com.skeleton.project.dto.UserGroup result = new com.skeleton.project.dto.UserGroup();
+//        result.setId(obj.getId());
+//        result.setLockIds(obj.getLockIds());
+//        result.setSchedule(obj.getSchedule());
+//        result.setOwner(obj.getOwner());
+//        result.setAdmins(obj.getAdmins());
+//        result.setUsers(obj.getUsers());
+//        result.setKeyRelationships(obj.getKeyRelationships());
+//        result.setCanRemoteUnlock(obj.isCanRemoteUnlock());
+//        result.setCanUnlockUntil(obj.isCanUnlockUntil());
+//        result.setName(obj.getName());
+//        result.setCreatedAt(obj.getCreatedAt());
+//        result.setUpdatedAt(obj.getUpdatedAt());
+//
+//        return result;
+//    }
 }
