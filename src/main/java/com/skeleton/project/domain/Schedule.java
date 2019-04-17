@@ -27,7 +27,7 @@ public class Schedule extends ParseObject {
 
     Date endDate;
     Date startDate;
-    boolean expirationDateUsesNumOccurrences;
+    Boolean expirationDateUsesNumOccurrences;
     List<Integer> repeatPattern; // todo make object
     Integer repeatType;
     Integer repeatInterval;
