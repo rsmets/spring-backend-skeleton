@@ -82,13 +82,14 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup createUserGroup(UserGroup userGroup) {
 
-        // Need to handle making and saving the nested objects first
+        // Need to handle grabbing nested attribute objects
         List<Schedule> schedulesInflated = new ArrayList<>();
         List<Schedule> schedules = userGroup.getSchedule();
         for(Schedule schedule : schedules) {
             Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
             schedulesInflated.add(schedulePopulated);
         }
+        userGroup.setSchedule(schedulesInflated);
 
         List<User> usersInflated = new ArrayList<>();
         List<User> users = userGroup.getUsers();
@@ -96,28 +97,19 @@ public class UserGroupService implements IUserGroupService {
             User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
             usersInflated.add(userPopulated);
         }
-
-        userGroup.setSchedule(schedulesInflated);
         userGroup.setUsers(usersInflated);
 
-//        return createUserGroupWithMongoJack(userGroup);
+        /**
+         * RJS 4/16/19 Do I really really need to inflate? Opting not to for keyRelationship.
+         * I think that having the objectIds should be enough...
+         */
+
         return createUserGroupWithMorphia(userGroup);
     }
 
-    private String createUserGroupWithMongoJack(UserGroup userGroup) {
-        // TODO if do decide to stick with mongojack can put this collectioZn def in constructor
-        DBCollection userGroupCollection = _database.getDB().getCollection("UserGroup");
-        JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
-
-        WriteResult writeResult = collection.insert(userGroup);
-
-        String newObjId = (String)writeResult.getSavedId();
-        return newObjId;
-    }
-
     private UserGroup createUserGroupWithMorphia(UserGroup userGroup) {
-        Key key = _database.getDatastore().save(userGroup);
-
+        // Populates the id field
+        _database.getDatastore().save(userGroup);
         return userGroup;
     }
 

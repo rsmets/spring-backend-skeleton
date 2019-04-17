@@ -52,9 +52,6 @@ public class CoreEngine implements ICoreEngine{
 //            return null;
 //        }
 
-		KeyRelationship userGroupKeyRelationship = userGroup.getKeyRelationship();
-
-
 		return userGroupService.createUserGroup(userGroup);
 	}
 

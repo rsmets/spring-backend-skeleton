@@ -30,19 +30,19 @@ public class UserGroup {
     List<String> lockIds = Collections.emptyList();
 
     @Embedded
-    List<Schedule> schedule = Collections.emptyList();;
+    List<Schedule> schedule = Collections.emptyList();
 
     @Embedded
     User owner;
 
     @Embedded
-    List<User> admins = Collections.emptyList();;
+    List<User> admins = Collections.emptyList();
 
     @Embedded
-    List<User> users = Collections.emptyList();;
+    List<User> users = Collections.emptyList();
 
     @Embedded
-    KeyRelationship keyRelationship;
+    List<KeyRelationship> keyRelationships;
 
     String name;
 

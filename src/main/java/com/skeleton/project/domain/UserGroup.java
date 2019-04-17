@@ -26,13 +26,14 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
     @Id
     String id;
 
+    User owner;
+    String name;
+
     List<String> lockIds = Collections.emptyList();
     List<Schedule> schedule = Collections.emptyList();
-    User owner;
     List<User> admins = Collections.emptyList();
     List<User> users = Collections.emptyList();
-    KeyRelationship keyRelationship;
-    String name;
+    List<KeyRelationship> keyRelationships;
 
     @Property("_updated_at")
     Date updatedAt;
@@ -58,7 +59,7 @@ public class UserGroup extends ParseObject { //todo extend an abstract group cla
                 .owner(User.convertFromDto(dto.getOwner()))
                 .admins(User.convertFromDtos(dto.getAdmins()))
                 .users(User.convertFromDtos(dto.getUsers()))
-                .keyRelationship(KeyRelationship.convertFromDto(dto.getKeyRelationship()))
+                .keyRelationships(KeyRelationship.convertFromDtos(dto.getKeyRelationships()))
 //                .groupParent(dto.getGroupParent())
 //                .groupChildren(dto.getGroupChildren())
                 .canRemoteUnlock(dto.isCanRemoteUnlock())

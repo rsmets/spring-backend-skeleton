@@ -26,6 +26,7 @@ public class KeyRelationship {
 
     Date endDate;
     Date startDate;
+
     boolean expirationDateUses;
     List<Integer> repeatPattern; // todo make object
     Integer repeatType;
@@ -59,18 +60,18 @@ public class KeyRelationship {
     // object ('objectId')
     // ******************************************************************************
 
-//    @JsonSetter("objectId")
-//    public void setObjectId(String id) {
-//        this.id = id;
-//    }
-//
-//    @ObjectId
-//    @JsonSetter("_id")
-//    public void setId(String id) {
-//        this.id = id;
-//    }
-//
-//    @ObjectId
-//    @JsonSetter("_id")
-//    public String getId() { return this.id;}
+    @JsonSetter("objectId")
+    public void setObjectId(String id) {
+        this.id = id;
+    }
+
+    @ObjectId
+    @JsonSetter("_id")
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @ObjectId
+    @JsonSetter("_id")
+    public String getId() { return this.id;}
 }
