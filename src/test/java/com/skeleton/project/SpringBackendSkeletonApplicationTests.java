@@ -16,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @Profile("test")
@@ -53,7 +51,7 @@ public class SpringBackendSkeletonApplicationTests {
 		user.setId("FgJCRVDiB5");
 		User user2 = new User();
 		user2.setId("pKPes1hdQE");
-		List<User> users = Arrays.asList(user, user2);
+		Set<User> users = new HashSet<>(Arrays.asList(user, user2));
 
 
 		boolean canUsersRemoteUnlock = true;

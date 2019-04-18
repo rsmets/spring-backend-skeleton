@@ -8,7 +8,9 @@ import lombok.Data;
 import org.mongojack.ObjectId;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -89,8 +91,8 @@ public class User {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<User> convertFromDtos(List<com.skeleton.project.dto.entity.User> dtos){
-        List<User> result = new ArrayList<>();
+    public static Set<User> convertFromDtos(Set<com.skeleton.project.dto.entity.User> dtos){
+        Set<User> result = new HashSet<>();
 
         if (dtos == null)
             return result;

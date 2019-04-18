@@ -12,6 +12,7 @@ import org.mongojack.ObjectId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,10 +34,10 @@ public class UserGroup {
     User owner;
 
     @Embedded
-    List<User> admins = Collections.emptyList();
+    Set<User> admins = Collections.emptySet();
 
     @Embedded
-    List<User> users = Collections.emptyList();
+    Set<User> users = Collections.emptySet();
 
     @Embedded
     List<KeyRelationship> keyRelationships;

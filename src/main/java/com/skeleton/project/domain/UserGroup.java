@@ -26,8 +26,8 @@ public class UserGroup {
 
     List<String> lockIds = Collections.emptyList();
     List<Schedule> schedule = Collections.emptyList();
-    List<User> admins = Collections.emptyList();
-    List<User> users = Collections.emptyList();
+    Set<User> admins = Collections.emptySet();
+    Set<User> users = Collections.emptySet();
     List<KeyRelationship> keyRelationships;
 
     @Property("_updated_at")
