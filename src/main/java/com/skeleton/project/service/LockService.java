@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.domain.Lock;
+import com.skeleton.project.dto.Lock;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -42,8 +42,7 @@ public class LockService implements ILockService {
 
         log.info("Got lock with id " + lockId + ": " + lock);
 
-        com.skeleton.project.domain.Lock result = com.skeleton.project.domain.Lock.convertFromDto(lock);
-        return result;
+        return lock;
     }
 
     @Override

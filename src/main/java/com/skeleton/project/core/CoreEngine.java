@@ -37,7 +37,7 @@ public class CoreEngine implements ICoreEngine{
 	@Override
 	public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
 
-	    Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
+	    com.skeleton.project.dto.Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
         com.skeleton.project.dto.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
 
         if(ownersLockKeyRelationship == null) {

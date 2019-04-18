@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.domain.Lock;
+import com.skeleton.project.dto.Lock;
 import dev.morphia.Key;
 
 public interface ILockService {
