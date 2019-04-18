@@ -35,7 +35,7 @@ public class CoreEngine implements ICoreEngine{
     ILockService lockService;
 
 	@Override
-	public UserGroup createUserGroup(UserGroup userGroup) {
+	public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
 
 	    Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
         KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
@@ -56,7 +56,7 @@ public class CoreEngine implements ICoreEngine{
 	}
 
 	@Override
-	public UserGroup getUserGroup(String id) {
+	public com.skeleton.project.dto.UserGroup getUserGroup(String id) {
 		return userGroupService.getUserGroup(id);
 	}
 
@@ -102,8 +102,8 @@ public class CoreEngine implements ICoreEngine{
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
 		userGroup.setName((String)obj);
 
-		UserGroup newObj = userGroupService.createUserGroup(userGroup);
-		UserGroup grabbed = userGroupService.getUserGroup(newObj.getId().toHexString());
+//		UserGroup newObj = userGroupService.createUserGroup(userGroup);
+//		userGroupService.getUserGroup(newObj.getId().toHexString());
 	}
 
 	private void insertAndGrabKeyRelationshipObject(Object obj){

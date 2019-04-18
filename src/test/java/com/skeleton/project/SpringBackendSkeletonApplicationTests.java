@@ -3,7 +3,7 @@ package com.skeleton.project;
 import com.skeleton.project.domain.KeyRelationship;
 import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.User;
-import com.skeleton.project.domain.UserGroup;
+import com.skeleton.project.dto.UserGroup;
 import com.skeleton.project.service.IKeyRelationshipService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
@@ -46,30 +46,43 @@ public class SpringBackendSkeletonApplicationTests {
 		Schedule schedule2 = Schedule.builder().id("3nxeEYEJi7").build();
 		List<Schedule> schedules = Arrays.asList(schedule, schedule2);
 
-		User user = User.builder().id("pKPes1hdQE").build();
-		User user2 = User.builder().id("FgJCRVDiB5").build();
-		List<User> users = Arrays.asList(user, user2);
+//		com.skeleton.project.dto.User user = User.builder().id("pKPes1hdQE").build();
+//		User user2 = User.builder().id("FgJCRVDiB5").build();
+		com.skeleton.project.dto.User user = new com.skeleton.project.dto.User();
+		user.setId("FgJCRVDiB5");
+		com.skeleton.project.dto.User user2 = new com.skeleton.project.dto.User();
+		user.setId("pKPes1hdQE");
+		List<com.skeleton.project.dto.User> users = Arrays.asList(user, user2);
+
 
 		boolean canUsersRemoteUnlock = true;
 		boolean canUsersUnlockUntil = false;
 
-		UserGroup userGroupToAdd = UserGroup.builder()
-				.name("TestGroup")
-				.canRemoteUnlock(canUsersRemoteUnlock)
-				.canUnlockUntil(canUsersUnlockUntil)
-				.lockIds(lockIds)
-				.users(users)
-				.admins(new ArrayList<>())
-				.schedule(schedules)
-				.keyRelationships(Collections.emptyList())
-				.build();
+//		UserGroup userGroupToAdd = UserGroup.builder()
+//				.name("TestGroup")
+//				.canRemoteUnlock(canUsersRemoteUnlock)
+//				.canUnlockUntil(canUsersUnlockUntil)
+//				.lockIds(lockIds)
+//				.users(users)
+//				.admins(new ArrayList<>())
+//				.schedule(schedules)
+//				.keyRelationships(Collections.emptyList())
+//				.build();
+		com.skeleton.project.dto.UserGroup userGroupToAdd = new com.skeleton.project.dto.UserGroup();
+		userGroupToAdd.setName("testGroupies");
+		userGroupToAdd.setCanUnlockUntil(canUsersUnlockUntil);
+		userGroupToAdd.setCanRemoteUnlock(canUsersRemoteUnlock);
+		userGroupToAdd.setLockIds(lockIds);
+		userGroupToAdd.setUsers(users);
 		try {
 //			UserGroup userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedules, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
 //			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
 //			Assert.assertEquals(userGroup, dbUserGroup);
 
 			UserGroup obj = userGroupService.createUserGroup(userGroupToAdd);
-			UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
+//			String id = obj.getId().toHexString();
+//			UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
+			com.skeleton.project.dto.UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
 
 			Assert.assertEquals(userGroupToAdd, dbUserGroup);
 
@@ -79,21 +92,21 @@ public class SpringBackendSkeletonApplicationTests {
 
 	}
 
-	@Test
+//	@Test
 	public void getUser() {
 
 		User dbUser = userService.getUser("3l6FvM305C");
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
-	@Test
+//	@Test
 	public void getUserByPhoneNumber() {
 
 		User dbUser = userService.getUserByPhone("+14044327575");
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
-	@Test
+//	@Test
 	public void getKeyRelationship() {
 
 		KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");

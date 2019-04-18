@@ -5,12 +5,10 @@ import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
 import com.skeleton.project.engine.DatabaseDriver;
-import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonDBCollection;
-import org.mongojack.WriteResult;
 import org.parse4j.ParseException;
 import org.parse4j.ParseObject;
 import org.parse4j.ParseQuery;
@@ -80,24 +78,24 @@ public class UserGroupService implements IUserGroupService {
      * @see IUserGroupService#createUserGroup(UserGroup)
      */
     @Override
-    public UserGroup createUserGroup(UserGroup userGroup) {
+    public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
 
         // Need to handle grabbing nested attribute objects
-        List<Schedule> schedulesInflated = new ArrayList<>();
-        List<Schedule> schedules = userGroup.getSchedule();
-        for(Schedule schedule : schedules) {
-            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
-            schedulesInflated.add(schedulePopulated);
-        }
-        userGroup.setSchedule(schedulesInflated);
-
-        List<User> usersInflated = new ArrayList<>();
-        List<User> users = userGroup.getUsers();
-        for(User user : users) {
-            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
-            usersInflated.add(userPopulated);
-        }
-        userGroup.setUsers(usersInflated);
+//        List<Schedule> schedulesInflated = new ArrayList<>();
+//        List<Schedule> schedules = userGroup.getSchedule();
+//        for(Schedule schedule : schedules) {
+//            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
+//            schedulesInflated.add(schedulePopulated);
+//        }
+//        userGroup.setSchedule(schedulesInflated);
+//
+//        List<User> usersInflated = new ArrayList<>();
+//        List<User> users = userGroup.getUsers();
+//        for(User user : users) {
+//            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
+//            usersInflated.add(userPopulated);
+//        }
+//        userGroup.setUsers(usersInflated);
 
         /**
          * RJS 4/16/19 Do I really really need to inflate? Opting not to for keyRelationship.
@@ -107,14 +105,14 @@ public class UserGroupService implements IUserGroupService {
         return createUserGroupWithMorphia(userGroup);
     }
 
-    private UserGroup createUserGroupWithMorphia(UserGroup userGroup) {
+    private com.skeleton.project.dto.UserGroup createUserGroupWithMorphia(com.skeleton.project.dto.UserGroup userGroup) {
         // Populates the id field
         _database.getDatastore().save(userGroup);
         return userGroup;
     }
 
     @Override
-    public UserGroup getUserGroup(String objectId) {
+    public com.skeleton.project.dto.UserGroup getUserGroup(String objectId) {
 //        return getWithParse(objectId);
 //        return getUserGroupWithMongoJack(objectId);
         return getUserGroupWithMorphia(objectId);
@@ -150,7 +148,7 @@ public class UserGroupService implements IUserGroupService {
         return UserGroup.convertFromDto(ug);
     }
 
-    private UserGroup getUserGroupWithMorphia(String objectId){
+    private com.skeleton.project.dto.UserGroup getUserGroupWithMorphia(String objectId){
         final Query<com.skeleton.project.dto.UserGroup> query = _database.getDatastore().createQuery(com.skeleton.project.dto.UserGroup.class);
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
@@ -165,7 +163,8 @@ public class UserGroupService implements IUserGroupService {
 
 //        return userGroups.get(0); //rjs this should always be one entry
 //        return userGroups;
-        return UserGroup.convertFromDto(ug);
+//        return UserGroup.convertFromDto(ug);
+        return ug;
     }
 
     @Override

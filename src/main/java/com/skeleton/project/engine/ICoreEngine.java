@@ -12,9 +12,9 @@ public interface ICoreEngine {
 	 */
 	BaseResponse executeAction(Object example);
 
-	UserGroup createUserGroup(UserGroup userGroup);
+	com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup);
 
-	UserGroup getUserGroup(String id);
+	com.skeleton.project.dto.UserGroup getUserGroup(String id);
 
 	UserGroup deleteUserGroup(String id);
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.util.JSON;
 import com.skeleton.project.domain.*;
+import com.skeleton.project.dto.UserGroup;
 import com.skeleton.project.engine.ICoreEngine;
 import com.skeleton.project.type.UserGroupType;
 import io.swagger.annotations.Api;
@@ -49,8 +50,9 @@ public class QueryController {
 	@PostMapping("/v1.0/create/userGroup")
 	public UserGroup createUserGroup(@RequestBody final com.skeleton.project.dto.UserGroup userGroup)
 	{
-		UserGroup input = UserGroup.convertFromDto(userGroup);
-		UserGroup result = _coreEngine.createUserGroup(input);
+//		UserGroup input = UserGroup.convertFromDto(userGroup);
+//		UserGroup result = _coreEngine.createUserGroup(input);
+		com.skeleton.project.dto.UserGroup result = _coreEngine.createUserGroup(userGroup);
 		log.info("new user group: " + result.toString());
 
 //		if (result == null)
@@ -74,8 +76,8 @@ public class QueryController {
 //	}
 
 	@GetMapping("/v1.0/get/userGroup/{id}")
-	public UserGroup getUserGroup(@PathVariable String id) {
-		UserGroup result = _coreEngine.getUserGroup(id);
+	public com.skeleton.project.dto.UserGroup getUserGroup(@PathVariable String id) {
+		com.skeleton.project.dto.UserGroup result = _coreEngine.getUserGroup(id);
 
 		return result;
 	}
