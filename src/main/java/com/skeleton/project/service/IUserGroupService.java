@@ -1,7 +1,7 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.dto.Schedule;
-import com.skeleton.project.dto.UserGroup;
+import com.skeleton.project.dto.entity.User;
+import com.skeleton.project.dto.entity.UserGroup;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ public interface IUserGroupService {
      * Creates a new user group with inflated Schedule and User attributes
      * @return
      */
-    UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup);
+    UserGroup createUserGroup(UserGroup userGroup);
     /**
      * Gets existing user group
      * @param objectId
      * @return
      */
-    com.skeleton.project.dto.UserGroup getUserGroup(String objectId);
+    UserGroup getUserGroup(String objectId);
 
 //    /**
 //     * Gets existing user group
@@ -32,4 +32,15 @@ public interface IUserGroupService {
      * @return
      */
     UserGroup modifyUserGroup(UserGroup userGroup);
+
+    /**
+     * Add user to the specified group
+     * TODO maybe and another param with the request user to see if have admin access to the group
+     * @param id
+     * @param user
+     * @return
+     */
+    UserGroup addUsers(String id, List<User> user);
+
+    UserGroup addUsers(UserGroup group, List<User> users);
 }

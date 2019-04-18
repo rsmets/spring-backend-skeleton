@@ -1,7 +1,6 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -20,7 +19,7 @@ import java.util.List;
 @Entity
 public class UserGroup {
 
-    @Property("_id")
+//    @Property("_id")
     @Id
     @ObjectId
     String id;
@@ -63,13 +62,13 @@ public class UserGroup {
     // object ('objectId')
     // ******************************************************************************
 
-    @JsonSetter("objectId")
-    private void setObjectId(String id) {
-        this.id = id;
-    }
-
-    @JsonSetter("_id")
-    private void setId(String id) {
-        this.id = id;
-    }
+//    @JsonSetter("objectId")
+//    private void setObjectId(String id) {
+//        this.id = id;
+//    }
+//
+//    @JsonSetter("_id")
+//    private void setId(String id) {
+//        this.id = id;
+//    }
 }

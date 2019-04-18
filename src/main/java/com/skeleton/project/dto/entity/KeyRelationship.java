@@ -1,12 +1,10 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Property;
-import dev.morphia.annotations.Reference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.mongojack.Id;

@@ -43,7 +43,7 @@ public class Lock extends ParseObject {
 //    Hub hub;
 //    List<BusinessHour> businessHours;
 
-    public static Lock convertFromDto(com.skeleton.project.dto.Lock dto){
+    public static Lock convertFromDto(com.skeleton.project.dto.entity.Lock dto){
         if (dto == null)
             return null;
 
@@ -62,13 +62,13 @@ public class Lock extends ParseObject {
         return result;
     }
 
-    public static List<Lock> convertFromDtos(List<com.skeleton.project.dto.Lock> dtos) {
+    public static List<Lock> convertFromDtos(List<com.skeleton.project.dto.entity.Lock> dtos) {
         List<Lock> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.Lock dto : dtos) {
+        for (com.skeleton.project.dto.entity.Lock dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

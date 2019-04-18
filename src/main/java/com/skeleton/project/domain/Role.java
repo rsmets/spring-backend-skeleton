@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
-import org.mongojack.ObjectId;
 import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class Role extends ParseObject {
     String name;
     int roleId;
 
-    public static Role convertFromDto(com.skeleton.project.dto.Role dto){
+    public static Role convertFromDto(com.skeleton.project.dto.entity.Role dto){
         if (dto == null)
             return null;
 
@@ -35,10 +34,10 @@ public class Role extends ParseObject {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<Role> convertFromDtos(List<com.skeleton.project.dto.Role> dtos){
+    public static List<Role> convertFromDtos(List<com.skeleton.project.dto.entity.Role> dtos){
         List<Role> result = new ArrayList<>();
 
-        for (com.skeleton.project.dto.Role dto : dtos) {
+        for (com.skeleton.project.dto.entity.Role dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.dto.Lock;
+import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -32,10 +32,10 @@ public class LockService implements ILockService {
 
     @Override
     public Lock getLockByLockId(String lockId) {
-        final Query<com.skeleton.project.dto.Lock> query = _database.getDatastore().createQuery(com.skeleton.project.dto.Lock.class);
+        final Query<Lock> query = _database.getDatastore().createQuery(Lock.class);
 
 
-        final com.skeleton.project.dto.Lock lock = query
+        final Lock lock = query
                 .disableValidation()
                 .field("lockId").equal(lockId)
                 .get();

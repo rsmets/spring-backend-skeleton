@@ -1,32 +1,39 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import org.mongojack.ObjectId;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Entity
-public class Phone {
+public class Lock {
 
     @Id
-    String _id;
+    @Property("_id")
+    String id;
 
-    String phone;
-    String verificationCode;
-    Boolean primary;
-    Boolean verified;
-    User user;
+    String lockId;
+    String shortName;
+    String longName;
+    int iconType;
+    String timezone;
+    Integer type;
 
-    Date _create_at;
-    Date _updated_at;
+    Boolean claimed;
+    Boolean lockUsed;
+    String claimCode;
+
+//    State state;
+//    Hub hub;
+//    List<BusinessHour> businessHours;
+
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -35,18 +42,12 @@ public class Phone {
     // ******************************************************************************
 
     @JsonSetter("objectId")
-    public void setObjectId(String id) {
-        this._id = id;
+    private void setObjectId(String id) {
+        this.id = id;
     }
 
     @JsonSetter("_id")
-    public void setId(String id) {
-        this._id = id;
+    private void setId(String id) {
+        this.id = id;
     }
-
-    @JsonGetter("_id")
-    public String getId(String id) {
-        return this._id;
-    }
-
 }

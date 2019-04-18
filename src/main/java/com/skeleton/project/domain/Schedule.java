@@ -1,14 +1,13 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skeleton.project.dto.Pointer;
+import com.skeleton.project.dto.entity.Pointer;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
-import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +41,7 @@ public class Schedule {
     @Property("_created_at")
     Date createdAt;
 
-    public static Schedule convertFromDto(com.skeleton.project.dto.Schedule dto){
+    public static Schedule convertFromDto(com.skeleton.project.dto.entity.Schedule dto){
         if (dto == null)
             return null;
 
@@ -66,13 +65,13 @@ public class Schedule {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<Schedule> convertFromDtos(List<com.skeleton.project.dto.Schedule> dtos){
+    public static List<Schedule> convertFromDtos(List<com.skeleton.project.dto.entity.Schedule> dtos){
         List<Schedule> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.Schedule dto : dtos) {
+        for (com.skeleton.project.dto.entity.Schedule dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

@@ -1,48 +1,34 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mongojack.ObjectId;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Entity
-public class Schedule {
+public class Email {
 
-//    @ObjectId
     @Property("_id")
     @Id
     String _id;
 
-    Date endDate;
-    Date startDate;
-    Boolean expirationDateUsesNumOccurrences;
-    List<Integer> repeatPattern; // todo make object
-    Integer repeatType;
-    Integer repeatInterval;
-    Date expirationDate;
-    Pointer reference;
+    String email;
+    Boolean primary;
+    String verificationCode;
+    Boolean verified;
+    User user;
 
-    @Property("_updated_at") //RJS not sure why this annotation is not working and needed actually name the variable accordingly
-    Date updatedAt;
-    @Property("_created_at")
-    Date createdAt;
-//    @JsonProperty("_updated_at") //RJS not sure why this annotation is not working and needed actually name the variable accordingly
-//    Date _updated_at;
-//    @JsonProperty("_created_at")
-//    Date _created_at;
-
+    Date _updated_at;
+    Date _created_at;
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -50,10 +36,18 @@ public class Schedule {
     // object ('objectId')
     // ******************************************************************************
 
-    @JsonSetter("objectId")
-    public void setObjectId(String id) {
-        this._id = id;
-    }
+    String objectId;
+    String className;
+
+//    @JsonSetter("objectId")
+//    public void setObjectId(String id) {
+//        this.id = id;
+//    }
+//
+//    @JsonGetter("objectId")
+//    public String getObjectId() {
+//        return this.id;
+//    }
 
     @JsonSetter("_id")
     public void setId(String id) {
@@ -64,5 +58,5 @@ public class Schedule {
     public String getId() {
         return this._id;
     }
-
 }
+

@@ -1,9 +1,9 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
-import com.skeleton.project.dto.Schedule;
-import com.skeleton.project.dto.User;
-import com.skeleton.project.dto.UserGroup;
+import com.skeleton.project.dto.entity.Schedule;
+import com.skeleton.project.dto.entity.User;
+import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -36,7 +38,7 @@ public class UserGroupService implements IUserGroupService {
      * @see IUserGroupService#createUserGroup(UserGroup)
      */
     @Override
-    public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
+    public UserGroup createUserGroup(UserGroup userGroup) {
 
         // Need to handle grabbing nested attribute objects
         List<Schedule> schedulesInflated = new ArrayList<>();
@@ -49,6 +51,8 @@ public class UserGroupService implements IUserGroupService {
 
         List<User> usersInflated = new ArrayList<>();
         List<User> users = userGroup.getUsers();
+//        Set<User> usersInflated = new HashSet<>();
+//        Set<User> users = userGroup.getUsers();
         for(User user : users) {
             User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
             usersInflated.add(userPopulated);
@@ -60,17 +64,17 @@ public class UserGroupService implements IUserGroupService {
          * I think that having the objectIds should be enough...
          */
 
-        return createUserGroupWithMorphia(userGroup);
+        return saveUserGroupWithMorphia(userGroup);
     }
 
-    private com.skeleton.project.dto.UserGroup createUserGroupWithMorphia(com.skeleton.project.dto.UserGroup userGroup) {
+    private UserGroup saveUserGroupWithMorphia(UserGroup userGroup) {
         // Populates the id field
         _database.getDatastore().save(userGroup);
         return userGroup;
     }
 
     @Override
-    public com.skeleton.project.dto.UserGroup getUserGroup(String objectId) {
+    public UserGroup getUserGroup(String objectId) {
 //        return getWithParse(objectId);
 //        return getUserGroupWithMongoJack(objectId);
         return getUserGroupWithMorphia(objectId);
@@ -98,24 +102,24 @@ public class UserGroupService implements IUserGroupService {
 
     private UserGroup getUserGroupWithMongoJack(String objectId){
         DBCollection userGroupCollection = _database.getDB().getCollection("UserGroup");
-        JacksonDBCollection<com.skeleton.project.dto.UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, com.skeleton.project.dto.UserGroup.class, String.class);
-        com.skeleton.project.dto.UserGroup ug = collection.findOneById(objectId);
+        JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
+        UserGroup ug = collection.findOneById(objectId);
 
         log.info("user group from jacksonified db: " + ug);
 
         return ug;
     }
 
-    private com.skeleton.project.dto.UserGroup getUserGroupWithMorphia(String objectId){
-        final Query<com.skeleton.project.dto.UserGroup> query = _database.getDatastore().createQuery(com.skeleton.project.dto.UserGroup.class);
+    private UserGroup getUserGroupWithMorphia(String objectId){
+        final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
-        final com.skeleton.project.dto.UserGroup userGroups = query
+        final UserGroup userGroups = query
                 .disableValidation()
                 .field("_id").equalIgnoreCase(new ObjectId(objectId))
                 .get(); //todo figure out how to query for one.
 
-        final com.skeleton.project.dto.UserGroup ug = _database.getDatastore().get(com.skeleton.project.dto.UserGroup.class, new ObjectId(objectId));
+        final UserGroup ug = _database.getDatastore().get(UserGroup.class, new ObjectId(objectId));
 
         log.info("Got user group with id " + objectId + ": " + ug);
 
@@ -128,5 +132,26 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup modifyUserGroup(UserGroup userGroup) {
         return null;
+    }
+
+    /**
+     * @see IUserGroupService#addUsers(String, List)
+     */
+    @Override
+    public UserGroup addUsers(String id, List<User> users) {
+        UserGroup group = getUserGroup(id);
+
+        group.getUsers().addAll(users);
+
+        UserGroup result = saveUserGroupWithMorphia(group);
+        return result;
+    }
+
+    @Override
+    public UserGroup addUsers(UserGroup group, List<User> users) {
+        group.getUsers().addAll(users);
+
+        saveUserGroupWithMorphia(group);
+        return group;
     }
 }

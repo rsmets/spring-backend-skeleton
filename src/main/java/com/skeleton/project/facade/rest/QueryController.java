@@ -1,7 +1,8 @@
 package com.skeleton.project.facade.rest;
 
 import com.skeleton.project.domain.*;
-import com.skeleton.project.dto.UserGroup;
+import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.core.ICoreEngine;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +41,12 @@ public class QueryController {
 	 * @param userGroup
 	 * @return id of new UserGroup obj
 	 */
-	@PostMapping("/v1.0/create/userGroup")
-	public UserGroup createUserGroup(@RequestBody final com.skeleton.project.dto.UserGroup userGroup)
+	@PostMapping("/v1.0/userGroup/create")
+	public UserGroup createUserGroup(@RequestBody final UserGroup userGroup)
 	{
 //		UserGroup input = UserGroup.convertFromDto(userGroup);
 //		UserGroup result = _coreEngine.createUserGroup(input);
-		com.skeleton.project.dto.UserGroup result = _coreEngine.createUserGroup(userGroup);
+		UserGroup result = _coreEngine.createUserGroup(userGroup);
 		log.info("new user group: " + result.toString());
 
 //		if (result == null)
@@ -56,7 +57,7 @@ public class QueryController {
 	}
 
 //	@PostMapping("/v1.0/create/userGroup/string")
-//	public String createUserGroupString(@RequestBody final com.skeleton.project.dto.UserGroup userGroup)
+//	public String createUserGroupString(@RequestBody final UserGroup userGroup)
 //	{
 //		UserGroup input = UserGroup.convertFromDto(userGroup);
 //		UserGroup result = _coreEngine.createUserGroup(input);
@@ -68,17 +69,38 @@ public class QueryController {
 //		return result.getId();
 //	}
 
-	@GetMapping("/v1.0/get/userGroup/{id}")
-	public com.skeleton.project.dto.UserGroup getUserGroup(@PathVariable String id) {
-		com.skeleton.project.dto.UserGroup result = _coreEngine.getUserGroup(id);
+	@GetMapping("/v1.0/userGroup/get/{id}")
+	public UserGroup getUserGroup(@PathVariable String id) {
+		UserGroup result = _coreEngine.getUserGroup(id);
 
 		return result;
 	}
 
-	@DeleteMapping("/v1.0/delete/userGroup/{id}")
+	@DeleteMapping("/v1.0/userGroup/delete/{id}")
 	public QueryResponse deleteUserGroup(@PathVariable String id) {
 		//TODO
 		return null;
 	}
+
+    /**
+     * @since 1.0
+     * @param userGroupRequest
+     * @return id of new UserGroup obj
+     */
+    @PostMapping("/v1.0/userGroup/{id}/addUsers")
+    public UserGroup addUser(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
+    {
+//		UserGroup input = UserGroup.convertFromDto(userGroup);
+//		UserGroup result = _coreEngine.createUserGroup(input);
+        UserGroup result = _coreEngine.addUsersToGroup(userGroupRequest);
+
+        log.info("new user group: " + result.toString());
+
+//		if (result == null)
+//			return "";
+//
+//		return result.getId();
+        return result;
+    }
 
 }

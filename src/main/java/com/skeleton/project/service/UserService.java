@@ -1,7 +1,7 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
-import com.skeleton.project.dto.User;
+import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -39,10 +39,9 @@ public class UserService implements IUserService {
 
     @Override
     public User getUserByPhone(String phoneNumber) {
-        final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
+        final Query<User> query = _database.getDatastore().createQuery(User.class);
 
-
-        final List<com.skeleton.project.dto.User> users = query
+        final List<User> users = query
                 .disableValidation()
                 .filter("primaryPhone", phoneNumber)
                 .asList(); //todo figure out how to query for one.
@@ -57,10 +56,24 @@ public class UserService implements IUserService {
         return users.get(0);
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        final Query<User> query = _database.getDatastore().createQuery(User.class);
+
+        final User user = query
+                .disableValidation()
+                .filter("primaryEmail", email)
+                .get(); //todo figure out how to query for one.
+
+        log.info("Got user with email " + email + ": " + user);
+
+        return user;
+    }
+
     private User getUserWithMongoJack(String objectId) {
         DBCollection userCollection = _database.getDB().getCollection("_User");
-        JacksonDBCollection<com.skeleton.project.dto.User, String> collection = JacksonDBCollection.wrap(userCollection, com.skeleton.project.dto.User.class, String.class);
-        com.skeleton.project.dto.User user = collection.findOneById(objectId);
+        JacksonDBCollection<User, String> collection = JacksonDBCollection.wrap(userCollection, User.class, String.class);
+        User user = collection.findOneById(objectId);
 
         log.info("key relationship from jacksonified db: " + user);
 
@@ -88,7 +101,7 @@ public class UserService implements IUserService {
     }
 
     private User getWithMorphia(String objectId) {
-        final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
+        final Query<User> query = _database.getDatastore().createQuery(User.class);
 
 
         final User user = query

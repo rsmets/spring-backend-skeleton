@@ -1,9 +1,8 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skeleton.project.dto.Pointer;
+import com.skeleton.project.dto.entity.Pointer;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
@@ -54,7 +53,7 @@ public class KeyRelationship {
     @Property("_created_at")
     Date createdAt;
 
-    public static KeyRelationship convertFromDto(com.skeleton.project.dto.KeyRelationship dto){
+    public static KeyRelationship convertFromDto(com.skeleton.project.dto.entity.KeyRelationship dto){
         if (dto == null)
             return null;
 
@@ -85,13 +84,13 @@ public class KeyRelationship {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<KeyRelationship> convertFromDtos(List<com.skeleton.project.dto.KeyRelationship> dtos){
+    public static List<KeyRelationship> convertFromDtos(List<com.skeleton.project.dto.entity.KeyRelationship> dtos){
         List<KeyRelationship> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.KeyRelationship dto : dtos) {
+        for (com.skeleton.project.dto.entity.KeyRelationship dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

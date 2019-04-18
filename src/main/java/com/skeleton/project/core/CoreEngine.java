@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.client.MongoCollection;
 import com.skeleton.project.domain.*;
+import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.exceptions.UserGroupPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
 import com.skeleton.project.service.IKeyRelationshipService;
@@ -11,11 +13,14 @@ import com.skeleton.project.service.ILockService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -35,10 +40,10 @@ public class CoreEngine implements ICoreEngine{
     ILockService lockService;
 
 	@Override
-	public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
+	public com.skeleton.project.dto.entity.UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup) {
 
-	    com.skeleton.project.dto.Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
-        com.skeleton.project.dto.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
+	    com.skeleton.project.dto.entity.Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
+        com.skeleton.project.dto.entity.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
 
         if(ownersLockKeyRelationship == null) {
             log.error("The attempted group owner does not have access to that lock");
@@ -56,7 +61,7 @@ public class CoreEngine implements ICoreEngine{
 	}
 
 	@Override
-	public com.skeleton.project.dto.UserGroup getUserGroup(String id) {
+	public com.skeleton.project.dto.entity.UserGroup getUserGroup(String id) {
 		return userGroupService.getUserGroup(id);
 	}
 
@@ -68,7 +73,35 @@ public class CoreEngine implements ICoreEngine{
 		return null;
 	}
 
-	@Override
+    @Override
+    public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+		// verify a valid operation
+		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+
+		if (!StringUtils.equals(group.getOwner().getId(), request.getRequestingUser().getId())) {
+			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
+			throw new UserGroupPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());
+		}
+
+		// inflate the user list
+		if (request.isNeedToInflate()) {
+			List<com.skeleton.project.dto.entity.User> inflatedUsers = new ArrayList<>();
+			for (com.skeleton.project.dto.entity.User user : request.getTargetUsers()) {
+				if (user.getPrimaryPhone() != null)
+					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
+				else if (user.getPrimaryEmail() != null)
+					inflatedUsers.add(userService.getUserByEmail(user.getPrimaryEmail()));
+				else
+					log.warn("No user identifier provided in " + request);
+			}
+
+			request.setTargetUsers(inflatedUsers);
+		}
+
+        return userGroupService.addUsers(group, request.getTargetUsers());
+    }
+
+    @Override
 	public BaseResponse executeAction(Object example) {
 
 		try{
@@ -81,7 +114,7 @@ public class CoreEngine implements ICoreEngine{
 
 //			User user = userService.getUser("3l6FvM305C");
 //			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
-			com.skeleton.project.dto.KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
+			com.skeleton.project.dto.entity.KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
 
 
 			return BaseResponse.builder().example(kr).build();
@@ -107,7 +140,7 @@ public class CoreEngine implements ICoreEngine{
 	}
 
 //	private void insertAndGrabKeyRelationshipObject(Object obj){
-//		com.skeleton.project.dto.KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
+//		KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
 //
 //		keyRelationshipService.createKeyRelationship(kr);
 //

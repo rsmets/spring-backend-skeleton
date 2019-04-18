@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.dto.User;
+import com.skeleton.project.dto.entity.User;
 import dev.morphia.Key;
 
 public interface IUserService {
@@ -10,4 +10,6 @@ public interface IUserService {
     User getUser(final String objectId);
 
     User getUserByPhone(final String phoneNumber);
+
+    User getUserByEmail(final String email);
 }

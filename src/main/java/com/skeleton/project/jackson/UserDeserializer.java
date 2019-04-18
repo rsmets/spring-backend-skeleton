@@ -10,9 +10,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.skeleton.project.domain.Email;
 import com.skeleton.project.domain.Phone;
 import com.skeleton.project.domain.User;
-import com.skeleton.project.dto.Pointer;
+import com.skeleton.project.dto.entity.Pointer;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class UserDeserializer extends StdDeserializer {
         List<Email> result = new ArrayList<>();
         for(JsonNode jnode : jsonNode) {
             try {
-                com.skeleton.project.dto.Email dto = mapper.readValue(jnode.toString(), com.skeleton.project.dto.Email.class);
+                com.skeleton.project.dto.entity.Email dto = mapper.readValue(jnode.toString(), com.skeleton.project.dto.entity.Email.class);
 
                 // TODO ACTUALLY GRAB THE DB EMAIL WITH ALL FIELDS POPULATED!!
 
@@ -86,7 +85,7 @@ public class UserDeserializer extends StdDeserializer {
         List<Phone> result = new ArrayList<>();
         for(JsonNode jnode : jsonNode) {
             try {
-                com.skeleton.project.dto.Phone dto = mapper.readValue(jnode.toString(), com.skeleton.project.dto.Phone.class);
+                com.skeleton.project.dto.entity.Phone dto = mapper.readValue(jnode.toString(), com.skeleton.project.dto.entity.Phone.class);
 
                 // TODO ACTUALLY GRAB THE DB PHONE WITH ALL FIELDS POPULATED!!
 

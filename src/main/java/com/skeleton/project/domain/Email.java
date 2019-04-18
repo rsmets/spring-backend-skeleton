@@ -29,7 +29,7 @@ public class Email extends ParseObject {
 //    Date updatedAt;
 //    Date createdAt
 
-    public static Email convertFromDto(com.skeleton.project.dto.Email dto){
+    public static Email convertFromDto(com.skeleton.project.dto.entity.Email dto){
         if (dto == null)
             return null;
 
@@ -49,13 +49,13 @@ public class Email extends ParseObject {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<Email> convertFromDtos(List<com.skeleton.project.dto.Email> dtos){
+    public static List<Email> convertFromDtos(List<com.skeleton.project.dto.entity.Email> dtos){
         List<Email> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.Email dto : dtos) {
+        for (com.skeleton.project.dto.entity.Email dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

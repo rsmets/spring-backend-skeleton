@@ -1,13 +1,11 @@
 package com.skeleton.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBCollection;
 import com.skeleton.project.core.DatabaseDriver;
-import com.skeleton.project.dto.KeyRelationship;
+import com.skeleton.project.dto.entity.KeyRelationship;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
-import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
 import org.parse4j.ParseObject;
 import org.parse4j.ParseQuery;
@@ -66,10 +64,10 @@ public class KeyRelationshipService implements IKeyRelationshipService {
 
     @Override
     public List<KeyRelationship> getKeyRelationshipsByUser(String userObjectId) {
-        final Query<com.skeleton.project.dto.KeyRelationship> query = _database.getDatastore().createQuery(com.skeleton.project.dto.KeyRelationship.class);
+        final Query<KeyRelationship> query = _database.getDatastore().createQuery(KeyRelationship.class);
 
         final String pointerString = "_User$" + userObjectId;
-        final List<com.skeleton.project.dto.KeyRelationship> krs = query
+        final List<KeyRelationship> krs = query
                 .disableValidation()
                 .filter("_p_user", pointerString)
                 .asList();
@@ -84,7 +82,7 @@ public class KeyRelationshipService implements IKeyRelationshipService {
 
     @Override
     public KeyRelationship getKeyRelationship(String userObjectId, String lockObjectId) {
-        final Query<com.skeleton.project.dto.KeyRelationship> query = _database.getDatastore().createQuery(com.skeleton.project.dto.KeyRelationship.class);
+        final Query<KeyRelationship> query = _database.getDatastore().createQuery(KeyRelationship.class);
 
         final String userPointerString = "_User$" + userObjectId;
         final String keyPointerString = "Lock$" + lockObjectId;

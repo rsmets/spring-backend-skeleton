@@ -1,4 +1,4 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,25 +10,37 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Entity
-public class Email {
+public class Schedule {
 
+//    @ObjectId
     @Property("_id")
     @Id
     String _id;
 
-    String email;
-    Boolean primary;
-    String verificationCode;
-    Boolean verified;
-    User user;
+    Date endDate;
+    Date startDate;
+    Boolean expirationDateUsesNumOccurrences;
+    List<Integer> repeatPattern; // todo make object
+    Integer repeatType;
+    Integer repeatInterval;
+    Date expirationDate;
+    Pointer reference;
 
-    Date _updated_at;
-    Date _created_at;
+    @Property("_updated_at") //RJS not sure why this annotation is not working and needed actually name the variable accordingly
+    Date updatedAt;
+    @Property("_created_at")
+    Date createdAt;
+//    @JsonProperty("_updated_at") //RJS not sure why this annotation is not working and needed actually name the variable accordingly
+//    Date _updated_at;
+//    @JsonProperty("_created_at")
+//    Date _created_at;
+
 
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
@@ -36,18 +48,10 @@ public class Email {
     // object ('objectId')
     // ******************************************************************************
 
-    String objectId;
-    String className;
-
-//    @JsonSetter("objectId")
-//    public void setObjectId(String id) {
-//        this.id = id;
-//    }
-//
-//    @JsonGetter("objectId")
-//    public String getObjectId() {
-//        return this.id;
-//    }
+    @JsonSetter("objectId")
+    public void setObjectId(String id) {
+        this._id = id;
+    }
 
     @JsonSetter("_id")
     public void setId(String id) {
@@ -58,5 +62,5 @@ public class Email {
     public String getId() {
         return this._id;
     }
-}
 
+}

@@ -1,17 +1,11 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.skeleton.project.dto.Pointer;
-import com.skeleton.project.utils.Utils;
-import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
-import org.parse4j.ParseClassName;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +44,7 @@ public class User {
 //    Date updatedAt;
 //    Date createdAt;
 
-    public static User convertFromDto(com.skeleton.project.dto.User dto){
+    public static User convertFromDto(com.skeleton.project.dto.entity.User dto){
         if (dto == null)
             return null;
 
@@ -67,7 +61,7 @@ public class User {
 //            phones.add(phone);
 //        }
 //
-//        for (com.skeleton.project.dto.Email point : Utils.nullGuard(dto.getEmails())) {
+//        for (Email point : Utils.nullGuard(dto.getEmails())) {
 //            Email email = Email.builder().id(point.getObjectId()).build();
 //            if (point.getObjectId() == null) {
 //                email = Email.builder().id(point.getId()).build();
@@ -95,13 +89,13 @@ public class User {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<User> convertFromDtos(List<com.skeleton.project.dto.User> dtos){
+    public static List<User> convertFromDtos(List<com.skeleton.project.dto.entity.User> dtos){
         List<User> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.User dto : dtos) {
+        for (com.skeleton.project.dto.entity.User dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.morphia.annotations.Id;
 import lombok.Builder;
 import lombok.Data;
-import org.mongojack.ObjectId;
 import org.parse4j.ParseObject;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class Phone extends ParseObject {
     Date updatedAt;
     Date createdAt;
 
-    public static Phone convertFromDto(com.skeleton.project.dto.Phone dto){
+    public static Phone convertFromDto(com.skeleton.project.dto.entity.Phone dto){
         if (dto == null)
             return null;
 
@@ -45,13 +44,13 @@ public class Phone extends ParseObject {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<Phone> convertFromDtos(List<com.skeleton.project.dto.Phone> dtos){
+    public static List<Phone> convertFromDtos(List<com.skeleton.project.dto.entity.Phone> dtos){
         List<Phone> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.Phone dto : dtos) {
+        for (com.skeleton.project.dto.entity.Phone dto : dtos) {
             result.add(convertFromDto(dto));
         }
 

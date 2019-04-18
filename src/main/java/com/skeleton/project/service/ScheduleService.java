@@ -2,7 +2,7 @@ package com.skeleton.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBCollection;
-import com.skeleton.project.dto.Schedule;
+import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -53,7 +52,7 @@ public class ScheduleService implements IScheduleService {
     }
 
     private Schedule getWithMorphia(String objectId) {
-        final Query<com.skeleton.project.dto.Schedule> query = _database.getDatastore().createQuery(com.skeleton.project.dto.Schedule.class);
+        final Query<Schedule> query = _database.getDatastore().createQuery(Schedule.class);
 
         final Schedule schedule = query
                 .field("_id").equalIgnoreCase(objectId)
@@ -71,8 +70,8 @@ public class ScheduleService implements IScheduleService {
      */
     private Schedule getScheduleWithMongoJack(String objectId){
         DBCollection krCollection = _database.getDB().getCollection("Schedule");
-        JacksonDBCollection<com.skeleton.project.dto.Schedule, String> collection = JacksonDBCollection.wrap(krCollection, com.skeleton.project.dto.Schedule.class, String.class);
-        com.skeleton.project.dto.Schedule schedule = collection.findOneById(objectId);
+        JacksonDBCollection<Schedule, String> collection = JacksonDBCollection.wrap(krCollection, Schedule.class, String.class);
+        Schedule schedule = collection.findOneById(objectId);
 
         log.info("key relationship from jacksonified db: " + schedule);
 
@@ -91,7 +90,7 @@ public class ScheduleService implements IScheduleService {
             log.info(result.toString());
             log.info(result.getParseData().toString());
 
-            com.skeleton.project.dto.Schedule dto = new ObjectMapper().readValue(result.getParseData().toString(), com.skeleton.project.dto.Schedule.class);
+            Schedule dto = new ObjectMapper().readValue(result.getParseData().toString(), Schedule.class);
             return dto;
 
         } catch (IOException | ParseException e) {

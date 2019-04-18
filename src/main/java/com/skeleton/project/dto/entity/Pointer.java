@@ -1,4 +1,4 @@
-package com.skeleton.project.dto;
+package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

@@ -1,7 +1,5 @@
 package com.skeleton.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.TreeNode;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -9,8 +7,6 @@ import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
 import org.mongojack.ObjectId;
-import org.parse4j.ParseClassName;
-import org.parse4j.ParseObject;
 
 import java.util.*;
 
@@ -47,7 +43,7 @@ public class UserGroup {
     boolean canRemoteUnlock;
     boolean canUnlockUntil;
 
-    public static UserGroup convertFromDto(com.skeleton.project.dto.UserGroup dto){
+    public static UserGroup convertFromDto(com.skeleton.project.dto.entity.UserGroup dto){
         if (dto == null)
             return null;
 
@@ -74,13 +70,13 @@ public class UserGroup {
     }
 
     // RJS I know there is away to abstract this... but going the ugly route for now
-    public static List<UserGroup> convertFromDtos(List<com.skeleton.project.dto.UserGroup> dtos){
+    public static List<UserGroup> convertFromDtos(List<com.skeleton.project.dto.entity.UserGroup> dtos){
         List<UserGroup> result = new ArrayList<>();
 
         if (dtos == null)
             return result;
 
-        for (com.skeleton.project.dto.UserGroup dto : dtos) {
+        for (com.skeleton.project.dto.entity.UserGroup dto : dtos) {
             result.add(convertFromDto(dto));
         }
 
@@ -88,11 +84,11 @@ public class UserGroup {
     }
 
     // RJS not worth the effort will just pass id's back for now. Hopefully can implement GRPC sooner than later to get around this.
-//    public static com.skeleton.project.dto.UserGroup convertToDto(UserGroup obj){
+//    public static UserGroup convertToDto(UserGroup obj){
 //        if (obj == null)
 //            return null;
 //
-//        com.skeleton.project.dto.UserGroup result = new com.skeleton.project.dto.UserGroup();
+//        UserGroup result = new UserGroup();
 //        result.setId(obj.getId());
 //        result.setLockIds(obj.getLockIds());
 //        result.setSchedule(obj.getSchedule());
