@@ -2,7 +2,7 @@ package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
 import com.skeleton.project.domain.User;
-import com.skeleton.project.engine.DatabaseDriver;
+import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
 import org.parse4j.ParseObject;
 import org.parse4j.ParseQuery;
-import org.parse4j.ParseUser;
 import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

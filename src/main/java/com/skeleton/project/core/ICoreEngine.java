@@ -1,4 +1,4 @@
-package com.skeleton.project.engine;
+package com.skeleton.project.core;
 
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.domain.UserGroup;

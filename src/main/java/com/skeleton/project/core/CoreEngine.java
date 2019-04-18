@@ -1,4 +1,4 @@
-package com.skeleton.project.engine;
+package com.skeleton.project.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

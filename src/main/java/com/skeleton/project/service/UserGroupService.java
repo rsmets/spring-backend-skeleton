@@ -4,7 +4,7 @@ import com.mongodb.DBCollection;
 import com.skeleton.project.domain.Schedule;
 import com.skeleton.project.domain.User;
 import com.skeleton.project.domain.UserGroup;
-import com.skeleton.project.engine.DatabaseDriver;
+import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
