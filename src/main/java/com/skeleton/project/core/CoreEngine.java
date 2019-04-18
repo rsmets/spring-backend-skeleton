@@ -38,7 +38,7 @@ public class CoreEngine implements ICoreEngine{
 	public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
 
 	    Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
-        KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
+        com.skeleton.project.dto.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
 
         if(ownersLockKeyRelationship == null) {
             log.error("The attempted group owner does not have access to that lock");
@@ -81,7 +81,7 @@ public class CoreEngine implements ICoreEngine{
 
 //			User user = userService.getUser("3l6FvM305C");
 //			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
-			KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
+			com.skeleton.project.dto.KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
 
 
 			return BaseResponse.builder().example(kr).build();
@@ -106,12 +106,12 @@ public class CoreEngine implements ICoreEngine{
 //		userGroupService.getUserGroup(newObj.getId().toHexString());
 	}
 
-	private void insertAndGrabKeyRelationshipObject(Object obj){
-		KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
-
-		keyRelationshipService.createKeyRelationship(kr);
-
-	}
+//	private void insertAndGrabKeyRelationshipObject(Object obj){
+//		com.skeleton.project.dto.KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
+//
+//		keyRelationshipService.createKeyRelationship(kr);
+//
+//	}
 
 	private Object getDbFullObject(Object search) {
 		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");

@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.domain.KeyRelationship;
+import com.skeleton.project.dto.KeyRelationship;
 import dev.morphia.Key;
 
 import java.util.List;
