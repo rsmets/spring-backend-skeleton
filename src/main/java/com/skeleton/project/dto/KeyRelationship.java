@@ -34,6 +34,8 @@ public class KeyRelationship {
     Integer repeatInterval;
     Date expirationDate;
     Pointer reference;
+
+    @Embedded
     List<Schedule> schedule;
 
     String pendingFirstName;

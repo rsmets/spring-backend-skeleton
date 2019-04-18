@@ -94,9 +94,9 @@ public class CoreEngine implements ICoreEngine{
 
 	}
 
-	private User getUser(String objId) {
-		return userService.getUser(objId);
-	}
+//	private User getUser(String objId) {
+//		return userService.getUser(objId);
+//	}
 
 	private void insertAndGrabUserGroupObject(Object obj){
 		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();

@@ -1,7 +1,7 @@
 package com.skeleton.project;
 
-import com.skeleton.project.domain.Schedule;
-import com.skeleton.project.domain.User;
+import com.skeleton.project.dto.Schedule;
+import com.skeleton.project.dto.User;
 import com.skeleton.project.dto.KeyRelationship;
 import com.skeleton.project.dto.UserGroup;
 import com.skeleton.project.service.IKeyRelationshipService;
@@ -42,8 +42,10 @@ public class SpringBackendSkeletonApplicationTests {
 
 		List<String> lockIds = new ArrayList<>();
 
-		Schedule schedule = Schedule.builder().id("GnOHW6uvA8").build();
-		Schedule schedule2 = Schedule.builder().id("3nxeEYEJi7").build();
+		Schedule schedule = new Schedule();
+		schedule.setId("GnOHW6uvA8");
+		Schedule schedule2= new Schedule();
+		schedule2.setId("3nxeEYEJi7");
 		List<Schedule> schedules = Arrays.asList(schedule, schedule2);
 
 //		com.skeleton.project.dto.User user = User.builder().id("pKPes1hdQE").build();
@@ -51,7 +53,7 @@ public class SpringBackendSkeletonApplicationTests {
 		com.skeleton.project.dto.User user = new com.skeleton.project.dto.User();
 		user.setId("FgJCRVDiB5");
 		com.skeleton.project.dto.User user2 = new com.skeleton.project.dto.User();
-		user.setId("pKPes1hdQE");
+		user2.setId("pKPes1hdQE");
 		List<com.skeleton.project.dto.User> users = Arrays.asList(user, user2);
 
 
@@ -74,6 +76,7 @@ public class SpringBackendSkeletonApplicationTests {
 		userGroupToAdd.setCanRemoteUnlock(canUsersRemoteUnlock);
 		userGroupToAdd.setLockIds(lockIds);
 		userGroupToAdd.setUsers(users);
+		userGroupToAdd.setSchedule(schedules);
 		try {
 //			UserGroup userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedules, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
 //			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
@@ -92,14 +95,14 @@ public class SpringBackendSkeletonApplicationTests {
 
 	}
 
-//	@Test
+	@Test
 	public void getUser() {
 
 		User dbUser = userService.getUser("3l6FvM305C");
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
-//	@Test
+	@Test
 	public void getUserByPhoneNumber() {
 
 		User dbUser = userService.getUserByPhone("+14044327575");
@@ -113,17 +116,17 @@ public class SpringBackendSkeletonApplicationTests {
 		Assert.assertEquals(kr.getId(), "3dy7V2SSoN");
 	}
 
+	// Can not test create and grab due to deciding against handling parse land collection creation in this external service.
 //	@Test
 	public void createUser() {
 
-		User user = User.builder()
-				.primaryPhone("+12024047575")
-				.primaryEmail("test@test.com")
-				.username("username2")
-				.firstName("Frank")
-				.lastName("Farina")
-				.type(0)
-				.build();
+		User user = new User();
+		user.setPrimaryEmail("test@test.com");
+		user.setPrimaryPhone("+12024047575");
+		user.setUsername("username5");
+		user.setFirstName("Frank");
+		user.setLastName("Farina");
+		user.setType(0);
 
 		try {
 			Key key = userService.createUser(user);

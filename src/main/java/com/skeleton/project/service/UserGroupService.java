@@ -1,9 +1,9 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
-import com.skeleton.project.domain.Schedule;
-import com.skeleton.project.domain.User;
-import com.skeleton.project.domain.UserGroup;
+import com.skeleton.project.dto.Schedule;
+import com.skeleton.project.dto.User;
+import com.skeleton.project.dto.UserGroup;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.query.Query;
 import lombok.extern.slf4j.Slf4j;
@@ -33,69 +33,27 @@ public class UserGroupService implements IUserGroupService {
     IScheduleService _scheduleService;
 
     /**
-     * @see IUserGroupService#createUserGroup(List, List, List, List, boolean, boolean)
-     */
-    @Override
-    public UserGroup createUserGroup(List<String> adminIds, List<String> lockIds, List<Schedule> schedule, List<String> userIds, boolean canUsersRemoteUnlock, boolean canUsersUnlockUntil) throws Exception {
-        List<User> admins = new ArrayList<>();
-        List<User> users = new ArrayList<>();
-
-        // can do these loops in an separate executor thread...
-
-        for (String id : adminIds) {
-            User user = _userService.getUser(id);
-            if (user == null) {
-                // need to throw an error... the users should all exist. (for now)
-                throw new Exception("User with id " + id + " should exist");
-            }
-            admins.add(user);
-        }
-
-        for (String id : userIds) {
-            User user = _userService.getUser(id);
-            if (user == null) {
-                // need to throw an error... the users should all exist. (for now)
-                throw new Exception("User with id " + id + " should exist");
-            }
-            users.add(user);
-        }
-
-
-        final UserGroup userGroup = UserGroup.builder()
-                .admins(admins)
-                .users(users)
-                .canRemoteUnlock(canUsersRemoteUnlock)
-                .canUnlockUntil(canUsersUnlockUntil)
-                .schedule(schedule)
-                .build();
-
-        _database.getDatastore().save(userGroup);
-
-        return userGroup;
-    }
-
-    /**
      * @see IUserGroupService#createUserGroup(UserGroup)
      */
     @Override
     public com.skeleton.project.dto.UserGroup createUserGroup(com.skeleton.project.dto.UserGroup userGroup) {
 
         // Need to handle grabbing nested attribute objects
-//        List<Schedule> schedulesInflated = new ArrayList<>();
-//        List<Schedule> schedules = userGroup.getSchedule();
-//        for(Schedule schedule : schedules) {
-//            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
-//            schedulesInflated.add(schedulePopulated);
-//        }
-//        userGroup.setSchedule(schedulesInflated);
-//
-//        List<User> usersInflated = new ArrayList<>();
-//        List<User> users = userGroup.getUsers();
-//        for(User user : users) {
-//            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
-//            usersInflated.add(userPopulated);
-//        }
-//        userGroup.setUsers(usersInflated);
+        List<Schedule> schedulesInflated = new ArrayList<>();
+        List<Schedule> schedules = userGroup.getSchedule();
+        for(Schedule schedule : schedules) {
+            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
+            schedulesInflated.add(schedulePopulated);
+        }
+        userGroup.setSchedule(schedulesInflated);
+
+        List<User> usersInflated = new ArrayList<>();
+        List<User> users = userGroup.getUsers();
+        for(User user : users) {
+            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
+            usersInflated.add(userPopulated);
+        }
+        userGroup.setUsers(usersInflated);
 
         /**
          * RJS 4/16/19 Do I really really need to inflate? Opting not to for keyRelationship.
@@ -145,7 +103,7 @@ public class UserGroupService implements IUserGroupService {
 
         log.info("user group from jacksonified db: " + ug);
 
-        return UserGroup.convertFromDto(ug);
+        return ug;
     }
 
     private com.skeleton.project.dto.UserGroup getUserGroupWithMorphia(String objectId){

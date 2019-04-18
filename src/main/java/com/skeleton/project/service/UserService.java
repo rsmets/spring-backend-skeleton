@@ -1,7 +1,7 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
-import com.skeleton.project.domain.User;
+import com.skeleton.project.dto.User;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -22,22 +22,6 @@ public class UserService implements IUserService {
 
     @Autowired
     DatabaseDriver _database;
-
-    @Override
-    public Key createUser(String email, String username, String lastName, String firstName, String phone, int type) {
-        final User user = User.builder()
-                .primaryEmail(email)
-                .username(username)
-                .lastName(lastName)
-                .firstName(firstName)
-                .primaryPhone(phone)
-                .type(type)
-                .build();
-
-        Key key = _database.getDatastore().save(user);
-
-        return key;
-    }
 
     @Override
     public Key createUser(User user) {
@@ -67,9 +51,10 @@ public class UserService implements IUserService {
 
         if (users.isEmpty())
             return null;
+        else if (users.size() > 1)
+            log.error("Something is wrong query for users by primary phone number " + phoneNumber + "returned more than one. Selecting the first for now.");
 
-        User result = User.convertFromDto(users.get(0)); //rjs this should always be one entry
-        return result;
+        return users.get(0);
     }
 
     private User getUserWithMongoJack(String objectId) {
@@ -79,7 +64,7 @@ public class UserService implements IUserService {
 
         log.info("key relationship from jacksonified db: " + user);
 
-        return com.skeleton.project.domain.User.convertFromDto(user);
+        return user;
     }
 
     private User getWithParse(String objectId) {
@@ -106,17 +91,13 @@ public class UserService implements IUserService {
         final Query<com.skeleton.project.dto.User> query = _database.getDatastore().createQuery(com.skeleton.project.dto.User.class);
 
 
-        final List<com.skeleton.project.dto.User> users = query
+        final User user = query
                 .disableValidation()
                 .field("_id").equalIgnoreCase(objectId)
-                .asList(); //todo figure out how to query for one.
+                .get(); //todo figure out how to query for one.
 
-        log.info("Got users with id " + objectId + ": " + users);
+        log.info("Got users with id " + objectId + ": " + user);
 
-        if (users.isEmpty())
-            return null;
-
-        User result = User.convertFromDto(users.get(0)); //rjs this should always be one entry
-        return result;
+        return user;
     }
 }
