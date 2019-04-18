@@ -2,7 +2,7 @@ package com.skeleton.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBCollection;
-import com.skeleton.project.domain.Schedule;
+import com.skeleton.project.dto.Schedule;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.Key;
 import dev.morphia.query.Query;
@@ -55,14 +55,13 @@ public class ScheduleService implements IScheduleService {
     private Schedule getWithMorphia(String objectId) {
         final Query<com.skeleton.project.dto.Schedule> query = _database.getDatastore().createQuery(com.skeleton.project.dto.Schedule.class);
 
-        final List<com.skeleton.project.dto.Schedule> users = query
+        final Schedule schedule = query
                 .field("_id").equalIgnoreCase(objectId)
-                .asList(); //todo figure out how to query for one.
+                .get(); //todo figure out how to query for one.
 
-        log.info("Got schedule with id " + objectId + ": " + users);
+        log.info("Got schedule with id " + objectId + ": " + schedule);
 
-        Schedule result = Schedule.convertFromDto(users.get(0));
-        return result; //rjs this should always be one entry
+        return schedule; //rjs this should always be one entry
     }
 
     /**
@@ -77,7 +76,7 @@ public class ScheduleService implements IScheduleService {
 
         log.info("key relationship from jacksonified db: " + schedule);
 
-        return Schedule.convertFromDto(schedule);
+        return schedule;
     }
 
     private Schedule getWithParse(String objectId) {
@@ -93,8 +92,7 @@ public class ScheduleService implements IScheduleService {
             log.info(result.getParseData().toString());
 
             com.skeleton.project.dto.Schedule dto = new ObjectMapper().readValue(result.getParseData().toString(), com.skeleton.project.dto.Schedule.class);
-            Schedule schedue = com.skeleton.project.domain.Schedule.convertFromDto(dto);
-            return schedue;
+            return dto;
 
         } catch (IOException | ParseException e) {
             e.printStackTrace();

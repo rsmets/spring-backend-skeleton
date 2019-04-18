@@ -1,6 +1,6 @@
 package com.skeleton.project.service;
 
-import com.skeleton.project.domain.Schedule;
+import com.skeleton.project.dto.Schedule;
 import dev.morphia.Key;
 
 public interface IScheduleService {
