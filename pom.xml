@@ -73,6 +73,7 @@
 			<groupId>dev.morphia.morphia</groupId>
 			<artifactId>core</artifactId>
 			<version>1.4.1</version>
+			<!--<version>1.5.0</version> Not breaking but some heavily used functions are deprecated-->
 		</dependency>
 		<dependency>
 			<groupId>com.github.thiagolocatelli</groupId>

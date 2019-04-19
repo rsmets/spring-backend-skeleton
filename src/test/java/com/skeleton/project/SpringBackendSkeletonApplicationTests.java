@@ -1,5 +1,6 @@
 package com.skeleton.project;
 
+import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.KeyRelationship;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
@@ -93,10 +95,29 @@ public class SpringBackendSkeletonApplicationTests {
 	}
 
 	@Test
+	public void getUserGroup() {
+		UserGroup group = userGroupService.getUserGroup("5cba1e8b7bcaefbeea1c634d");
+		Assert.assertEquals("raysUserGroup", group.getName());
+	}
+
+	@Test
+	public void addUserToGroup() {
+		User user = new User();
+		user.setFirstName("New");
+		user.setLastName("Human");
+
+		UserGroup res = userGroupService.addUsers("5cba1e8b7bcaefbeea1c634d", Arrays.asList(user));
+		Assert.assertEquals(3, res.getUsers().size());
+
+		UserGroup grabbed = userGroupService.getUserGroup("5cba1e8b7bcaefbeea1c634d");
+		Assert.assertEquals(3, grabbed.getUsers().size());
+	}
+
+	@Test
 	public void getUser() {
 
 		User dbUser = userService.getUser("3l6FvM305C");
-		Assert.assertEquals(dbUser.getLastName(), "Smets");
+		Assert.assertEquals("Smets", dbUser.getLastName());
 	}
 
 	@Test

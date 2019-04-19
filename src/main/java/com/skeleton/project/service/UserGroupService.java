@@ -1,12 +1,19 @@
 package com.skeleton.project.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.DBCollection;
+import com.mongodb.QueryOperators;
+import com.mongodb.client.MongoCollection;
 import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.query.Query;
+import dev.morphia.query.UpdateOperations;
+import dev.morphia.query.UpdateResults;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
@@ -16,10 +23,7 @@ import org.parse4j.callback.GetCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -139,17 +143,37 @@ public class UserGroupService implements IUserGroupService {
     public UserGroup addUsers(String id, List<User> users) {
         UserGroup group = getUserGroup(id);
 
-        group.getUsers().addAll(users);
+        return addUsers(group, users);
+    }
 
-        UserGroup result = saveUserGroupWithMorphia(group);
-        return result;
+    private UserGroup modifyGroupName(String id, String newName) {
+        Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(id));
+        UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set("name", newName);
+
+        UpdateResults results = _database.getDatastore().update(query, ops);
+
+        return getUserGroup(id);
     }
 
     @Override
     public UserGroup addUsers(UserGroup group, List<User> users) {
-        group.getUsers().addAll(users);
 
-        saveUserGroupWithMorphia(group);
+        Set<User> newUserSet = group.getUsers();
+        newUserSet.addAll(users);
+
+        /**
+         * Note: Need to use the Morphia filter method instead of find due as the difference are one does a regex mongo $regex lookup (that is find) and the other
+         * does a $oid lookup (filter). When not using a bjson ObjectId on the entity the find seems to fail for update queries (but works for regular finds?)
+         */
+        Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(group.getId()));
+        UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set("users", newUserSet);
+
+        UpdateResults results = _database.getDatastore().update(query, ops);
+        if (results.getWriteResult().getN() == 0) {
+            log.error("Something went wrong during db " + group.getClass().getSimpleName() + " object update");
+        }
+
+        // Due to verifying an update took place can just return the pojo with the update to save a db round trip
         return group;
     }
 }
