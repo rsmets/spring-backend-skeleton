@@ -52,6 +52,9 @@ public class User {
 //    Date updatedAt;
 //    Date createdAt;
 
+    public static String getAttributeName() { return "user"; }
+    public static String getAttributeNamePlural() { return "users"; }
+
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
     // due to incoming either a) directly from db ('_id') or as a Pointer in other

@@ -1,6 +1,7 @@
 package com.skeleton.project.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,8 @@ public class UserGroupRequest {
 
     User requestingUser;
     List<User> targetUsers;
+    List<KeyRelationship> keyRelationships;
     String groupId;
-    boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user list
+    boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists
 
 }

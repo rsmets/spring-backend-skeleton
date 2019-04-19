@@ -28,7 +28,7 @@ public class UserGroup {
     List<Schedule> schedule = Collections.emptyList();
     Set<User> admins = Collections.emptySet();
     Set<User> users = Collections.emptySet();
-    List<KeyRelationship> keyRelationships;
+    Set<KeyRelationship> keyRelationships;
 
     @Property("_updated_at")
     Date updatedAt;

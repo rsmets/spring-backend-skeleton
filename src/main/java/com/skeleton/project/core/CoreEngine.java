@@ -94,11 +94,18 @@ public class CoreEngine implements ICoreEngine{
 				else
 					log.warn("No user identifier provided in " + request);
 			}
-
 			request.setTargetUsers(inflatedUsers);
+
+//			// TODO need to inflate the kr list too! Do I though?? I think not, only having the objectId is suffice.
+//			List<com.skeleton.project.dto.entity.KeyRelationship> inflatedKRs = new ArrayList<>();
+//			for (com.skeleton.project.dto.entity.KeyRelationship KeyRelationship : request.getKeyRelationships()) {
+//				inflatedKRs.add(keyRelationshipService.getKeyRelationship(KeyRelationship.getId()));
+//			}
+//			request.setKeyRelationships(inflatedKRs);
+
 		}
 
-        return userGroupService.addUsers(group, request.getTargetUsers());
+		return userGroupService.modifyUserGroup(group, request.getTargetUsers(), request.getKeyRelationships());
     }
 
     @Override

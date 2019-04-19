@@ -1,9 +1,7 @@
 package com.skeleton.project.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.DBCollection;
-import com.mongodb.QueryOperators;
-import com.mongodb.client.MongoCollection;
+import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
@@ -12,8 +10,6 @@ import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
 import dev.morphia.query.UpdateResults;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
@@ -76,13 +72,13 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
-    public UserGroup getUserGroup(String objectId) {
+    public UserGroup getUserGroup(final String objectId) {
 //        return getWithParse(objectId);
 //        return getUserGroupWithMongoJack(objectId);
         return getUserGroupWithMorphia(objectId);
     }
 
-    private UserGroup getWithParse(String objectId) {
+    private UserGroup getWithParse(final String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserGroup");
         query.getInBackground(objectId, new GetCallback<ParseObject>() {
             @Override
@@ -102,7 +98,7 @@ public class UserGroupService implements IUserGroupService {
         return null;
     }
 
-    private UserGroup getUserGroupWithMongoJack(String objectId){
+    private UserGroup getUserGroupWithMongoJack(final String objectId){
         DBCollection userGroupCollection = _database.getDB().getCollection("UserGroup");
         JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
         UserGroup ug = collection.findOneById(objectId);
@@ -112,7 +108,7 @@ public class UserGroupService implements IUserGroupService {
         return ug;
     }
 
-    private UserGroup getUserGroupWithMorphia(String objectId){
+    private UserGroup getUserGroupWithMorphia(final String objectId){
         final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
@@ -131,22 +127,31 @@ public class UserGroupService implements IUserGroupService {
         return ug;
     }
 
+    /**
+     * Can used for: adding users to group, ...
+     * @param userGroup - with settings wanted to persist
+     * @param users
+     * @param keyRelationships
+     * @return
+     */
     @Override
-    public UserGroup modifyUserGroup(UserGroup userGroup) {
-        return null;
+    public UserGroup modifyUserGroup(UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships) {
+
+        userGroup = addKeyRelationship(userGroup, keyRelationships);
+        return addUsers(userGroup, users);
     }
 
     /**
      * @see IUserGroupService#addUsers(String, List)
      */
     @Override
-    public UserGroup addUsers(String id, List<User> users) {
+    public UserGroup addUsers(final String id, final List<User> users) {
         UserGroup group = getUserGroup(id);
 
         return addUsers(group, users);
     }
 
-    private UserGroup modifyGroupName(String id, String newName) {
+    private UserGroup modifyGroupName(final String id, final String newName) {
         Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(id));
         UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set("name", newName);
 
@@ -155,25 +160,44 @@ public class UserGroupService implements IUserGroupService {
         return getUserGroup(id);
     }
 
+    public UserGroup addKeyRelationship(final UserGroup group, final List<KeyRelationship> keyRelationships) {
+        Set<KeyRelationship> newKRset = group.getKeyRelationships();
+        newKRset.addAll(keyRelationships);
+
+        return updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+    }
+
+    /**
+     * Helper to handle updating a single UserGroup attribute
+     * @param group
+     * @param attributeName
+     * @param newValue
+     * @return
+     */
+    private UserGroup updateUserGroup(UserGroup group, String attributeName, Object newValue) {
+        /**
+         * Note: Need to use the Morphia filter method instead of find due as the difference are one does a regex mongo $regex lookup (that is find) and the other
+         * does a $oid lookup (filter). When not using a bjson ObjectId on the entity the find seems to fail for update queries (but works for regular finds?)
+         */
+        Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(group.getId()));
+        UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set(attributeName, newValue);
+
+        UpdateResults results = _database.getDatastore().update(query, ops);
+        if (results.getWriteResult().getN() == 0) {
+            log.error("Something went wrong during db UserGroup object update");
+        }
+
+        // Due to verifying an update took place can just return the pojo with the update to save a db round trip.
+        // TODO figure out the update and return function (in one call / trip)...
+        return group;
+    }
+
     @Override
     public UserGroup addUsers(UserGroup group, List<User> users) {
 
         Set<User> newUserSet = group.getUsers();
         newUserSet.addAll(users);
 
-        /**
-         * Note: Need to use the Morphia filter method instead of find due as the difference are one does a regex mongo $regex lookup (that is find) and the other
-         * does a $oid lookup (filter). When not using a bjson ObjectId on the entity the find seems to fail for update queries (but works for regular finds?)
-         */
-        Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(group.getId()));
-        UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set("users", newUserSet);
-
-        UpdateResults results = _database.getDatastore().update(query, ops);
-        if (results.getWriteResult().getN() == 0) {
-            log.error("Something went wrong during db " + group.getClass().getSimpleName() + " object update");
-        }
-
-        // Due to verifying an update took place can just return the pojo with the update to save a db round trip
-        return group;
+        return updateUserGroup(group, User.getAttributeNamePlural(), newUserSet);
     }
 }

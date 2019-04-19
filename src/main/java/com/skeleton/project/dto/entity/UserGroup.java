@@ -7,7 +7,6 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.mongojack.ObjectId;
 
 import java.util.Collections;
 import java.util.Date;
@@ -22,7 +21,6 @@ public class UserGroup {
 
 //    @Property("_id")
     @Id
-    @ObjectId
     String id;
 
     List<String> lockIds = Collections.emptyList();
@@ -40,7 +38,7 @@ public class UserGroup {
     Set<User> users = Collections.emptySet();
 
     @Embedded
-    List<KeyRelationship> keyRelationships;
+    Set<KeyRelationship> keyRelationships; // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
 
     String name;
 

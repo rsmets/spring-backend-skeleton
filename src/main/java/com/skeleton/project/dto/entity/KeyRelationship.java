@@ -60,6 +60,9 @@ public class KeyRelationship {
     @Property("_created_at")
     Date createdAt;
 
+    public static String getAttributeName() { return "keyRelationship"; }
+    public static String getAttributeNamePlural() { return "keyRelationships"; }
+
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
     // due to incoming either a) directly from db ('_id') or as a Pointer in other
