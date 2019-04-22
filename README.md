@@ -13,6 +13,12 @@ MAVEN WAY TO DOCKER ACTIONS:
         - however currently is having issues during the push phase... https://github.com/spotify/dockerfile-maven/issues/51
         - note need to populate the required env vars for tests to pass
             i.e. mvn -DDB_HOST=localhost -DDB_PORT=27017 -DDB_NAME=nexkey install 
+            or mvn install -DskipTests=true
+
+TO RUN THE CONTAINER:
+    - need to populate the env variables & open ports
+    
+    docker run -e DB_HOST='host.docker.internal' -e DB_PORT='27017' -e DB_NAME='nexkey' -p 8080:8080 -p 27017:27017 rsmets/spring-backend-skeleton:0.0.1-SNAPSHOT
 
 
 OLD NONE MAVEN WAY TO DO DOCKER ACTIONS:

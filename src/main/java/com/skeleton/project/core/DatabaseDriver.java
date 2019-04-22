@@ -11,6 +11,7 @@ import dev.morphia.Morphia;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -19,11 +20,11 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Slf4j
-@Repository
+@Component
 @PropertySource("classpath:application.properties") // Not necessary but leaving for explicit declaration sake
-public class DatabaseDriver {
+public class DatabaseDriver implements IDatabaseDriver{
 
-    @Value("${db.host:localhost}")
+    @Value("${db.host}")
     private String _dbHost;
 
     @Value("${db.port:27017}")
@@ -47,7 +48,8 @@ public class DatabaseDriver {
             MongoClient mongoClient = MongoClients.create(
                     MongoClientSettings.builder()
                             .applyToClusterSettings(builder ->
-                                builder.hosts(Arrays.asList(new ServerAddress(_dbHost, _dbPort))))
+//                                builder.hosts(Arrays.asList(new ServerAddress("mongodb://" + _dbHost, _dbPort))))
+                                    builder.hosts(Arrays.asList(new ServerAddress(_dbHost, _dbPort))))
                             .build());
 
 //            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
