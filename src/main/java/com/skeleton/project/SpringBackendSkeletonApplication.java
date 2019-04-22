@@ -2,14 +2,17 @@ package com.skeleton.project;
 
 import org.parse4j.Parse;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 @SpringBootApplication
+@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 public class SpringBackendSkeletonApplication {
 
 	public static void main(String[] args) {
 
-		Parse.initialize("bLg3XZ2X8KurMX0h8hKcBvcPvJ6MUz7zq2zP3V8s", "iPHmGfFhryIWrmSMnxIRyaAnnoIaqdXjWZFhvtLa", "http://localhost:1337");
+//		Parse.initialize("bLg3XZ2X8KurMX0h8hKcBvcPvJ6MUz7zq2zP3V8s", "iPHmGfFhryIWrmSMnxIRyaAnnoIaqdXjWZFhvtLa", "http://localhost:1337");
 
 		SpringApplication.run(SpringBackendSkeletonApplication.class, args);
 
