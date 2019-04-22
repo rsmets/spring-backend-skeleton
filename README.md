@@ -11,6 +11,8 @@ MAVEN WAY TO DOCKER ACTIONS:
         - which triggers both 'mvn dockerfile:build' && 'mvn dockerfile:push'
           due to the build execution definitions the pom file.
         - however currently is having issues during the push phase... https://github.com/spotify/dockerfile-maven/issues/51
+        - note need to populate the required env vars for tests to pass
+            i.e. mvn -DDB_HOST=localhost -DDB_PORT=27017 -DDB_NAME=nexkey install 
 
 
 OLD NONE MAVEN WAY TO DO DOCKER ACTIONS:
@@ -31,6 +33,9 @@ How to push the image to docker hub
 
     docker login
     docker push rsmets/skeleton:0.0.1-SNAPSHOT
+    
+    OR if used the maven install way of building and tagging then:
+    docker push rsmets/spring-backend-skeleton:0.0.1-SNAPSHOT
 
 How to pull the image from docker hub and run
 
