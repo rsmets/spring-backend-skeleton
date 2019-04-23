@@ -1,10 +1,9 @@
 package com.skeleton.project.core;
 
-import com.mongodb.DB;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoClient;
+import com.mongodb.*;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoClients;
+//import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoDatabase;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -24,14 +24,19 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @PropertySource("classpath:application.properties") // Not necessary but leaving for explicit declaration sake
 public class DatabaseDriver implements IDatabaseDriver{
 
-    @Value("${db.host}")
-    private String _dbHost;
+//    @Value("${db.host}")
+//    private String _dbHost = "nk-sandbox:thepassword1015@ds241369-a0.mlab.com:41369,ds241369-a1.mlab.com:41369/nexkey-sandbox?replicaSet=rs-ds241369";
+//    private String _dbHost = "mongodb://nk-sandbox:thepassword1015@ds241369-a0.mlab.com:41369/nexkey-sandbox";
+    private String _dbHost = "ds241369-a0.mlab.com";
 
-    @Value("${db.port:27017}")
-    private int _dbPort;
+//    @Value("${db.host}")
+//    private String _dbHost;
 
-    @Value("${db.name:nexkey}")
-    private String _dbName;
+//    @Value("${db.port:27017}")
+    private int _dbPort = 41369;
+
+//    @Value("${db.name:nexkey}")
+    private String _dbName = "nexkey-sandbox";
 
     private MongoDatabase _database;
     private com.mongodb.MongoClient _mongoClient;
@@ -42,21 +47,26 @@ public class DatabaseDriver implements IDatabaseDriver{
     public MongoDatabase getDatabase(){
 
         // I know there is a cleaner way todo this... but this works for now
+        MongoClientURI uri = new MongoClientURI(_dbHost);
+//        MongoClientURI uri = new MongoClientURI("mongodb://" + _dbHost + ":" + _dbPort);
+
         if (_database == null) {
             log.debug("init db interface");
 
-            MongoClient mongoClient = MongoClients.create(
-                    MongoClientSettings.builder()
-                            .applyToClusterSettings(builder ->
-//                                builder.hosts(Arrays.asList(new ServerAddress("mongodb://" + _dbHost, _dbPort))))
-                                    builder.hosts(Arrays.asList(new ServerAddress(_dbHost, _dbPort))))
-                            .build());
+//            MongoClient mongoClient = MongoClients.create(
+//                    MongoClientSettings.builder()
+//                            .applyToClusterSettings(builder ->
+////                                builder.hosts(Arrays.asList(new ServerAddress("mongodb://" + _dbHost, _dbPort))))
+//                                    builder.hosts(Arrays.asList(new ServerAddress(_dbHost, _dbPort))))
+//                            .build());
 
 //            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
 //                    fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 //            MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry())
 
-            _database = mongoClient.getDatabase(_dbName);
+            MongoClient m = new MongoClient(uri);
+            _database = m.getDatabase(uri.getDatabase());
+//            _database = m.getDatabase(_dbName);
         }
 
         return _database;
@@ -87,13 +97,27 @@ public class DatabaseDriver implements IDatabaseDriver{
     }
 
     public Datastore getDatastore() {
+//        MongoClientURI uri = new MongoClientURI(_dbHost);
         if (_mongoClient == null) {
-            _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+            _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential("nk-sandbox", "nexkey-sandbox", "thepassword1015".toCharArray())));
+//            _mongoClient = new MongoClient(uri);
         }
 
         if (_datastore == null)
-            _datastore = morphia.createDatastore(_mongoClient, "nexkey");
+            _datastore = morphia.createDatastore(_mongoClient, _dbName);
+//            _datastore = morphia.createDatastore(_mongoClient, uri.getDatabase());
 
         return _datastore;
     }
+
+//    public Datastore getDatastore() {
+//        if (_mongoClient == null) {
+//            _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+//        }
+//
+//        if (_datastore == null)
+//            _datastore = morphia.createDatastore(_mongoClient, "nexkey");
+//
+//        return _datastore;
+//    }
 }

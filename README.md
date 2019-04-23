@@ -19,7 +19,8 @@ TO RUN THE CONTAINER:
     - need to populate the env variables & open ports
     
     docker run -e DB_HOST='host.docker.internal' -e DB_PORT='27017' -e DB_NAME='nexkey' -p 8080:8080 -p 27017:27017 rsmets/spring-backend-skeleton:0.0.1-SNAPSHOT
-
+    
+    docker run -e DB_HOST='<user>:<password>@ds241369-a0.mlab.com:41369,ds241369-a1.mlab.com:41369/nexkey-sandbox?replicaSet=rs-ds241369' -e DB_PORT='27017' -e DB_NAME='nexkey' -p 8080:8080 -p 27017:27017 rsmets/spring-backend-skeleton:0.0.2-SNAPSHOT
 
 OLD NONE MAVEN WAY TO DO DOCKER ACTIONS:
 
