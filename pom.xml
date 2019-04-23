@@ -6,7 +6,7 @@
 
 	<groupId>com.skeleton</groupId>
 	<artifactId>spring-backend-skeleton</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>backened-java-service-skeleton</name>
@@ -59,14 +59,9 @@
 			<artifactId>swagger-annotations</artifactId>
 			<version>1.5.22</version>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>org.mongodb</groupId>-->
-			<!--<artifactId>mongodb-driver-sync</artifactId>-->
-			<!--<version>3.10.1</version>-->
-		<!--</dependency>-->
 		<dependency>
 			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver</artifactId>
+			<artifactId>mongodb-driver-sync</artifactId>
 			<version>3.10.1</version>
 		</dependency>
 		<dependency>
