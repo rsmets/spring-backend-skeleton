@@ -39,6 +39,9 @@ public class CoreEngine implements ICoreEngine{
 	@Autowired
     ILockService lockService;
 
+	/**
+	 * @see ICoreEngine#createUserGroup(userGroup)
+	 */
 	@Override
 	public com.skeleton.project.dto.entity.UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup) {
 
@@ -60,19 +63,36 @@ public class CoreEngine implements ICoreEngine{
 		return userGroupService.createUserGroup(userGroup);
 	}
 
+	/**
+	 * @see ICoreEngine#getUserGroup(String)
+	 */
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup getUserGroup(String id) {
+	public com.skeleton.project.dto.entity.UserGroup getUserGroup(final String id) {
 		return userGroupService.getUserGroup(id);
 	}
 
+	/**
+	 * @see ICoreEngine#getUserGroupsForUser(String)
+	 */
 	@Override
-	public UserGroup deleteUserGroup(String id) {
+	public List<com.skeleton.project.dto.entity.UserGroup> getUserGroupsForUser(final String userId) {
+		return userGroupService.getUserGroupsForUser(userId);
+	}
+
+	/**
+	 * @see ICoreEngine#deleteUserGroup(String)
+	 */
+	@Override
+	public com.skeleton.project.dto.entity.UserGroup deleteUserGroup(final String id) {
 //		return userGroupService.deleteUser(id);
 
 		//TODO
 		return null;
 	}
 
+	/**
+	 * @see ICoreEngine#addUsersToGroup(request)
+	 */
     @Override
     public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
 		// verify a valid operation

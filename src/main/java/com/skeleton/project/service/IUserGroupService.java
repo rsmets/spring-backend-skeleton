@@ -22,6 +22,13 @@ public interface IUserGroupService {
     UserGroup getUserGroup(String objectId);
 
     /**
+     * Gets a list of user groups where the user is an owner or an admin of
+     * @param userId
+     * @return
+     */
+    List<UserGroup> getUserGroupsForUser(String userId);
+
+    /**
      * Modified existing user group
      * TODO maybe and another param with the request user to see if have admin access to the group
      * @param userGroup - with settings wanted to persist
@@ -30,13 +37,9 @@ public interface IUserGroupService {
     UserGroup modifyUserGroup(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships);
 
     /**
-     * Add user to the specified group
+     * Add users to the specified group
      * TODO maybe and another param with the request user to see if have admin access to the group
-     * @param id
-     * @param user
-     * @return
      */
     UserGroup addUsers(String id, List<User> user);
-
     UserGroup addUsers(UserGroup group, List<User> users);
 }

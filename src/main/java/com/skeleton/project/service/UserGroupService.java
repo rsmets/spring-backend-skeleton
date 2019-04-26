@@ -78,6 +78,18 @@ public class UserGroupService implements IUserGroupService {
         return getUserGroupWithMorphia(objectId);
     }
 
+    @Override
+    public List<UserGroup> getUserGroupsForUser(final String userId) {
+        final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
+        query.filter("owner._id", userId);
+
+        final List<UserGroup> groups = query.disableValidation().asList();
+
+        log.info("Got user groups for user " + userId + ": " + groups);
+
+        return groups;
+    }
+
     private UserGroup getWithParse(final String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("UserGroup");
         query.getInBackground(objectId, new GetCallback<ParseObject>() {

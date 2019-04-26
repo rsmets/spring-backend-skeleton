@@ -33,7 +33,7 @@ public class KeyRelationship {
     Date expirationDate;
     Pointer reference;
 
-    @Embedded
+    @Embedded("schedule")
     List<Schedule> schedule;
 
     String pendingFirstName;
@@ -52,7 +52,7 @@ public class KeyRelationship {
     Role role;
     @Property("_p_role")
     String roleObjectId;
-    @Embedded
+    @Embedded("key")
     Lock key;
 
     @Property("_updated_at")

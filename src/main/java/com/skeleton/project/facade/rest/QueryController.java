@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Api("QueryApi")
 @Slf4j
@@ -53,6 +55,13 @@ public class QueryController {
 	@GetMapping("/v1.0/userGroup/get/{id}")
 	public UserGroup getUserGroup(@PathVariable String id) {
 		UserGroup result = _coreEngine.getUserGroup(id);
+
+		return result;
+	}
+
+	@GetMapping("/v1.0/userGroup/getForUser/{userId}")
+	public List<UserGroup> getAllUserGroupsForUser(@PathVariable String userId) {
+		List<com.skeleton.project.dto.entity.UserGroup>  result = _coreEngine.getUserGroupsForUser(userId);
 
 		return result;
 	}

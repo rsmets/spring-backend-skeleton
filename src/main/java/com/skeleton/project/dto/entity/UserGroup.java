@@ -25,19 +25,19 @@ public class UserGroup {
 
     List<String> lockIds = Collections.emptyList();
 
-    @Embedded
+    @Embedded("schedule")
     List<Schedule> schedule = Collections.emptyList();
 
-    @Embedded
+    @Embedded("owner")
     User owner;
 
-    @Embedded
+    @Embedded("admins")
     Set<User> admins = Collections.emptySet();
 
-    @Embedded
+    @Embedded("users")
     Set<User> users = Collections.emptySet();
 
-    @Embedded
+    @Embedded("keyRelationships")
     Set<KeyRelationship> keyRelationships; // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
 
     String name;
