@@ -34,6 +34,9 @@ public class SpringBackendSkeletonApplicationTests {
 	@Autowired
 	IKeyRelationshipService keyRelationshipService;
 
+	/**
+	 * TODO make this the first step in the testing process so that the id can be used for the testing through out
+	 */
 	@Test
 	public void createUserGroup() {
 

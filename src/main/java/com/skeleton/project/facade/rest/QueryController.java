@@ -44,30 +44,11 @@ public class QueryController {
 	@PostMapping("/v1.0/userGroup/create")
 	public UserGroup createUserGroup(@RequestBody final UserGroup userGroup)
 	{
-//		UserGroup input = UserGroup.convertFromDto(userGroup);
-//		UserGroup result = _coreEngine.createUserGroup(input);
 		UserGroup result = _coreEngine.createUserGroup(userGroup);
 		log.info("new user group: " + result.toString());
 
-//		if (result == null)
-//			return "";
-//
-//		return result.getId();
 		return result;
 	}
-
-//	@PostMapping("/v1.0/create/userGroup/string")
-//	public String createUserGroupString(@RequestBody final UserGroup userGroup)
-//	{
-//		UserGroup input = UserGroup.convertFromDto(userGroup);
-//		UserGroup result = _coreEngine.createUserGroup(input);
-//		log.info("new user group: " + result.toString());
-//
-//		if (result == null)
-//			return "";
-//
-//		return result.getId();
-//	}
 
 	@GetMapping("/v1.0/userGroup/get/{id}")
 	public UserGroup getUserGroup(@PathVariable String id) {
@@ -90,16 +71,10 @@ public class QueryController {
     @PostMapping("/v1.0/userGroup/{id}/addUsers")
     public UserGroup addUser(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
     {
-//		UserGroup input = UserGroup.convertFromDto(userGroup);
-//		UserGroup result = _coreEngine.createUserGroup(input);
         UserGroup result = _coreEngine.addUsersToGroup(userGroupRequest);
 
         log.info("new user group: " + result.toString());
 
-//		if (result == null)
-//			return "";
-//
-//		return result.getId();
         return result;
     }
 

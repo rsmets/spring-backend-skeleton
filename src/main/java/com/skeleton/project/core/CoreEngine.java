@@ -74,7 +74,7 @@ public class CoreEngine implements ICoreEngine{
 	}
 
     @Override
-    public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+    public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
 		// verify a valid operation
 		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
@@ -109,23 +109,17 @@ public class CoreEngine implements ICoreEngine{
     }
 
     @Override
-	public BaseResponse executeAction(Object example) {
+	public BaseResponse executeAction(final Object example) {
 
 		try{
 			BaseResponse response = _client.doAction(example);
 
 			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
 
-//			insertAndGrabUserGroupObject(example);
-//			insertAndGrabKeyRelationshipObject(example);
-
-//			User user = userService.getUser("3l6FvM305C");
-//			UserGroup userGroup = userGroupService.getUserGroup("5ca6d2211f093865027e93db");
 			com.skeleton.project.dto.entity.KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
 
 
 			return BaseResponse.builder().example(kr).build();
-//			return null;
 		} catch (Exception e) {
 			log.error("That request did not work... ", e);
 		}
@@ -134,26 +128,7 @@ public class CoreEngine implements ICoreEngine{
 
 	}
 
-//	private User getUser(String objId) {
-//		return userService.getUser(objId);
-//	}
-
-	private void insertAndGrabUserGroupObject(Object obj){
-		UserGroup userGroup = UserGroup.builder().canRemoteUnlock(true).canUnlockUntil(true).build();
-		userGroup.setName((String)obj);
-
-//		UserGroup newObj = userGroupService.createUserGroup(userGroup);
-//		userGroupService.getUserGroup(newObj.getId().toHexString());
-	}
-
-//	private void insertAndGrabKeyRelationshipObject(Object obj){
-//		KeyRelationship kr = KeyRelationship.builder().repeatInterval(1).repeatType(2).expirationDateUses(true).build();
-//
-//		keyRelationshipService.createKeyRelationship(kr);
-//
-//	}
-
-	private Object getDbFullObject(Object search) {
+	private Object getDbFullObject(final Object search) {
 		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
 
 		Document doc = userCollection.find().first();
