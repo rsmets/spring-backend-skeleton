@@ -81,7 +81,10 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public List<UserGroup> getUserGroupsForUser(final String userId) {
         final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
-        query.filter("owner._id", userId);
+        query.or (
+                query.criteria("owner._id").equal(userId),
+                query.criteria("admins._id").equal(userId)
+                );
 
         final List<UserGroup> groups = query.disableValidation().asList();
 
