@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +161,14 @@ public class CoreEngine implements ICoreEngine{
 	 * @param request
 	 * @param group
 	 */
-	private void verifyRequest(UserGroupRequest request, com.skeleton.project.dto.entity.UserGroup group) throws UserGroupPermissionsException {
+	private void verifyRequest(UserGroupRequest request, com.skeleton.project.dto.entity.UserGroup group) throws UserGroupPermissionsException, EntityNotFoundException {
+
+		if (group == null) {
+			String message = "Requested group with id " + request.getGroupId() + " does not exist";
+			log.error(message);
+			throw new EntityNotFoundException(message);
+		}
+
 		if (!doesUserHaveAdminRights(request.getRequestingUser().getId(), group)) {
 			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
 			throw new UserGroupPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());

@@ -73,8 +73,6 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup getUserGroup(final String objectId) {
-//        return getWithParse(objectId);
-//        return getUserGroupWithMongoJack(objectId);
         return getUserGroupWithMorphia(objectId);
     }
 
@@ -123,7 +121,7 @@ public class UserGroupService implements IUserGroupService {
         return ug;
     }
 
-    private UserGroup getUserGroupWithMorphia(final String objectId){
+    private UserGroup getUserGroupWithMorphia(final String objectId) {
         final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
 //        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
 
@@ -136,9 +134,6 @@ public class UserGroupService implements IUserGroupService {
 
         log.info("Got user group with id " + objectId + ": " + ug);
 
-//        return userGroups.get(0); //rjs this should always be one entry
-//        return userGroups;
-//        return UserGroup.convertFromDto(ug);
         return ug;
     }
 
