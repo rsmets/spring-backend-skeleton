@@ -40,7 +40,7 @@ public class CoreEngine implements ICoreEngine{
     ILockService lockService;
 
 	/**
-	 * @see ICoreEngine#createUserGroup(userGroup)
+	 * @see ICoreEngine#createUserGroup(com.skeleton.project.dto.entity.UserGroup)
 	 */
 	@Override
 	public com.skeleton.project.dto.entity.UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup) {
@@ -91,17 +91,14 @@ public class CoreEngine implements ICoreEngine{
 	}
 
 	/**
-	 * @see ICoreEngine#addUsersToGroup(request)
+	 * @see ICoreEngine#addUsersToGroup(UserGroupRequest)
 	 */
     @Override
     public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
-		// verify a valid operation
-		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
-		if (!StringUtils.equals(group.getOwner().getId(), request.getRequestingUser().getId())) {
-			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
-			throw new UserGroupPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());
-		}
+    	com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
 
 		// inflate the user list
 		if (request.isNeedToInflate()) {
@@ -128,6 +125,16 @@ public class CoreEngine implements ICoreEngine{
 		return userGroupService.modifyUserGroup(group, request.getTargetUsers(), request.getKeyRelationships());
     }
 
+	@Override
+	public com.skeleton.project.dto.entity.UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException {
+
+		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		return userGroupService.modifyGroupName(group, request.getNewGroupName());
+	}
+
     @Override
 	public BaseResponse executeAction(final Object example) {
 
@@ -146,6 +153,39 @@ public class CoreEngine implements ICoreEngine{
 
 		return null;
 
+	}
+
+	/**
+	 * Verifies the requesting user has admin or owner permissions and throws exception if not
+	 * @param request
+	 * @param group
+	 */
+	private void verifyRequest(UserGroupRequest request, com.skeleton.project.dto.entity.UserGroup group) throws UserGroupPermissionsException {
+		if (!doesUserHaveAdminRights(request.getRequestingUser().getId(), group)) {
+			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
+			throw new UserGroupPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());
+		}
+	}
+
+	/**
+	 * Checks if the user id is in the owner or admin list.
+	 * @param requestingUserId
+	 * @param group
+	 * @return
+	 */
+	private boolean doesUserHaveAdminRights(String requestingUserId, com.skeleton.project.dto.entity.UserGroup group) {
+		if ( StringUtils.equals(group.getOwner().getId(), requestingUserId) ) {
+			return true;
+		}
+
+		// I know there are 'sexier' ways than this... but I do have a love for the readability of the for loop
+		for(com.skeleton.project.dto.entity.User admins : group.getAdmins()) {
+			if ( StringUtils.equals(admins.getId(), requestingUserId) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private Object getDbFullObject(final Object search) {

@@ -41,7 +41,7 @@ public class QueryController {
 	/**
 	 * @since 1.0
 	 * @param userGroup
-	 * @return id of new UserGroup obj
+	 * @return new UserGroup obj
 	 */
 	@PostMapping("/v1.0/userGroup/create")
 	public UserGroup createUserGroup(@RequestBody final UserGroup userGroup)
@@ -75,7 +75,7 @@ public class QueryController {
     /**
      * @since 1.0
      * @param userGroupRequest
-     * @return id of new UserGroup obj
+     * @return new UserGroup obj
      */
     @PostMapping("/v1.0/userGroup/{id}/addUsers")
     public UserGroup addUser(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
@@ -86,5 +86,20 @@ public class QueryController {
 
         return result;
     }
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return new UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/{id}/modifyName")
+	public UserGroup modifyGroupName(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.modifyGroupName(userGroupRequest);
+
+		log.info("user group with new name: " + result.toString());
+
+		return result;
+	}
 
 }

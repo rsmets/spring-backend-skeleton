@@ -52,6 +52,10 @@ public interface ICoreEngine {
 	 */
 	UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
 
+	//TODO: UserGroup addAdmisToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+
+	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException;
+
 	/**
 	 * Dummy function that should probably be deleted..
 	 *

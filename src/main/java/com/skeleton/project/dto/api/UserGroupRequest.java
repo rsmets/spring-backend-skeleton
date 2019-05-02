@@ -22,6 +22,6 @@ public class UserGroupRequest {
     List<User> targetUsers;
     List<KeyRelationship> keyRelationships;
     String groupId;
+    String newGroupName;
     boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists
-
 }

@@ -152,7 +152,7 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup modifyUserGroup(UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships) {
 
-        userGroup = addKeyRelationship(userGroup, keyRelationships);
+        userGroup = addKeyRelationships(userGroup, keyRelationships);
         return addUsers(userGroup, users);
     }
 
@@ -166,16 +166,20 @@ public class UserGroupService implements IUserGroupService {
         return addUsers(group, users);
     }
 
-    private UserGroup modifyGroupName(final String id, final String newName) {
-        Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class).disableValidation().filter("_id", new ObjectId(id));
-        UpdateOperations<UserGroup> ops =  _database.getDatastore().createUpdateOperations(UserGroup.class).set("name", newName);
-
-        UpdateResults results = _database.getDatastore().update(query, ops);
-
-        return getUserGroup(id);
+    /**
+     * @see IUserGroupService#modifyGroupName(UserGroup, String)
+     */
+    @Override
+    public UserGroup modifyGroupName(final UserGroup group, final String newName) {
+        group.setName(newName); // TODO figure out the proper update and fetch in one go. Till then this is a little hack to return the seemingly new db group obj
+        return updateUserGroup(group, "name", newName);
     }
 
-    public UserGroup addKeyRelationship(final UserGroup group, final List<KeyRelationship> keyRelationships) {
+    /**
+     * @see IUserGroupService#addKeyRelationships(UserGroup, List)
+     */
+    @Override
+    public UserGroup addKeyRelationships(final UserGroup group, final List<KeyRelationship> keyRelationships) {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.addAll(keyRelationships);
 

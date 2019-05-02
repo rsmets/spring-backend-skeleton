@@ -37,9 +37,22 @@ public interface IUserGroupService {
     UserGroup modifyUserGroup(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships);
 
     /**
+     * Modify group name
+     * @param groupId
+     * @param newName
+     * @return
+     */
+    UserGroup modifyGroupName(UserGroup groupId, String newName);
+
+    /**
      * Add users to the specified group
      * TODO maybe and another param with the request user to see if have admin access to the group
      */
     UserGroup addUsers(String id, List<User> user);
     UserGroup addUsers(UserGroup group, List<User> users);
+
+    /**
+     * Adds key relationships to group
+     */
+    UserGroup addKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);
 }
