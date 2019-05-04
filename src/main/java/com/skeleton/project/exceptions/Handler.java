@@ -20,7 +20,7 @@ public class Handler {
         }
 
         if (ex instanceof EntityNotFoundException) {
-            return new ResponseEntity<>("Group id not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Requested id not found", HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

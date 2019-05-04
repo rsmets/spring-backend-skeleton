@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @Slf4j
 public class LockService implements ILockService {
@@ -31,7 +33,7 @@ public class LockService implements ILockService {
     }
 
     @Override
-    public Lock getLockByLockId(String lockId) {
+    public Lock getLockByLockId(String lockId) throws EntityNotFoundException{
         final Query<Lock> query = _database.getDatastore().createQuery(Lock.class);
 
 
@@ -39,6 +41,12 @@ public class LockService implements ILockService {
                 .disableValidation()
                 .field("lockId").equal(lockId)
                 .get();
+
+        if(lock == null) {
+            String message = "Requested lock with id " + lockId + " does not exist";
+            log.error(message);
+            throw new EntityNotFoundException(message);
+        }
 
         log.info("Got lock with id " + lockId + ": " + lock);
 

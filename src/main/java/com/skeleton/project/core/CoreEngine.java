@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.client.MongoCollection;
 import com.skeleton.project.domain.*;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.exceptions.LockAdminPermissionsException;
 import com.skeleton.project.exceptions.UserGroupPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
@@ -46,21 +47,7 @@ public class CoreEngine implements ICoreEngine{
 	@Override
 	public com.skeleton.project.dto.entity.UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup) {
 
-	    com.skeleton.project.dto.entity.Lock lock = lockService.getLockByLockId(userGroup.getLockIds().get(0));
-        com.skeleton.project.dto.entity.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(userGroup.getOwner().getId(), lock.getId());
-
-        if(ownersLockKeyRelationship == null) {
-            log.error("The attempted group owner does not have access to that lock");
-            // TODO send back a custom exception
-            return null;
-        }
-        //RJS due to the Role pointer being a string would need to TODO roleService todo db retrieval todo roleId comparison here. Will do in node world for now
-//        else if (ownersLockKeyRelationship.getRole() == null || ownersLockKeyRelationship.getRole().getRoleId() == 0) {
-//            log.error("The attempted group owner does not have admin privileges to that lock");
-//            // TODO send back a custom exception
-//            return null;
-//        }
-
+		verifyRequest(userGroup);
 		return userGroupService.createUserGroup(userGroup);
 	}
 
@@ -154,6 +141,31 @@ public class CoreEngine implements ICoreEngine{
 
 		return null;
 
+	}
+
+	/**
+	 * Verifies that the group owner has the proper key relationship with group's locks
+	 * @param group
+	 * @throws UserGroupPermissionsException
+	 * @throws EntityNotFoundException
+	 */
+	private void verifyRequest(com.skeleton.project.dto.entity.UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
+		for (String lockId : group.getLockIds()) {
+
+			com.skeleton.project.dto.entity.Lock lock = lockService.getLockByLockId(lockId);
+			com.skeleton.project.dto.entity.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(group.getOwner().getId(), lock.getId());
+
+			if (ownersLockKeyRelationship == null) {
+				log.error("The attempted group owner does not have access to that lock");
+				throw new LockAdminPermissionsException(lockId, group.getOwner().getId());
+			}
+			//RJS due to the Role pointer being a string would need to TODO roleService todo db retrieval todo roleId comparison here. Will do in node world for now
+//        else if (ownersLockKeyRelationship.getRole() == null || ownersLockKeyRelationship.getRole().getRoleId() == 0) {
+//            log.error("The attempted group owner does not have admin privileges to that lock");
+//            // TODO send back a custom exception
+//            return null;
+//        }
+		}
 	}
 
 	/**
