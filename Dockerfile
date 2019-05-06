@@ -23,8 +23,8 @@ ARG JAR_FILE=target/spring-backend-skeleton-0.0.1-SNAPSHOT.jar
 #COPY ${JAR_FILE} app.jar
 ADD ${JAR_FILE} app.jar
 
-ARG CERT_FILE=keystore.p12
-ADD ${CERT_FILE} keystore.p12
+ARG CERT_FILE='*.nexkey.com.p12'
+ADD ${CERT_FILE} '*.nexkey.com.p12'
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar"]
 
