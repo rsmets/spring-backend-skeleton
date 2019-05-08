@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Api("QueryApi")
@@ -62,6 +63,13 @@ public class QueryController {
 	@GetMapping("/v1.0/userGroup/getForUser/{userId}")
 	public List<UserGroup> getAllUserGroupsForUser(@PathVariable String userId) {
 		List<com.skeleton.project.dto.entity.UserGroup>  result = _coreEngine.getUserGroupsForUser(userId);
+
+		return result;
+	}
+
+	@PostMapping("/v1.0/userGroup/fetch")
+	public Set<UserGroup> fetchUserGroups(@RequestBody UserGroupRequest request) {
+		Set<UserGroup> result = _coreEngine.fetchUserGroups(request.getRequestingUser(), request.getTargetUsers());
 
 		return result;
 	}

@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -57,6 +59,29 @@ public class CoreEngine implements ICoreEngine{
 	@Override
 	public com.skeleton.project.dto.entity.UserGroup getUserGroup(final String id) {
 		return userGroupService.getUserGroup(id);
+	}
+
+	/**
+	 * @see ICoreEngine#fetchUserGroups(com.skeleton.project.dto.entity.User, List)
+	 */
+	@Override
+	public Set<com.skeleton.project.dto.entity.UserGroup> fetchUserGroups(com.skeleton.project.dto.entity.User requestingUser, List<com.skeleton.project.dto.entity.User> requestedUsers) {
+
+		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
+		if (requestedUsers.isEmpty()) {
+			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId()));
+		}
+
+		List<com.skeleton.project.dto.entity.UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId());
+
+		Set<com.skeleton.project.dto.entity.UserGroup> requestedUsersGroups = new HashSet<>();
+		for(com.skeleton.project.dto.entity.User user : requestedUsers) {
+			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId()));
+		}
+
+		requestedUsersGroups.retainAll(requestingUsersGroups);
+
+		return requestedUsersGroups;
 	}
 
 	/**

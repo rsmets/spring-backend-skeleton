@@ -7,6 +7,7 @@ import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.exceptions.UserGroupPermissionsException;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ICoreEngine {
 
@@ -26,6 +27,16 @@ public interface ICoreEngine {
 	 * @return
 	 */
 	UserGroup getUserGroup(String id);
+
+	/**
+	 * Fetches user groups that the requestedUser belongs to and the requestingUser has has admin access to.
+	 * NOTE: Accepts request that do not have requestedUser populated, which will be treated the same a request to just
+	 * got the groups for the requestingUsers
+	 * @param requestingUser
+	 * @param requestedUsers
+	 * @return
+	 */
+	Set<UserGroup> fetchUserGroups(User requestingUser, List<User> requestedUsers);
 
 	/**
 	 * Gets all user groups associated with a given user id of which they are an owner or and admin
