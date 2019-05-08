@@ -3,8 +3,12 @@ package com.skeleton.project.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.client.MongoCollection;
-import com.skeleton.project.domain.*;
+import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.entity.KeyRelationship;
+import com.skeleton.project.dto.entity.Lock;
+import com.skeleton.project.dto.entity.User;
+import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.exceptions.LockAdminPermissionsException;
 import com.skeleton.project.exceptions.UserGroupPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
@@ -44,10 +48,10 @@ public class CoreEngine implements ICoreEngine{
     ILockService lockService;
 
 	/**
-	 * @see ICoreEngine#createUserGroup(com.skeleton.project.dto.entity.UserGroup)
+	 * @see ICoreEngine#createUserGroup(UserGroup)
 	 */
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup) {
+	public UserGroup createUserGroup(UserGroup userGroup) {
 
 		verifyRequest(userGroup);
 		return userGroupService.createUserGroup(userGroup);
@@ -57,33 +61,33 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#getUserGroup(String)
 	 */
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup getUserGroup(final String id) {
+	public UserGroup getUserGroup(final String id) {
 		return userGroupService.getUserGroup(id);
 	}
 
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup fetchOneUserGroup(UserGroupRequest request) {
-		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+	public UserGroup fetchOneUserGroup(UserGroupRequest request) {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
 		verifyRequest(request, group);
 		return group;
 	}
 
 	/**
-	 * @see ICoreEngine#fetchUserGroups(com.skeleton.project.dto.entity.User, List)
+	 * @see ICoreEngine#fetchUserGroups(User, List)
 	 */
 	@Override
-	public Set<com.skeleton.project.dto.entity.UserGroup> fetchUserGroups(com.skeleton.project.dto.entity.User requestingUser, List<com.skeleton.project.dto.entity.User> requestedUsers) {
+	public Set<UserGroup> fetchUserGroups(User requestingUser, List<User> requestedUsers) {
 
 		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
 		if (requestedUsers == null || requestedUsers.isEmpty()) {
 			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId()));
 		}
 
-		List<com.skeleton.project.dto.entity.UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId());
+		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId());
 
-		Set<com.skeleton.project.dto.entity.UserGroup> requestedUsersGroups = new HashSet<>();
-		for(com.skeleton.project.dto.entity.User user : requestedUsers) {
+		Set<UserGroup> requestedUsersGroups = new HashSet<>();
+		for(User user : requestedUsers) {
 			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId()));
 		}
 
@@ -96,7 +100,7 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#getUserGroupsForUser(String)
 	 */
 	@Override
-	public List<com.skeleton.project.dto.entity.UserGroup> getUserGroupsForUser(final String userId) {
+	public List<UserGroup> getUserGroupsForUser(final String userId) {
 		return userGroupService.getUserGroupsForUser(userId);
 	}
 
@@ -104,7 +108,7 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#deleteUserGroup(String)
 	 */
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup deleteUserGroup(final String id) {
+	public UserGroup deleteUserGroup(final String id) {
 //		return userGroupService.deleteUser(id);
 
 		//TODO
@@ -115,16 +119,16 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#addUsersToGroup(UserGroupRequest)
 	 */
     @Override
-    public com.skeleton.project.dto.entity.UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
+    public UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
 
-    	com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+    	UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
 
 		// inflate the user list
 		if (request.isNeedToInflate()) {
-			List<com.skeleton.project.dto.entity.User> inflatedUsers = new ArrayList<>();
-			for (com.skeleton.project.dto.entity.User user : request.getTargetUsers()) {
+			List<User> inflatedUsers = new ArrayList<>();
+			for (User user : request.getTargetUsers()) {
 				if (user.getPrimaryPhone() != null)
 					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
 				else if (user.getPrimaryEmail() != null)
@@ -135,8 +139,8 @@ public class CoreEngine implements ICoreEngine{
 			request.setTargetUsers(inflatedUsers);
 
 //			// TODO need to inflate the kr list too! Do I though?? I think not, only having the objectId is suffice.
-//			List<com.skeleton.project.dto.entity.KeyRelationship> inflatedKRs = new ArrayList<>();
-//			for (com.skeleton.project.dto.entity.KeyRelationship KeyRelationship : request.getKeyRelationships()) {
+//			List<KeyRelationship> inflatedKRs = new ArrayList<>();
+//			for (KeyRelationship KeyRelationship : request.getKeyRelationships()) {
 //				inflatedKRs.add(keyRelationshipService.getKeyRelationship(KeyRelationship.getId()));
 //			}
 //			request.setKeyRelationships(inflatedKRs);
@@ -147,9 +151,9 @@ public class CoreEngine implements ICoreEngine{
     }
 
 	@Override
-	public com.skeleton.project.dto.entity.UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException {
+	public UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException {
 
-		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
 
@@ -164,7 +168,7 @@ public class CoreEngine implements ICoreEngine{
 
 			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
 
-			com.skeleton.project.dto.entity.KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
+			KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
 
 
 			return BaseResponse.builder().example(kr).build();
@@ -182,10 +186,10 @@ public class CoreEngine implements ICoreEngine{
 	 * @throws UserGroupPermissionsException
 	 * @throws EntityNotFoundException
 	 */
-	private void verifyRequest(com.skeleton.project.dto.entity.UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
+	private void verifyRequest(UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
 		for (String lockId : group.getLockIds()) {
 
-			com.skeleton.project.dto.entity.Lock lock = lockService.getLockByLockId(lockId);
+			Lock lock = lockService.getLockByLockId(lockId);
 			com.skeleton.project.dto.entity.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(group.getOwner().getId(), lock.getId());
 
 			if (ownersLockKeyRelationship == null) {
@@ -206,7 +210,7 @@ public class CoreEngine implements ICoreEngine{
 	 * @param request
 	 * @param group
 	 */
-	private void verifyRequest(UserGroupRequest request, com.skeleton.project.dto.entity.UserGroup group) throws UserGroupPermissionsException, EntityNotFoundException {
+	private void verifyRequest(UserGroupRequest request, UserGroup group) throws UserGroupPermissionsException, EntityNotFoundException {
 
 		if (group == null) {
 			String message = "Requested group with id " + request.getGroupId() + " does not exist";
@@ -226,13 +230,13 @@ public class CoreEngine implements ICoreEngine{
 	 * @param group
 	 * @return
 	 */
-	private boolean doesUserHaveAdminRights(String requestingUserId, com.skeleton.project.dto.entity.UserGroup group) {
+	private boolean doesUserHaveAdminRights(String requestingUserId, UserGroup group) {
 		if ( StringUtils.equals(group.getOwner().getId(), requestingUserId) ) {
 			return true;
 		}
 
 		// I know there are 'sexier' ways than this... but I do have a love for the readability of the for loop
-		for(com.skeleton.project.dto.entity.User admins : group.getAdmins()) {
+		for(User admins : group.getAdmins()) {
 			if ( StringUtils.equals(admins.getId(), requestingUserId) ) {
 				return true;
 			}
