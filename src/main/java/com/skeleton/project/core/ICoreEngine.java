@@ -22,11 +22,19 @@ public interface ICoreEngine {
 	UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup);
 
 	/**
-	 * Get the user group associated with the provided id
+	 * Get the user group associated with the provided id.
+	 * Note: no ownership validation, just a simple get
 	 * @param id
 	 * @return
 	 */
 	UserGroup getUserGroup(String id);
+
+	/**
+	 * Fetches a user group whilst doing validaiton that the requesting user has admin or owner access to the the group
+	 * @param request
+	 * @return
+	 */
+	UserGroup fetchOneUserGroup(UserGroupRequest request);
 
 	/**
 	 * Fetches user groups that the requestedUser belongs to and the requestingUser has has admin access to.

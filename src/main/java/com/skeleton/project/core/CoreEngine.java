@@ -61,6 +61,14 @@ public class CoreEngine implements ICoreEngine{
 		return userGroupService.getUserGroup(id);
 	}
 
+	@Override
+	public com.skeleton.project.dto.entity.UserGroup fetchOneUserGroup(UserGroupRequest request) {
+		com.skeleton.project.dto.entity.UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+
+		verifyRequest(request, group);
+		return group;
+	}
+
 	/**
 	 * @see ICoreEngine#fetchUserGroups(com.skeleton.project.dto.entity.User, List)
 	 */
@@ -68,7 +76,7 @@ public class CoreEngine implements ICoreEngine{
 	public Set<com.skeleton.project.dto.entity.UserGroup> fetchUserGroups(com.skeleton.project.dto.entity.User requestingUser, List<com.skeleton.project.dto.entity.User> requestedUsers) {
 
 		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
-		if (requestedUsers.isEmpty()) {
+		if (requestedUsers == null || requestedUsers.isEmpty()) {
 			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId()));
 		}
 

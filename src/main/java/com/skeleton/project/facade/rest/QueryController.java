@@ -74,6 +74,13 @@ public class QueryController {
 		return result;
 	}
 
+	@PostMapping("/v1.0/userGroup/fetchOne")
+	public UserGroup fetchUserGroup(@RequestBody UserGroupRequest request) {
+		UserGroup result = _coreEngine.fetchOneUserGroup(request);
+
+		return result;
+	}
+
 	@DeleteMapping("/v1.0/userGroup/delete/{id}")
 	public QueryResponse deleteUserGroup(@PathVariable String id) {
 		//TODO
