@@ -63,7 +63,7 @@ public interface ICoreEngine {
 	UserGroup deleteUserGroup(String id);
 
 	/**
-	 * Adds a targetUsers of the UserGroupRequest to the provided user group id.
+	 * Adds targetUsers of the UserGroupRequest to the provided user group id. Including key relationships.
 	 *
 	 * @param request
 	 * @return
@@ -71,8 +71,33 @@ public interface ICoreEngine {
 	 */
 	UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
 
-	//TODO: UserGroup addAdmisToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	//TODO: UserGroup addAdminsToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
 
+	/**
+	 * Adds targetLocks of the UserGroupRequest to the provided user group id. Including key relationships.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupPermissionsException
+	 */
+	UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+
+	/**
+	 * Removes targetUsers of the UserGroupRequest from the provided user group id. Including key relationships.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupPermissionsException
+	 */
+	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+
+	/**
+	 * Modifies group name. Request permissions validation performed.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupPermissionsException
+	 */
 	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException;
 
 	/**

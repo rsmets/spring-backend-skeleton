@@ -42,7 +42,7 @@ public class SpringBackendSkeletonApplicationTests {
 
 		List<String> adminIds = new ArrayList<>();
 
-		List<String> lockIds = new ArrayList<>();
+		Set<String> lockIds = new HashSet<>();
 
 		Schedule schedule = new Schedule();
 		schedule.setId("GnOHW6uvA8");

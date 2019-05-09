@@ -23,7 +23,7 @@ public class UserGroup {
     @Id
     String id;
 
-    List<String> lockIds = Collections.emptyList();
+    Set<String> lockIds = Collections.emptySet();
 
     @Embedded("schedule")
     List<Schedule> schedule = Collections.emptyList();
@@ -55,6 +55,7 @@ public class UserGroup {
     @Property("_created_at")
     Date createdAt;
 
+    public static String getLocksIdsAttrbibuteName() { return "lockIds"; }
     // ******************************************************************************
     // Necessary to explicitly have these different json keys map to same attribute
     // due to incoming either a) directly from db ('_id') or as a Pointer in other

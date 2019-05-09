@@ -147,8 +147,26 @@ public class CoreEngine implements ICoreEngine{
 
 		}
 
-		return userGroupService.modifyUserGroup(group, request.getTargetUsers(), request.getKeyRelationships());
+		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds());
     }
+
+	@Override
+	public UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds());
+	}
+
+	@Override
+	public UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+    	return null; //TODO
+	}
 
 	@Override
 	public UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException {

@@ -92,8 +92,8 @@ public class QueryController {
      * @param userGroupRequest
      * @return new UserGroup obj
      */
-    @PostMapping("/v1.0/userGroup/{id}/addUsers")
-    public UserGroup addUser(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
+    @PostMapping("/v1.0/userGroup/addUsers")
+    public UserGroup addUsers(@RequestBody final UserGroupRequest userGroupRequest)
     {
         UserGroup result = _coreEngine.addUsersToGroup(userGroupRequest);
 
@@ -101,6 +101,21 @@ public class QueryController {
 
         return result;
     }
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return new UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/addLocks")
+	public UserGroup addLocks(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.addLocksToGroup(userGroupRequest);
+
+		log.info("new user group: " + result.toString());
+
+		return result;
+	}
 
 	/**
 	 * @since 1.0

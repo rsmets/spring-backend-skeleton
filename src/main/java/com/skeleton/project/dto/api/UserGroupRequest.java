@@ -2,6 +2,7 @@ package com.skeleton.project.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.skeleton.project.dto.entity.KeyRelationship;
+import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,8 @@ public class UserGroupRequest {
 
     User requestingUser;
     List<User> targetUsers;
+    List<User> targetAdmins;
+    List<String> targetLockIds;
     List<KeyRelationship> keyRelationships;
     String groupId;
     String newGroupName;

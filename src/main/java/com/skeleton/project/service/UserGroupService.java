@@ -1,10 +1,7 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
-import com.skeleton.project.dto.entity.KeyRelationship;
-import com.skeleton.project.dto.entity.Schedule;
-import com.skeleton.project.dto.entity.User;
-import com.skeleton.project.dto.entity.UserGroup;
+import com.skeleton.project.dto.entity.*;
 import com.skeleton.project.core.DatabaseDriver;
 import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
@@ -145,10 +142,18 @@ public class UserGroupService implements IUserGroupService {
      * @return
      */
     @Override
-    public UserGroup modifyUserGroup(UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships) {
+    public UserGroup additiveGroupModification(UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships, final List<String> lockIds) {
 
+        if (users != null && !users.isEmpty())
+            userGroup =  addUsers(userGroup, users);
+
+        if (lockIds != null && !lockIds.isEmpty())
+            userGroup = addLocks(userGroup, lockIds);
+
+        // keyRelationships should always be populate by nature of either new users or locks having new krs
         userGroup = addKeyRelationships(userGroup, keyRelationships);
-        return addUsers(userGroup, users);
+
+        return userGroup;
     }
 
     /**
@@ -209,9 +214,18 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup addUsers(UserGroup group, List<User> users) {
 
-        Set<User> newUserSet = group.getUsers();
-        newUserSet.addAll(users);
+        Set<User> userSet = group.getUsers();
+        userSet.addAll(users);
 
-        return updateUserGroup(group, User.getAttributeNamePlural(), newUserSet);
+        return updateUserGroup(group, User.getAttributeNamePlural(), userSet);
+    }
+
+    @Override
+    public UserGroup addLocks(UserGroup group, List<String> lockIds) {
+
+        Set<String> lockIdSet = group.getLockIds();
+        lockIdSet.addAll(lockIds);
+
+        return updateUserGroup(group, UserGroup.getLocksIdsAttrbibuteName(), lockIdSet);
     }
 }

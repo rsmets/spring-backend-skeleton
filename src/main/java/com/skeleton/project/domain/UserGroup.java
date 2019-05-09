@@ -24,7 +24,7 @@ public class UserGroup {
     User owner;
     String name;
 
-    List<String> lockIds = Collections.emptyList();
+    Set<String> lockIds = Collections.emptySet();
     List<Schedule> schedule = Collections.emptyList();
     Set<User> admins = Collections.emptySet();
     Set<User> users = Collections.emptySet();

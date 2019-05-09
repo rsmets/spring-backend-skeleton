@@ -1,6 +1,7 @@
 package com.skeleton.project.service;
 
 import com.skeleton.project.dto.entity.KeyRelationship;
+import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 
@@ -34,7 +35,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup modifyUserGroup(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships);
+    UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds);
 
     /**
      * Modify group name
@@ -45,11 +46,17 @@ public interface IUserGroupService {
     UserGroup modifyGroupName(UserGroup groupId, String newName);
 
     /**
-     * Add users to the specified group
-     * TODO maybe and another param with the request user to see if have admin access to the group
+     * Add users to the specified group.
+     * Validation is done in the core engine/
      */
     UserGroup addUsers(String id, List<User> user);
     UserGroup addUsers(UserGroup group, List<User> users);
+
+    /**
+     * Add locks to the specified group.
+     * Validation is done in the core engine.
+     */
+    UserGroup addLocks(UserGroup group, List<String> lockIds);
 
     /**
      * Adds key relationships to group
