@@ -23,6 +23,14 @@ public class Handler {
             return new ResponseEntity<>("Requested id not found", HttpStatus.NOT_FOUND);
         }
 
+        if (ex instanceof UserGroupPermissionsException) {
+            return new ResponseEntity<>("Requesting user does not have admin privileges for group", HttpStatus.NOT_FOUND);
+        }
+
+        if (ex instanceof LockAdminPermissionsException) {
+            return new ResponseEntity<>("The attempting group owner does not have access to that lock", HttpStatus.NOT_FOUND);
+        }
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 

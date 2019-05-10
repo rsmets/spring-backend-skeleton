@@ -135,7 +135,9 @@ public class UserGroupService implements IUserGroupService {
     }
 
     /**
-     * Can used for: adding users to group, ...
+     * Can used for: adding users and / or locks and key relationships to group
+     * TODO I think should move to coreEngine (and the reductive method)... this is higher level than grabs and deletes
+     *
      * @param userGroup - with settings wanted to persist
      * @param users
      * @param keyRelationships
@@ -152,6 +154,21 @@ public class UserGroupService implements IUserGroupService {
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
         userGroup = addKeyRelationships(userGroup, keyRelationships);
+
+        return userGroup;
+    }
+
+    @Override
+    public UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds) {
+        if (users != null && !users.isEmpty())
+            userGroup =  removeUsers(userGroup, users);
+
+        //TODO
+//        if (lockIds != null && !lockIds.isEmpty())
+//            userGroup = removeLocks(userGroup, lockIds);
+
+        // keyRelationships should always be populate by nature of either new users or locks having new krs
+        userGroup = removeKeyRelationships(userGroup, keyRelationships);
 
         return userGroup;
     }
@@ -186,6 +203,14 @@ public class UserGroupService implements IUserGroupService {
         return updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
     }
 
+    @Override
+    public UserGroup removeKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships) {
+        Set<KeyRelationship> newKRset = group.getKeyRelationships();
+        newKRset.removeAll(keyRelationships);
+
+        return updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+    }
+
     /**
      * Helper to handle updating a single UserGroup attribute
      * @param group
@@ -216,6 +241,14 @@ public class UserGroupService implements IUserGroupService {
 
         Set<User> userSet = group.getUsers();
         userSet.addAll(users);
+
+        return updateUserGroup(group, User.getAttributeNamePlural(), userSet);
+    }
+
+    @Override
+    public UserGroup removeUsers(UserGroup group, List<User> users) {
+        Set<User> userSet = group.getUsers();
+        userSet.removeAll(users);
 
         return updateUserGroup(group, User.getAttributeNamePlural(), userSet);
     }

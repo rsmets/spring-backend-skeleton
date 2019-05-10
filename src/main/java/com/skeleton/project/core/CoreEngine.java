@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -156,7 +157,7 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds());
+		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds());
 	}
 
 	@Override
@@ -165,7 +166,11 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-    	return null; //TODO
+		// TODO Need to grab all the key relationships for said user and remove them
+		// yikes do not have that info handy!
+
+//    	return userGroupService.removeUsers(group, request.getTargetUsers());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), Collections.emptyList());
 	}
 
 	@Override
@@ -178,7 +183,14 @@ public class CoreEngine implements ICoreEngine{
 		return userGroupService.modifyGroupName(group, request.getNewGroupName());
 	}
 
-    @Override
+	@Override
+	public UserGroup removeKeyRelationships(UserGroupRequest request) {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+
+		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships());
+	}
+
+	@Override
 	public BaseResponse executeAction(final Object example) {
 
 		try{

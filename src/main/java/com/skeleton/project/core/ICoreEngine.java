@@ -84,12 +84,16 @@ public interface ICoreEngine {
 
 	/**
 	 * Removes targetUsers of the UserGroupRequest from the provided user group id. Including key relationships.
-	 *
+	 * Validation is required for this batch operation.
 	 * @param request
 	 * @return
 	 * @throws UserGroupPermissionsException
 	 */
 	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+
+	//TODO
+	// validation would be a little different here... valid if owner, admin or group OR acting on oneself (removing oneself from group)
+//	UserGroup removeUserFromGroup(UserGroupRequest request) throws UserGroupPermissionsException;
 
 	/**
 	 * Modifies group name. Request permissions validation performed.
@@ -99,6 +103,15 @@ public interface ICoreEngine {
 	 * @throws UserGroupPermissionsException
 	 */
 	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException;
+
+	/**
+	 * Removes key relationship from group. NO request validation performed.
+	 * TODO: figure out a secret auth for these requests that have no requestingUser
+	 *
+	 * @param request
+	 * @return
+	 */
+	UserGroup removeKeyRelationships(UserGroupRequest request);
 
 	/**
 	 * Dummy function that should probably be deleted..

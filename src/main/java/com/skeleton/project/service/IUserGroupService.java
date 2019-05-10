@@ -30,12 +30,21 @@ public interface IUserGroupService {
     List<UserGroup> getUserGroupsForUser(String userId);
 
     /**
-     * Modified existing user group
-     * TODO maybe and another param with the request user to see if have admin access to the group
+     * Additive modification to existing user group. Validation is performed in core engine
+     *
      * @param userGroup - with settings wanted to persist
      * @return
      */
     UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds);
+
+    /**
+     * Reducing modification to existing user group. Validation is performed in core engine
+     *
+     * @param userGroup - with settings wanted to persist
+     * @return
+     */
+    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds);
+
 
     /**
      * Modify group name
@@ -47,10 +56,16 @@ public interface IUserGroupService {
 
     /**
      * Add users to the specified group.
-     * Validation is done in the core engine/
+     * Validation is done in the core engine
      */
     UserGroup addUsers(String id, List<User> user);
     UserGroup addUsers(UserGroup group, List<User> users);
+
+    /**
+     * Removes users from the specified group.
+     * Validation is done in the core engine
+     */
+    UserGroup removeUsers(UserGroup group, List<User> users);
 
     /**
      * Add locks to the specified group.
@@ -62,4 +77,9 @@ public interface IUserGroupService {
      * Adds key relationships to group
      */
     UserGroup addKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);
+
+    /**
+     * Removes key relationships from group
+     */
+    UserGroup removeKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);
 }

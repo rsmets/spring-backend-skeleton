@@ -120,7 +120,7 @@ public class QueryController {
 	/**
 	 * @since 1.0
 	 * @param userGroupRequest
-	 * @return new UserGroup obj
+	 * @return modified UserGroup obj
 	 */
 	@PostMapping("/v1.0/userGroup/{id}/modifyName")
 	public UserGroup modifyGroupName(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
@@ -128,6 +128,21 @@ public class QueryController {
 		UserGroup result = _coreEngine.modifyGroupName(userGroupRequest);
 
 		log.info("user group with new name: " + result.toString());
+
+		return result;
+	}
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/removeUsers")
+	public UserGroup removeUsers(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.removeUsersFromGroup(userGroupRequest);
+
+		log.info("user group with removed users: " + result.toString());
 
 		return result;
 	}

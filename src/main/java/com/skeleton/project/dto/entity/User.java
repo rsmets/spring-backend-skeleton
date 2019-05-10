@@ -9,6 +9,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.mongojack.ObjectId;
 import org.parse4j.ParseClassName;
@@ -23,10 +24,12 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Entity("_User")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     @Property("_id")
     @Id
+    @EqualsAndHashCode.Include
     String _id; //todo convert back to just id;
 
     String primaryEmail;
