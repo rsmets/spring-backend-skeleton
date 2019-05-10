@@ -29,7 +29,7 @@ public class User {
 
     @Property("_id")
     @Id
-    @EqualsAndHashCode.Include
+    @EqualsAndHashCode.Include // id is the only attribute used for equals and hashcode methods
     String _id; //todo convert back to just id;
 
     String primaryEmail;

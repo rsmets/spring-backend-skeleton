@@ -14,7 +14,7 @@ public interface ICoreEngine {
 	/**
 	 * Creates a new user group.
 	 *
-	 * NOTE: inflates the depenedent objs, but does not create them (that is handle in respective services,
+	 * NOTE: inflates the dependent objs, but does not create them (that is handle in respective services,
 	 * for not just in the main node app for things like Schedule, Key Relationships, etc)
 	 * @param userGroup
 	 * @return
@@ -30,7 +30,7 @@ public interface ICoreEngine {
 	UserGroup getUserGroup(String id);
 
 	/**
-	 * Fetches a user group whilst doing validaiton that the requesting user has admin or owner access to the the group
+	 * Fetches a user group whilst doing validation that the requesting user has admin or owner access to the the group
 	 * @param request
 	 * @return
 	 */

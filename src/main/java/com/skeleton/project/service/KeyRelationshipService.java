@@ -81,6 +81,23 @@ public class KeyRelationshipService implements IKeyRelationshipService {
     }
 
     @Override
+    public List<KeyRelationship> getKeyRelationshipsByUserAndGroup(String userObjectId, String groupId) {
+        final Query<KeyRelationship> query = _database.getDatastore().createQuery(KeyRelationship.class);
+
+        final String userPointerString = "_User$" + userObjectId;
+
+        final List<KeyRelationship> krs = query
+                .disableValidation()
+                .filter("_p_user", userPointerString)
+                .filter("groupId", groupId)
+                .asList();
+
+        log.info("Got key relationship with user " + userObjectId + " and groupId : " + groupId + ": " + krs);
+
+        return krs;
+    }
+
+    @Override
     public KeyRelationship getKeyRelationship(String userObjectId, String lockObjectId) {
         final Query<KeyRelationship> query = _database.getDatastore().createQuery(KeyRelationship.class);
 

@@ -8,8 +8,9 @@ import dev.morphia.annotations.Property;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,22 +24,22 @@ public class UserGroup {
     @Id
     String id;
 
-    Set<String> lockIds = Collections.emptySet();
+    Set<String> lockIds = new HashSet<>();
 
     @Embedded("schedule")
-    List<Schedule> schedule = Collections.emptyList();
+    List<Schedule> schedule = new ArrayList<>();
 
     @Embedded("owner")
     User owner;
 
     @Embedded("admins")
-    Set<User> admins = Collections.emptySet();
+    Set<User> admins = new HashSet<>();
 
     @Embedded("users")
-    Set<User> users = Collections.emptySet();
+    Set<User> users = new HashSet<>();
 
     @Embedded("keyRelationships")
-    Set<KeyRelationship> keyRelationships; // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
+    Set<KeyRelationship> keyRelationships = new HashSet<>(); // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
 
     String name;
 

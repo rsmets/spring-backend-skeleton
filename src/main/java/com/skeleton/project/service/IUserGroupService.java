@@ -74,6 +74,12 @@ public interface IUserGroupService {
     UserGroup addLocks(UserGroup group, List<String> lockIds);
 
     /**
+     * Removes locks from the specified group.
+     * Validation is done in the core engine.
+     */
+    UserGroup removeLocks(UserGroup group, List<String> lockIds);
+
+    /**
      * Adds key relationships to group
      */
     UserGroup addKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);

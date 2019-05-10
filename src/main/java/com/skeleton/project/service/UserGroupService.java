@@ -144,33 +144,28 @@ public class UserGroupService implements IUserGroupService {
      * @return
      */
     @Override
-    public UserGroup additiveGroupModification(UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships, final List<String> lockIds) {
+    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships, final List<String> lockIds) {
 
         if (users != null && !users.isEmpty())
-            userGroup =  addUsers(userGroup, users);
+            _addUsers(userGroup, users);
 
         if (lockIds != null && !lockIds.isEmpty())
-            userGroup = addLocks(userGroup, lockIds);
+            _addLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
-        userGroup = addKeyRelationships(userGroup, keyRelationships);
-
-        return userGroup;
+        return addKeyRelationships(userGroup, keyRelationships);
     }
 
     @Override
-    public UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds) {
+    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds) {
         if (users != null && !users.isEmpty())
-            userGroup =  removeUsers(userGroup, users);
+            _removeUsers(userGroup, users);
 
-        //TODO
-//        if (lockIds != null && !lockIds.isEmpty())
-//            userGroup = removeLocks(userGroup, lockIds);
+        if (lockIds != null && !lockIds.isEmpty())
+            _removeLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
-        userGroup = removeKeyRelationships(userGroup, keyRelationships);
-
-        return userGroup;
+        return removeKeyRelationships(userGroup, keyRelationships);
     }
 
     /**
@@ -189,7 +184,7 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup modifyGroupName(final UserGroup group, final String newName) {
         group.setName(newName); // TODO figure out the proper update and fetch in one go. Till then this is a little hack to return the seemingly new db group obj
-        return updateUserGroup(group, "name", newName);
+        return _updateUserGroup(group, "name", newName);
     }
 
     /**
@@ -200,7 +195,7 @@ public class UserGroupService implements IUserGroupService {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.addAll(keyRelationships);
 
-        return updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        return _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
     }
 
     @Override
@@ -208,7 +203,34 @@ public class UserGroupService implements IUserGroupService {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.removeAll(keyRelationships);
 
-        return updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        return _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+    }
+
+    @Override
+    public UserGroup addUsers(UserGroup group, List<User> users) {
+        _addUsers(group, users);
+        return _updateUserGroup(group, User.getAttributeNamePlural(), group.getUsers());
+    }
+
+    @Override
+    public UserGroup removeUsers(UserGroup group, List<User> users) {
+        _removeUsers(group, users);
+
+        return _updateUserGroup(group, User.getAttributeNamePlural(), group.getUsers());
+    }
+
+    @Override
+    public UserGroup addLocks(UserGroup group, final List<String> lockIds) {
+        _addLocks(group, lockIds);
+        return _updateUserGroup(group, UserGroup.getLocksIdsAttrbibuteName(), group.getLockIds());
+    }
+
+    @Override
+    public UserGroup removeLocks(UserGroup group, final List<String> lockIds) {
+        Set<String> lockIdsSet = group.getLockIds();
+        lockIdsSet.removeAll(lockIds);
+
+        return _updateUserGroup(group, User.getAttributeNamePlural(), lockIdsSet);
     }
 
     /**
@@ -218,7 +240,7 @@ public class UserGroupService implements IUserGroupService {
      * @param newValue
      * @return
      */
-    private UserGroup updateUserGroup(UserGroup group, String attributeName, Object newValue) {
+    private UserGroup _updateUserGroup(UserGroup group, String attributeName, Object newValue) {
         /**
          * Note: Need to use the Morphia filter method instead of find due as the difference are one does a regex mongo $regex lookup (that is find) and the other
          * does a $oid lookup (filter). When not using a bjson ObjectId on the entity the find seems to fail for update queries (but works for regular finds?)
@@ -236,29 +258,19 @@ public class UserGroupService implements IUserGroupService {
         return group;
     }
 
-    @Override
-    public UserGroup addUsers(UserGroup group, List<User> users) {
-
-        Set<User> userSet = group.getUsers();
-        userSet.addAll(users);
-
-        return updateUserGroup(group, User.getAttributeNamePlural(), userSet);
+    private void _addLocks(UserGroup group, final List<String> lockIds) {
+        group.getLockIds().addAll(lockIds);
     }
 
-    @Override
-    public UserGroup removeUsers(UserGroup group, List<User> users) {
-        Set<User> userSet = group.getUsers();
-        userSet.removeAll(users);
-
-        return updateUserGroup(group, User.getAttributeNamePlural(), userSet);
+    private void _addUsers(UserGroup group, List<User> users) {
+        group.getUsers().addAll(users);
     }
 
-    @Override
-    public UserGroup addLocks(UserGroup group, List<String> lockIds) {
+    private void _removeUsers(UserGroup group, final List<User> users) {
+        group.getUsers().removeAll(users);
+    }
 
-        Set<String> lockIdSet = group.getLockIds();
-        lockIdSet.addAll(lockIds);
-
-        return updateUserGroup(group, UserGroup.getLocksIdsAttrbibuteName(), lockIdSet);
+    private void _removeLocks(UserGroup group, final List<String> lockIds) {
+        group.getLockIds().removeAll(lockIds);
     }
 }

@@ -6,6 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Property;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.mongojack.Id;
 import org.mongojack.ObjectId;
@@ -17,10 +18,12 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class KeyRelationship {
 
     @Property("_id")
     @Id
+    @EqualsAndHashCode.Include // id is the only attribute used for equals and hashcode methods
     String id;
 
     Date endDate;

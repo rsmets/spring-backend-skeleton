@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -55,7 +56,7 @@ public class CoreEngine implements ICoreEngine{
 	@Override
 	public UserGroup createUserGroup(UserGroup userGroup) {
 
-		verifyRequest(userGroup);
+		verifyOwnerRequest(userGroup);
 		return userGroupService.createUserGroup(userGroup);
 	}
 
@@ -167,10 +168,13 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		// TODO Need to grab all the key relationships for said user and remove them
-		// yikes do not have that info handy!
+		// TODO Need to grab all the key relationships for said user and remove them from group (ALSO NEED TO DELETE THEM... HMM TRUE KR SERVICE IMPL??)
+		List<KeyRelationship> userGroupKrs = new ArrayList<>();
+		for(User user : request.getTargetUsers()) {
+			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+		}
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), Collections.emptyList());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
 	}
 
 	@Override
@@ -228,14 +232,14 @@ public class CoreEngine implements ICoreEngine{
 	 * @throws UserGroupAdminPermissionsException
 	 * @throws EntityNotFoundException
 	 */
-	private void verifyRequest(UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
+	private void verifyOwnerRequest(UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
 		for (String lockId : group.getLockIds()) {
 
 			Lock lock = lockService.getLockByLockId(lockId);
 			com.skeleton.project.dto.entity.KeyRelationship ownersLockKeyRelationship = keyRelationshipService.getKeyRelationship(group.getOwner().getId(), lock.getId());
 
 			if (ownersLockKeyRelationship == null) {
-				log.error("The attempted group owner does not have access to that lock");
+				log.error("The attempted group owner does not have admin+ access to that lock");
 				throw new LockAdminPermissionsException(lockId, group.getOwner().getId());
 			}
 			//RJS due to the Role pointer being a string would need to TODO roleService todo db retrieval todo roleId comparison here. Will do in node world for now
