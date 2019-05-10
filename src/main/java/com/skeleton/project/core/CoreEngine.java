@@ -10,7 +10,8 @@ import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.exceptions.LockAdminPermissionsException;
-import com.skeleton.project.exceptions.UserGroupPermissionsException;
+import com.skeleton.project.exceptions.ModifcationException;
+import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
 import com.skeleton.project.service.IKeyRelationshipService;
@@ -120,7 +121,7 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#addUsersToGroup(UserGroupRequest)
 	 */
     @Override
-    public UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupPermissionsException {
+    public UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
 
     	UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
@@ -152,7 +153,7 @@ public class CoreEngine implements ICoreEngine{
     }
 
 	@Override
-	public UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+	public UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
@@ -161,7 +162,7 @@ public class CoreEngine implements ICoreEngine{
 	}
 
 	@Override
-	public UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupPermissionsException {
+	public UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
@@ -169,12 +170,23 @@ public class CoreEngine implements ICoreEngine{
 		// TODO Need to grab all the key relationships for said user and remove them
 		// yikes do not have that info handy!
 
-//    	return userGroupService.removeUsers(group, request.getTargetUsers());
 		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), Collections.emptyList());
 	}
 
 	@Override
-	public UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException {
+	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation: special in the sense if the user is acting on his self it is valid too
+		verifyUserRequest(request, group);
+
+		// TODO Need to grab all the key relationships for said user and remove them
+		// yikes do not have that info handy!
+
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), Collections.emptyList());
+	}
+
+	@Override
+	public UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
@@ -213,7 +225,7 @@ public class CoreEngine implements ICoreEngine{
 	/**
 	 * Verifies that the group owner has the proper key relationship with group's locks
 	 * @param group
-	 * @throws UserGroupPermissionsException
+	 * @throws UserGroupAdminPermissionsException
 	 * @throws EntityNotFoundException
 	 */
 	private void verifyRequest(UserGroup group) throws LockAdminPermissionsException, EntityNotFoundException {
@@ -240,7 +252,7 @@ public class CoreEngine implements ICoreEngine{
 	 * @param request
 	 * @param group
 	 */
-	private void verifyRequest(UserGroupRequest request, UserGroup group) throws UserGroupPermissionsException, EntityNotFoundException {
+	private void verifyRequest(UserGroupRequest request, UserGroup group) throws UserGroupAdminPermissionsException, EntityNotFoundException {
 
 		if (group == null) {
 			String message = "Requested group with id " + request.getGroupId() + " does not exist";
@@ -250,7 +262,26 @@ public class CoreEngine implements ICoreEngine{
 
 		if (!doesUserHaveAdminRights(request.getRequestingUser().getId(), group)) {
 			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
-			throw new UserGroupPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());
+			throw new UserGroupAdminPermissionsException(request.getRequestingUser().getId(), group.getId(), group.getName());
+		}
+	}
+
+	/**
+	 * Verifies the requesting user is acting only on oneself and throws exception if not
+	 * @param request
+	 * @param group
+	 */
+	private void verifyUserRequest(UserGroupRequest request, UserGroup group) throws UserGroupAdminPermissionsException, EntityNotFoundException {
+
+		if (group == null) {
+			String message = "Requested group with id " + request.getGroupId() + " does not exist";
+			log.error(message);
+			throw new EntityNotFoundException(message);
+		}
+
+		if (!isUserActingOnSelf(request)) {
+			log.error("Requesting user " + request.getRequestingUser().getId() + " does not have admin privileges for group " + group.getName() + " " + group.getId());
+			throw new ModifcationException(request.getRequestingUser().getId(), group.getId(), group.getName());
 		}
 	}
 
@@ -273,6 +304,21 @@ public class CoreEngine implements ICoreEngine{
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if the requesting user id matches targetUser's
+	 * @param request
+	 * @return
+	 */
+	private boolean isUserActingOnSelf(UserGroupRequest request) {
+		for (User user : request.getTargetUsers()) {
+			if ( !StringUtils.equals(request.getRequestingUser().getId(), user.getId()) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private Object getDbFullObject(final Object search) {

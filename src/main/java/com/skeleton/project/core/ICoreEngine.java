@@ -4,7 +4,7 @@ import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
-import com.skeleton.project.exceptions.UserGroupPermissionsException;
+import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 
 import java.util.List;
 import java.util.Set;
@@ -67,42 +67,47 @@ public interface ICoreEngine {
 	 *
 	 * @param request
 	 * @return
-	 * @throws UserGroupPermissionsException
+	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
-	//TODO: UserGroup addAdminsToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	//TODO: UserGroup addAdminsToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Adds targetLocks of the UserGroupRequest to the provided user group id. Including key relationships.
 	 *
 	 * @param request
 	 * @return
-	 * @throws UserGroupPermissionsException
+	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Removes targetUsers of the UserGroupRequest from the provided user group id. Including key relationships.
 	 * Validation is required for this batch operation.
 	 * @param request
 	 * @return
-	 * @throws UserGroupPermissionsException
+	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
-	//TODO
-	// validation would be a little different here... valid if owner, admin or group OR acting on oneself (removing oneself from group)
-//	UserGroup removeUserFromGroup(UserGroupRequest request) throws UserGroupPermissionsException;
+	/**
+	 * Removes a user (and their key relationships) from the specified group.
+	 * Note special validation: valid if owner, admin or group OR acting on oneself (removing oneself from group)
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Modifies group name. Request permissions validation performed.
 	 *
 	 * @param request
 	 * @return
-	 * @throws UserGroupPermissionsException
+	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupPermissionsException;
+	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Removes key relationship from group. NO request validation performed.

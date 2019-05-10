@@ -147,4 +147,19 @@ public class QueryController {
 		return result;
 	}
 
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/removeSelf")
+	public UserGroup removeSelf(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.removeSelfFromGroup(userGroupRequest);
+
+		log.info("user group with removed (self) user: " + result.toString());
+
+		return result;
+	}
+
 }
