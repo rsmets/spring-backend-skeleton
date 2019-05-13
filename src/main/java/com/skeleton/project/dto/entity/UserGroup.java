@@ -20,7 +20,6 @@ import java.util.Set;
 @Entity
 public class UserGroup {
 
-//    @Property("_id")
     @Id
     String id;
 

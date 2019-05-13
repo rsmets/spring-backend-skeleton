@@ -1,8 +1,10 @@
 package com.skeleton.project.service;
 
 import com.mongodb.DBCollection;
+import com.mongodb.WriteResult;
 import com.skeleton.project.dto.entity.*;
 import com.skeleton.project.core.DatabaseDriver;
+import dev.morphia.DeleteOptions;
 import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
 import dev.morphia.query.UpdateResults;
@@ -62,6 +64,13 @@ public class UserGroupService implements IUserGroupService {
         return saveUserGroupWithMorphia(userGroup);
     }
 
+    @Override
+    public WriteResult deleteUserGroup(String objectId) {
+        WriteResult result = _database.getDatastore().delete(UserGroup.class, new ObjectId(objectId));
+
+        return result;
+    }
+
     private UserGroup saveUserGroupWithMorphia(UserGroup userGroup) {
         // Populates the id field
         _database.getDatastore().save(userGroup);
@@ -119,14 +128,6 @@ public class UserGroupService implements IUserGroupService {
     }
 
     private UserGroup getUserGroupWithMorphia(final String objectId) {
-        final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
-//        final UserGroup res = _database.getDatastore().getByKey(UserGroup.class, objectId);
-
-        final UserGroup userGroups = query
-                .disableValidation()
-                .field("_id").equalIgnoreCase(new ObjectId(objectId))
-                .get(); //todo figure out how to query for one.
-
         final UserGroup ug = _database.getDatastore().get(UserGroup.class, new ObjectId(objectId));
 
         log.info("Got user group with id " + objectId + ": " + ug);

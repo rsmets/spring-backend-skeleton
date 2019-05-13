@@ -1,7 +1,7 @@
 package com.skeleton.project.service;
 
+import com.mongodb.WriteResult;
 import com.skeleton.project.dto.entity.KeyRelationship;
-import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 
@@ -14,6 +14,13 @@ public interface IUserGroupService {
      * @return
      */
     UserGroup createUserGroup(UserGroup userGroup);
+
+    /**
+     * Deletes a user group by objectId
+     * @param objectId
+     * @return
+     */
+    WriteResult deleteUserGroup(String objectId);
 
     /**
      * Gets existing user group

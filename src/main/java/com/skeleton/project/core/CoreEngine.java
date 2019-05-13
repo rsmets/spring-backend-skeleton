@@ -2,6 +2,7 @@ package com.skeleton.project.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
@@ -111,11 +112,10 @@ public class CoreEngine implements ICoreEngine{
 	 * @see ICoreEngine#deleteUserGroup(String)
 	 */
 	@Override
-	public UserGroup deleteUserGroup(final String id) {
-//		return userGroupService.deleteUser(id);
+	public WriteResult deleteUserGroup(final String id) {
+		WriteResult result = userGroupService.deleteUserGroup(id);
 
-		//TODO
-		return null;
+		return result;
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.skeleton.project.facade.rest;
 
+import com.mongodb.WriteResult;
 import com.skeleton.project.domain.*;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.UserGroup;
@@ -83,8 +84,8 @@ public class QueryController {
 
 	@DeleteMapping("/v1.0/userGroup/delete/{id}")
 	public QueryResponse deleteUserGroup(@PathVariable String id) {
-		//TODO
-		return null;
+		WriteResult result = _coreEngine.deleteUserGroup(id);
+		return QueryResponse.builder().example(result).build();
 	}
 
     /**

@@ -1,5 +1,6 @@
 package com.skeleton.project.core;
 
+import com.mongodb.WriteResult;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.User;
@@ -20,6 +21,15 @@ public interface ICoreEngine {
 	 * @return
 	 */
 	UserGroup createUserGroup(com.skeleton.project.dto.entity.UserGroup userGroup);
+
+	/**
+	 * Deletes the user group for the associated id. Internal obj deletion should
+	 * be handled in their respective services, similar to creation
+	 *
+	 * @param id
+	 * @return
+	 */
+	WriteResult deleteUserGroup(String id);
 
 	/**
 	 * Get the user group associated with the provided id.
@@ -52,15 +62,6 @@ public interface ICoreEngine {
 	 * @return
 	 */
 	List<UserGroup> getUserGroupsForUser(String userId);
-
-	/**
-	 * Deletes the user group for the associated id. Internal obj deletion should
-	 * be handled in their respective services, similar to creation
-	 *
-	 * @param id
-	 * @return
-	 */
-	UserGroup deleteUserGroup(String id);
 
 	/**
 	 * Adds targetUsers of the UserGroupRequest to the provided user group id. Including key relationships.
