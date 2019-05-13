@@ -168,10 +168,14 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		// TODO Need to grab all the key relationships for said user and remove them from group (ALSO NEED TO DELETE THEM... HMM TRUE KR SERVICE IMPL??)
-		List<KeyRelationship> userGroupKrs = new ArrayList<>();
+		// Need to grab all the key relationships for said user, delete them, and remove them from group
+		Set<KeyRelationship> userGroupKrs = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
 			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+		}
+
+		for(KeyRelationship keyRelationship: userGroupKrs) {
+			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
 		}
 
 		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
@@ -183,10 +187,17 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation: special in the sense if the user is acting on his self it is valid too
 		verifyUserRequest(request, group);
 
-		// TODO Need to grab all the key relationships for said user and remove them
-		// yikes do not have that info handy!
+		// Need to grab all the key relationships for said user, delete them, and remove them from group
+		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		for(User user : request.getTargetUsers()) {
+			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+		}
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), Collections.emptyList());
+		for(KeyRelationship keyRelationship: userGroupKrs) {
+			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
+		}
+
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -23,7 +24,7 @@ public class UserGroupRequest {
     List<User> targetUsers;
     List<User> targetAdmins;
     List<String> targetLockIds;
-    List<KeyRelationship> keyRelationships;
+    Set<KeyRelationship> keyRelationships;
     String groupId;
     String newGroupName;
     boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists

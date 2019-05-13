@@ -145,7 +145,7 @@ public class UserGroupService implements IUserGroupService {
      * @return
      */
     @Override
-    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final List<KeyRelationship> keyRelationships, final List<String> lockIds) {
+    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships, final List<String> lockIds) {
 
         if (users != null && !users.isEmpty())
             _addUsers(userGroup, users);
@@ -158,7 +158,7 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
-    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds) {
+    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds) {
         if (users != null && !users.isEmpty())
             _removeUsers(userGroup, users);
 
@@ -189,18 +189,21 @@ public class UserGroupService implements IUserGroupService {
     }
 
     /**
-     * @see IUserGroupService#addKeyRelationships(UserGroup, List)
+     * @see IUserGroupService#addKeyRelationships(UserGroup, Set)
      */
     @Override
-    public UserGroup addKeyRelationships(final UserGroup group, final List<KeyRelationship> keyRelationships) {
+    public UserGroup addKeyRelationships(final UserGroup group, final Set<KeyRelationship> keyRelationships) {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.addAll(keyRelationships);
 
         return _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
     }
 
+    /**
+     * @see IUserGroupService#removeKeyRelationships(UserGroup, Set)
+     */
     @Override
-    public UserGroup removeKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships) {
+    public UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships) {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.removeAll(keyRelationships);
 

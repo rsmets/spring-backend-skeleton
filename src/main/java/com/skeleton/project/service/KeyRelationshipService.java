@@ -1,6 +1,7 @@
 package com.skeleton.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.WriteResult;
 import com.skeleton.project.core.DatabaseDriver;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import dev.morphia.Key;
@@ -116,9 +117,9 @@ public class KeyRelationshipService implements IKeyRelationshipService {
     }
 
     @Override
-    public Boolean deleteKeyRelationship(KeyRelationship keyRelationship) {
-
-        return null;
+    public WriteResult deleteKeyRelationship(String id) {
+        WriteResult result = _database.getDatastore().delete(KeyRelationship.class, id);
+        return result;
     }
 
     private KeyRelationship getWithParse(String objectId) {

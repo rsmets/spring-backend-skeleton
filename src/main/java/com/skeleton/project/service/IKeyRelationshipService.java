@@ -1,5 +1,6 @@
 package com.skeleton.project.service;
 
+import com.mongodb.WriteResult;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import dev.morphia.Key;
 
@@ -19,5 +20,5 @@ public interface IKeyRelationshipService {
 
     KeyRelationship getKeyRelationship(String userObjectId, String lockObjectId);
 
-    Boolean deleteKeyRelationship(KeyRelationship keyRelationship);
+    WriteResult deleteKeyRelationship(String objectId);
 }

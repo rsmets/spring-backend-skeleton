@@ -6,6 +6,7 @@ import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IUserGroupService {
 
@@ -42,7 +43,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds);
+    UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds);
 
     /**
      * Reducing modification to existing user group. Validation is performed in core engine
@@ -50,7 +51,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, List<KeyRelationship> keyRelationships, List<String> lockIds);
+    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds);
 
 
     /**
@@ -89,10 +90,10 @@ public interface IUserGroupService {
     /**
      * Adds key relationships to group
      */
-    UserGroup addKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);
+    UserGroup addKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships);
 
     /**
      * Removes key relationships from group
      */
-    UserGroup removeKeyRelationships(UserGroup group, List<KeyRelationship> keyRelationships);
+    UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships);
 }
