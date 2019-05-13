@@ -146,12 +146,12 @@ public class UserGroupService implements IUserGroupService {
      */
     @Override
     public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships, final List<String> lockIds) {
-
+        // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
-            _addUsers(userGroup, users);
+            addUsers(userGroup, users);
 
         if (lockIds != null && !lockIds.isEmpty())
-            _addLocks(userGroup, lockIds);
+            addLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
         return addKeyRelationships(userGroup, keyRelationships);
@@ -159,11 +159,12 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds) {
+        // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
-            _removeUsers(userGroup, users);
+            removeUsers(userGroup, users);
 
         if (lockIds != null && !lockIds.isEmpty())
-            _removeLocks(userGroup, lockIds);
+            removeLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
         return removeKeyRelationships(userGroup, keyRelationships);
