@@ -49,19 +49,19 @@ public class UserGroupService implements IUserGroupService {
         }
         userGroup.setSchedule(schedulesInflated);
 
-        Set<User> usersInflated = new HashSet<>();
-        Set<User> users = userGroup.getUsers();
-        // TODO figure out a batch grab
-        for(User user : users) {
-            User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
-            usersInflated.add(userPopulated);
-        }
-        userGroup.setUsers(usersInflated);
+        // create the key relationship mapping
+        Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
+        for (KeyRelationship kr : userGroup.getKeyRelationships()) {
+            String userId = kr.getUser().getId();
+            List<KeyRelationship> krs = keyRelationshipMap.get(userId);
 
-        /**
-         * RJS 4/16/19 Do I really really need to inflate? Opting not to for keyRelationship.
-         * I think that having the objectIds should be enough...
-         */
+            if (krs == null)
+                krs = new ArrayList<>();
+
+            krs.add(kr);
+            keyRelationshipMap.put(userId, krs);
+        }
+        userGroup.setKeyRelationshipsMap(keyRelationshipMap);
 
         return saveUserGroupWithMorphia(userGroup);
     }

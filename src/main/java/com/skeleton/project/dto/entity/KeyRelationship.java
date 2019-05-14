@@ -1,6 +1,8 @@
 package com.skeleton.project.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -42,7 +45,9 @@ public class KeyRelationship {
     String pendingFirstName;
     String pendingEmailInvite;
     String smsUnlockCode;
-    String userGroupId;
+
+    @JsonIgnore // to prevent corner case of stale kr group value from being persisted
+    String groupId;
 
     // RJS tried to use mongo dbRef object but struggled to get to decode... the id will do for grabs / tracking.
 //    @Reference
@@ -53,8 +58,8 @@ public class KeyRelationship {
 
     @Embedded
     Role role;
-    @Property("_p_role")
-    String roleObjectId;
+//    @Property("_p_role")
+//    String roleObjectId;
     @Embedded("key")
     Lock key;
 

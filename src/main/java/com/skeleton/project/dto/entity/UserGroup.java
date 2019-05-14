@@ -1,5 +1,6 @@
 package com.skeleton.project.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
@@ -10,8 +11,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -40,6 +43,9 @@ public class UserGroup {
     @Embedded("keyRelationships")
     Set<KeyRelationship> keyRelationships = new HashSet<>(); // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
 
+    @Embedded("keyRelationshipsMap")
+    Map<String, List<KeyRelationship>> keyRelationshipsMap = new HashMap<>(); // userId, kr
+
     String name;
 
     // todo put this stuff the parent class
@@ -50,6 +56,7 @@ public class UserGroup {
     boolean canRemoteUnlock;
     boolean canUnlockUntil;
 
+    // TODO with morpia 'hook' annotations...
     @Property("_updated_at")
     Date updatedAt;
     @Property("_created_at")

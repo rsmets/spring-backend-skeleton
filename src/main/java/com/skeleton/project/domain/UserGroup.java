@@ -1,6 +1,7 @@
 package com.skeleton.project.domain;
 
 import com.fasterxml.jackson.core.TreeNode;
+import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
@@ -13,9 +14,7 @@ import java.util.*;
 @Data
 @Builder
 @Entity
-public class UserGroup {
-//@ParseClassName("UserGroup")
-//public class UserGroup extends ParseObject { //todo extend an abstract group class that has a notion of a tree node
+public class UserGroup { //todo extend an abstract group class that has a notion of a tree node
 
     @ObjectId
     @Id
@@ -29,6 +28,9 @@ public class UserGroup {
     Set<User> admins = Collections.emptySet();
     Set<User> users = Collections.emptySet();
     Set<KeyRelationship> keyRelationships;
+
+    @Embedded("keyRelationshipsMap")
+    Map<User, KeyRelationship> keyRelationshipsMap = new HashMap<>();
 
     @Property("_updated_at")
     Date updatedAt;

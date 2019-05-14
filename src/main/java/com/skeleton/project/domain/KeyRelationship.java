@@ -38,7 +38,7 @@ public class KeyRelationship {
     String pendingFirstName;
     String pendingEmailInvite;
     String smsUnlockCode;
-    String userGroupId;
+    String groupId;
 
 //    UserGroup userGroup;
 
@@ -74,7 +74,7 @@ public class KeyRelationship {
 //                .role(Role.convertFromDto(dto.getRoleObjectId()))  //RJS due to the pointer being a string would need to TODO roleService todo db retrieval
                 .updatedAt(dto.getUpdatedAt())
                 .createdAt(dto.getCreatedAt())
-                .userGroupId(dto.getUserGroupId())
+                .groupId(dto.getGroupId())
 //                .userGroup(UserGroup.convertFromDto(dto.getUserGroup())) // RJS tried to use mongo dbRef object but struggled to get to decode... the id will do for grabs / tracking.
                 .build();
 
