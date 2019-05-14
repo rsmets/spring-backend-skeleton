@@ -1,6 +1,5 @@
 package com.skeleton.project.dto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;

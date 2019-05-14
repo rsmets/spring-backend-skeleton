@@ -2,6 +2,7 @@ package com.skeleton.project.dto.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -14,11 +15,11 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @Entity
 public class Schedule {
 
-//    @ObjectId
     @Property("_id")
     @Id
     String _id;

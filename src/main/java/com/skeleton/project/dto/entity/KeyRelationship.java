@@ -40,6 +40,7 @@ public class KeyRelationship {
     Pointer reference;
 
     @Embedded("schedule")
+    @JsonIgnore // not really necessary that the schedule list is tracked in the grouping world due to it living on the group itself
     List<Schedule> schedule;
 
     String pendingFirstName;
