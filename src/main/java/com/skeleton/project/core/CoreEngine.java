@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -174,9 +173,10 @@ public class CoreEngine implements ICoreEngine{
 			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
 		}
 
-		for(KeyRelationship keyRelationship: userGroupKrs) {
-			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
-		}
+		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
+//		for(KeyRelationship keyRelationship: userGroupKrs) {
+//			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
+//		}
 
 		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
 	}
@@ -193,9 +193,10 @@ public class CoreEngine implements ICoreEngine{
 			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
 		}
 
-		for(KeyRelationship keyRelationship: userGroupKrs) {
-			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
-		}
+		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
+//		for(KeyRelationship keyRelationship: userGroupKrs) {
+//			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
+//		}
 
 		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
 	}
@@ -215,6 +216,21 @@ public class CoreEngine implements ICoreEngine{
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
 		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships());
+	}
+
+	@Override
+	public Set<KeyRelationship> getGroupKeyRelationshipsForUsers(UserGroupRequest request) {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		// Need to grab all the key relationships for said user, delete them, and remove them from group
+		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		for(User user : request.getTargetUsers()) {
+			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+		}
+
+		return userGroupKrs;
 	}
 
 	@Override

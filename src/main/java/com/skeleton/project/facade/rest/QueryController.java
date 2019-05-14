@@ -3,6 +3,7 @@ package com.skeleton.project.facade.rest;
 import com.mongodb.WriteResult;
 import com.skeleton.project.domain.*;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.core.ICoreEngine;
 import io.swagger.annotations.Api;
@@ -159,6 +160,21 @@ public class QueryController {
 		UserGroup result = _coreEngine.removeSelfFromGroup(userGroupRequest);
 
 		log.info("user group with removed (self) user: " + result.toString());
+
+		return result;
+	}
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/getUsersKeyRelationships")
+	public Set<KeyRelationship> getUsersKeyRelationships(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		Set<KeyRelationship> result = _coreEngine.getGroupKeyRelationshipsForUsers(userGroupRequest);
+
+		log.info("user group key relationships for users: " + result.toString());
 
 		return result;
 	}

@@ -3,6 +3,7 @@ package com.skeleton.project.core;
 import com.mongodb.WriteResult;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
@@ -49,7 +50,7 @@ public interface ICoreEngine {
 	/**
 	 * Fetches user groups that the requestedUser belongs to and the requestingUser has has admin access to.
 	 * NOTE: Accepts request that do not have requestedUser populated, which will be treated the same a request to just
-	 * got the groups for the requestingUsers
+	 * get the groups for the requestingUsers
 	 * @param requestingUser
 	 * @param requestedUsers
 	 * @return
@@ -118,6 +119,13 @@ public interface ICoreEngine {
 	 * @return
 	 */
 	UserGroup removeKeyRelationships(UserGroupRequest request);
+
+	/**
+	 * Grabs the key relationships corresponding to the group and users list
+	 * @param request
+	 * @return
+	 */
+	Set<KeyRelationship> getGroupKeyRelationshipsForUsers(UserGroupRequest request);
 
 	/**
 	 * Dummy function that should probably be deleted..

@@ -42,6 +42,7 @@ public class UserGroupService implements IUserGroupService {
         // Need to handle grabbing nested attribute objects
         List<Schedule> schedulesInflated = new ArrayList<>();
         List<Schedule> schedules = userGroup.getSchedule();
+        // TODO figure out a batch grab
         for(Schedule schedule : schedules) {
             Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
             schedulesInflated.add(schedulePopulated);
@@ -50,6 +51,7 @@ public class UserGroupService implements IUserGroupService {
 
         Set<User> usersInflated = new HashSet<>();
         Set<User> users = userGroup.getUsers();
+        // TODO figure out a batch grab
         for(User user : users) {
             User userPopulated = user.getId() != null ? _userService.getUser(user.getId()) : _userService.getUserByPhone(user.getPrimaryPhone());
             usersInflated.add(userPopulated);
