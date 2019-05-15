@@ -1,9 +1,11 @@
-package com.skeleton.project.core;
+package com.skeleton.project.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
+import com.skeleton.project.core.DatabaseDriver;
+import com.skeleton.project.core.ICoreEngine;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.KeyRelationship;
@@ -31,7 +33,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class CoreEngine implements ICoreEngine{
+public class CoreEngine implements ICoreEngine {
 
 	@Autowired
 	IClient _client;
@@ -44,7 +46,7 @@ public class CoreEngine implements ICoreEngine{
 	@Autowired
 	IKeyRelationshipService keyRelationshipService;
 	@Autowired
-    ILockService lockService;
+	ILockService lockService;
 
 	/**
 	 * @see ICoreEngine#createUserGroup(UserGroup)
@@ -116,15 +118,14 @@ public class CoreEngine implements ICoreEngine{
 	/**
 	 * @see ICoreEngine#addUsersToGroup(UserGroupRequest)
 	 */
-    @Override
-    public UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
+	@Override
+	public UserGroup addUsersToGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
 
-    	UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		// 5/14/19 NOT sure this is necessary anymore... seems as though everything is encoded and decoded just fine. Maybe if want to decrease size over wire? But protobufs will solve that...
-		// inflate the user list
+		// inflate the user list (this generally if coming from the stand along request to add users to group)
 		if (request.isNeedToInflate()) {
 			List<User> inflatedUsers = new ArrayList<>();
 			for (User user : request.getTargetUsers()) {
@@ -139,21 +140,10 @@ public class CoreEngine implements ICoreEngine{
 		}
 
 		// create the key relationship mapping
-		Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
-		for (KeyRelationship kr : request.getKeyRelationships()) {
-			String userId = kr.getUser().getId();
-			List<KeyRelationship> krs = keyRelationshipMap.get(userId);
-
-			if (krs == null)
-				krs = new ArrayList<>();
-
-			krs.add(kr);
-			keyRelationshipMap.put(userId, krs);
-		}
-//		request.setKeyRelationshipsMap(keyRelationshipMap);
+		Map<String, List<KeyRelationship>> keyRelationshipMap = createKeyRelationshipMapping(request.getKeyRelationships());
 
 		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
-    }
+	}
 
 	@Override
 	public UserGroup addLocksToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
@@ -162,18 +152,7 @@ public class CoreEngine implements ICoreEngine{
 		verifyRequest(request, group);
 
 		// create the key relationship mapping
-		Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
-		for (KeyRelationship kr : request.getKeyRelationships()) {
-			String userId = kr.getUser().getId();
-			List<KeyRelationship> krs = keyRelationshipMap.get(userId);
-
-			if (krs == null)
-				krs = new ArrayList<>();
-
-			krs.add(kr);
-			keyRelationshipMap.put(userId, krs);
-		}
-//		request.setKeyRelationshipsMap(keyRelationshipMap);
+		Map<String, List<KeyRelationship>> keyRelationshipMap = createKeyRelationshipMapping(request.getKeyRelationships());
 
 		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
 	}
@@ -187,7 +166,10 @@ public class CoreEngine implements ICoreEngine{
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		Set<KeyRelationship> userGroupKrs = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
-			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
+
+			// remove user from the key relationship map
+			group.getKeyRelationshipsMap().remove(user.getId());
 		}
 
 		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
@@ -195,7 +177,32 @@ public class CoreEngine implements ICoreEngine{
 //			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
 //		}
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap());
+	}
+
+	@Override
+	public UserGroup removeLocksFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		// Need to grab all the key relationships for said user and remove them from group. Deletion taking place in the key relationship service (aka parse) so the db hooks can fire
+		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
+		Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap()); // deep copy so can modify without concurrent modification exception
+		for (Map.Entry<String, List<KeyRelationship>> entry : group.getKeyRelationshipsMap().entrySet()) {
+			for(KeyRelationship kr : entry.getValue()) {
+				if(request.getTargetLockIds().contains(kr.getKey().getId())) {
+					// found a kr that needs to be removed
+					keyRelationshipsToRemove.add(kr);
+					krsMap.get(kr.getUser().getId()).remove(kr);
+				}
+			}
+		}
+
+		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
+
+		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), group.getKeyRelationships(), request.getTargetLockIds(), krsMap);
+//		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), group.getKeyRelationships(), request.getTargetLockIds(), group.getKeyRelationshipsMap());
 	}
 
 	@Override
@@ -205,17 +212,17 @@ public class CoreEngine implements ICoreEngine{
 		verifyUserRequest(request, group);
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
-		Set<KeyRelationship> userGroupKrs = new HashSet<>();
-		for(User user : request.getTargetUsers()) {
-			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
-		}
+		User user = request.getTargetUsers().get(0); // should be singular if not something is wrong... todo throw exception
+		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
 
 		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
 //		for(KeyRelationship keyRelationship: userGroupKrs) {
 //			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
 //		}
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList());
+		group.getKeyRelationshipsMap().remove(user.getId());
+
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap());
 	}
 
 	@Override
@@ -241,10 +248,10 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		// Need to grab all the key relationships for said user, delete them, and remove them from group
+		// Need to grab all the key relationships for said user and remove them from group. The delete should be handled in the KR service (aka parse land) due to db hooks
 		Set<KeyRelationship> userGroupKrs = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
-			userGroupKrs.addAll(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
 		}
 
 		return userGroupKrs;
@@ -367,6 +374,23 @@ public class CoreEngine implements ICoreEngine{
 		}
 
 		return true;
+	}
+
+	private Map<String, List<KeyRelationship>> createKeyRelationshipMapping(Set<KeyRelationship> keyRelationships) {
+		// create the key relationship mapping
+		Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
+		for (KeyRelationship kr : keyRelationships) {
+			String userId = kr.getUser().getId();
+			List<KeyRelationship> krs = keyRelationshipMap.get(userId);
+
+			if (krs == null)
+				krs = new ArrayList<>();
+
+			krs.add(kr);
+			keyRelationshipMap.put(userId, krs);
+		}
+
+		return keyRelationshipMap;
 	}
 
 	private Object getDbFullObject(final Object search) {

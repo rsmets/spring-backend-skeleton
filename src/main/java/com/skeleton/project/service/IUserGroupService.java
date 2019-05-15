@@ -52,7 +52,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds);
+    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps);
 
 
     /**
@@ -96,5 +96,5 @@ public interface IUserGroupService {
     /**
      * Removes key relationships from group
      */
-    UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships);
+    UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships, Map<String, List<KeyRelationship>> krMap);
 }

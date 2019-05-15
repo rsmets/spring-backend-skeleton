@@ -100,7 +100,7 @@ public interface ICoreEngine {
 	 * @return
 	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup removeLockFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+	UserGroup removeLocksFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Removes a user (and their key relationships) from the specified group.
