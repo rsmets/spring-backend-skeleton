@@ -27,11 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -127,6 +123,7 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
+		// 5/14/19 NOT sure this is necessary anymore... seems as though everything is encoded and decoded just fine. Maybe if want to decrease size over wire? But protobufs will solve that...
 		// inflate the user list
 		if (request.isNeedToInflate()) {
 			List<User> inflatedUsers = new ArrayList<>();
@@ -139,17 +136,23 @@ public class CoreEngine implements ICoreEngine{
 					log.warn("No user identifier provided in " + request);
 			}
 			request.setTargetUsers(inflatedUsers);
-
-//			// TODO need to inflate the kr list too! Do I though?? I think not, only having the objectId is suffice.
-//			List<KeyRelationship> inflatedKRs = new ArrayList<>();
-//			for (KeyRelationship KeyRelationship : request.getKeyRelationships()) {
-//				inflatedKRs.add(keyRelationshipService.getKeyRelationship(KeyRelationship.getId()));
-//			}
-//			request.setKeyRelationships(inflatedKRs);
-
 		}
 
-		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds());
+		// create the key relationship mapping
+		Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
+		for (KeyRelationship kr : request.getKeyRelationships()) {
+			String userId = kr.getUser().getId();
+			List<KeyRelationship> krs = keyRelationshipMap.get(userId);
+
+			if (krs == null)
+				krs = new ArrayList<>();
+
+			krs.add(kr);
+			keyRelationshipMap.put(userId, krs);
+		}
+//		request.setKeyRelationshipsMap(keyRelationshipMap);
+
+		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
     }
 
 	@Override
@@ -158,7 +161,21 @@ public class CoreEngine implements ICoreEngine{
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds());
+		// create the key relationship mapping
+		Map<String, List<KeyRelationship>> keyRelationshipMap = new HashMap<>();
+		for (KeyRelationship kr : request.getKeyRelationships()) {
+			String userId = kr.getUser().getId();
+			List<KeyRelationship> krs = keyRelationshipMap.get(userId);
+
+			if (krs == null)
+				krs = new ArrayList<>();
+
+			krs.add(kr);
+			keyRelationshipMap.put(userId, krs);
+		}
+//		request.setKeyRelationshipsMap(keyRelationshipMap);
+
+		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
 	}
 
 	@Override

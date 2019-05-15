@@ -39,7 +39,7 @@ public class UserGroupService implements IUserGroupService {
     @Override
     public UserGroup createUserGroup(UserGroup userGroup) {
 
-        // Need to handle grabbing nested attribute objects
+        // Need to handle grabbing nested attribute objects due to not being able to handle the list of schedule parse pointers (or really just choosing not to)
         List<Schedule> schedulesInflated = new ArrayList<>();
         List<Schedule> schedules = userGroup.getSchedule();
         // TODO figure out a batch grab
@@ -147,7 +147,7 @@ public class UserGroupService implements IUserGroupService {
      * @return
      */
     @Override
-    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships, final List<String> lockIds) {
+    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships, final List<String> lockIds, Map<String, List<KeyRelationship>> krMaps) {
         // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
             addUsers(userGroup, users);
@@ -156,11 +156,11 @@ public class UserGroupService implements IUserGroupService {
             addLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
-        return addKeyRelationships(userGroup, keyRelationships);
+        return addKeyRelationships(userGroup, keyRelationships, krMaps);
     }
 
     @Override
-    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds) {
+    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps) {
         // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
             removeUsers(userGroup, users);
@@ -169,7 +169,7 @@ public class UserGroupService implements IUserGroupService {
             removeLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
-        return removeKeyRelationships(userGroup, keyRelationships);
+        return removeKeyRelationships(userGroup, keyRelationships, krMaps);
     }
 
     /**
@@ -192,25 +192,54 @@ public class UserGroupService implements IUserGroupService {
     }
 
     /**
-     * @see IUserGroupService#addKeyRelationships(UserGroup, Set)
+     * @see IUserGroupService#addKeyRelationships(UserGroup, Set, Map)
      */
     @Override
-    public UserGroup addKeyRelationships(final UserGroup group, final Set<KeyRelationship> keyRelationships) {
+    public UserGroup addKeyRelationships(final UserGroup group, final Set<KeyRelationship> keyRelationships, final Map<String, List<KeyRelationship>> krMap) {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.addAll(keyRelationships);
 
-        return _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        krMap.forEach((k, v) -> {
+            List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(k);
+            if (krs == null)
+                krs = new ArrayList<>();
+            krs.addAll(v);
+            group.getKeyRelationshipsMap().put(k, krs);
+        });
+
+//        for (Map.Entry<String, List<KeyRelationship>> entry : krMap.entrySet()) {
+//            List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(entry.getKey());
+//            if (krs == null)
+//                krs = new ArrayList<>();
+//            krs.addAll(entry.getValue());
+//        }
+
+        _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        return _updateUserGroup(group, "keyRelationshipsMap", group.getKeyRelationshipsMap());
     }
 
     /**
-     * @see IUserGroupService#removeKeyRelationships(UserGroup, Set)
+     * @see IUserGroupService#removeKeyRelationships(UserGroup, Set, Map)
      */
     @Override
-    public UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships) {
+    public UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationships, Map<String, List<KeyRelationship>> krsMap) {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.removeAll(keyRelationships);
 
-        return _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        krsMap.forEach((k, v) -> {
+            List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(k);
+            if (krs == null)
+                krs = new ArrayList<>();
+            krs.removeAll(v);
+
+            if (krs.isEmpty())
+                group.getKeyRelationshipsMap().remove(k);
+            else
+                group.getKeyRelationshipsMap().put(k, krs);
+        });
+
+        _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
+        return _updateUserGroup(group, "keyRelationshipsMap", group.getKeyRelationshipsMap());
     }
 
     @Override

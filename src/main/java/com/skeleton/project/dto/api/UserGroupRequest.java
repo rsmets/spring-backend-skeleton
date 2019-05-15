@@ -2,12 +2,12 @@ package com.skeleton.project.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.skeleton.project.dto.entity.KeyRelationship;
-import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -25,6 +25,7 @@ public class UserGroupRequest {
     List<User> targetAdmins;
     List<String> targetLockIds;
     Set<KeyRelationship> keyRelationships;
+    Map<String, List<KeyRelationship>> keyRelationshipsMap;
     String groupId;
     String newGroupName;
     boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists

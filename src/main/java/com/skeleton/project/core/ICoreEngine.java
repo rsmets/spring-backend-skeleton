@@ -94,6 +94,15 @@ public interface ICoreEngine {
 	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
+	 * Removes locks from the provided user group id. Including key relationships.
+	 * Validation is required for this batch operation.
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup removeLockFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+
+	/**
 	 * Removes a user (and their key relationships) from the specified group.
 	 * Note special validation: valid if owner, admin or group OR acting on oneself (removing oneself from group)
 	 * @param request
