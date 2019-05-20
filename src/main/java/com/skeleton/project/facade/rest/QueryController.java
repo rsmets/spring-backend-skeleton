@@ -83,10 +83,11 @@ public class QueryController {
 		return result;
 	}
 
-	@DeleteMapping("/v1.0/userGroup/delete/{id}")
-	public QueryResponse deleteUserGroup(@PathVariable String id) {
-		WriteResult result = _coreEngine.deleteUserGroup(id);
-		return QueryResponse.builder().example(result).build();
+	@PostMapping("/v1.0/userGroup/delete")
+	public Set<KeyRelationship> deleteUserGroup(@RequestBody UserGroupRequest request) throws Exception {
+		Set<KeyRelationship> result = _coreEngine.deleteUserGroup(request);
+//		return QueryResponse.builder().example(result).build();
+		return result;
 	}
 
     /**

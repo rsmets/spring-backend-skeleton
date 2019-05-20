@@ -17,12 +17,7 @@ import com.skeleton.project.exceptions.ModifcationException;
 import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
-import com.skeleton.project.service.IKeyRelationshipService;
-import com.skeleton.project.service.ILockService;
-import com.skeleton.project.service.IUserGroupService;
-import com.skeleton.project.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +25,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -110,13 +112,21 @@ public class CoreEngine implements ICoreEngine {
 	 * @see ICoreEngine#deleteUserGroup(UserGroupRequest)
 	 */
 	@Override
-	public WriteResult deleteUserGroup(final UserGroupRequest request) {
+	public Set<KeyRelationship> deleteUserGroup(final UserGroupRequest request) throws Exception {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
+
+		Set<KeyRelationship> groupKeyRelationships = group.getKeyRelationships();
+//		Set<KeyRelationship> groupKeyRelationships = group.getKeyRelationshipsMap().values();
+
 		WriteResult result = userGroupService.deleteUserGroup(group.getId());
 
-		return result;
+		if (!result.wasAcknowledged()) {
+			throw new Exception("Group not deleted");
+		}
+
+		return groupKeyRelationships;
 	}
 
 	/**

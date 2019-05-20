@@ -27,10 +27,10 @@ public interface ICoreEngine {
 	 * Deletes the user group for the associated id. Internal obj deletion should
 	 * be handled in their respective services, similar to creation
 	 *
-	 * @param id
-	 * @return
+	 * @param request
+	 * @return set of the group's key relationships
 	 */
-	WriteResult deleteUserGroup(String id);
+	Set<KeyRelationship> deleteUserGroup(UserGroupRequest request) throws Exception;
 
 	/**
 	 * Get the user group associated with the provided id.

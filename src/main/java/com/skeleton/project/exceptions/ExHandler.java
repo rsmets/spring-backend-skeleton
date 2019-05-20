@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
-public class Handler {
+public class ExHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handle(Exception ex,
@@ -20,7 +20,7 @@ public class Handler {
         }
 
         if (ex instanceof EntityNotFoundException) {
-            return new ResponseEntity<>("Requested id not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
 
         if (ex instanceof UserGroupAdminPermissionsException) {

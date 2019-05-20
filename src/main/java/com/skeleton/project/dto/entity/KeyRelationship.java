@@ -54,6 +54,9 @@ public class KeyRelationship {
 //    @Reference
 //    UserGroup userGroup;
 
+    @Embedded("key")
+    Lock key;
+
     @Embedded
     User user;
 
@@ -61,8 +64,6 @@ public class KeyRelationship {
     Role role;
 //    @Property("_p_role")
 //    String roleObjectId;
-    @Embedded("key")
-    Lock key;
 
     @Property("_updated_at")
     Date updatedAt;
