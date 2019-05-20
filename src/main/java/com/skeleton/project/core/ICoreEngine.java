@@ -74,7 +74,14 @@ public interface ICoreEngine {
 	 */
 	UserGroup addUsersToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
-	//TODO: UserGroup addAdminsToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+	/**
+	 * Adds targetAdmins of the UserGroupRequest to the provided user group id. Including key relationships.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup addAdminsToGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
 	 * Adds targetLocks of the UserGroupRequest to the provided user group id. Including key relationships.

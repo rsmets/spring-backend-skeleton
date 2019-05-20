@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.net.CookieHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -161,7 +162,7 @@ public class CoreEngine implements ICoreEngine {
 		// verify a valid operation
 		verifyRequest(request, group);
 
-		// inflate the user list (this generally if coming from the stand along request to add users to group)
+		// inflate the user list (this generally if coming from the stand alone request to add users to group)
 		if (request.isNeedToInflate()) {
 			List<User> inflatedUsers = new ArrayList<>();
 			for (User user : request.getTargetUsers()) {
@@ -178,7 +179,37 @@ public class CoreEngine implements ICoreEngine {
 		// create the key relationship mapping
 		Map<String, List<KeyRelationship>> keyRelationshipMap = createKeyRelationshipMapping(request.getKeyRelationships());
 
-		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
+		return userGroupService.additiveGroupModification(group, request.getTargetUsers(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap, Collections.emptySet());
+	}
+
+	/**
+	 * @see ICoreEngine#addAdminsToGroup(UserGroupRequest)
+	 */
+	@Override
+	public UserGroup addAdminsToGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
+
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		// inflate the user list (this generally if coming from the stand alone request to add users to group)
+		if (request.isNeedToInflate()) {
+			List<User> inflatedUsers = new ArrayList<>();
+			for (User user : request.getTargetAdmins()) {
+				if (user.getPrimaryPhone() != null)
+					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
+				else if (user.getPrimaryEmail() != null)
+					inflatedUsers.add(userService.getUserByEmail(user.getPrimaryEmail()));
+				else
+					log.warn("No user identifier provided in " + request);
+			}
+			request.setTargetUsers(inflatedUsers);
+		}
+
+		// create the key relationship mapping
+		Map<String, List<KeyRelationship>> keyRelationshipMap = createKeyRelationshipMapping(request.getKeyRelationships());
+
+		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap, request.getTargetAdmins());
 	}
 
 	@Override
@@ -190,9 +221,15 @@ public class CoreEngine implements ICoreEngine {
 		// create the key relationship mapping
 		Map<String, List<KeyRelationship>> keyRelationshipMap = createKeyRelationshipMapping(request.getKeyRelationships());
 
-		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap);
+		return userGroupService.additiveGroupModification(group, Collections.emptyList(), request.getKeyRelationships(), request.getTargetLockIds(), keyRelationshipMap, Collections.emptySet());
 	}
 
+	/**
+	 * @see ICoreEngine#removeUsersFromGroup(UserGroupRequest)
+	 * Note: Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
+	 *
+	 * @throws UserGroupAdminPermissionsException
+	 */
 	@Override
 	public UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
@@ -214,12 +251,9 @@ public class CoreEngine implements ICoreEngine {
 			group.getKeyRelationshipsMap().remove(user.getId());
 		}
 
-		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
-//		for(KeyRelationship keyRelationship: userGroupKrs) {
-//			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
-//		}
+		// TODO NEED TO confirm that not removing the last "admin"
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), Collections.emptySet());
 	}
 
 	@Override
@@ -231,74 +265,30 @@ public class CoreEngine implements ICoreEngine {
 		// Need to grab all the key relationships for said user and remove them from group. Deletion taking place in the key relationship service (aka parse) so the db hooks can fire
 		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
 		Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap());
-//		Map<String, List<KeyRelationship>> krsMap = (Map<String, List<KeyRelationship>>) SerializationUtils.clone(group.getKeyRelationshipsMap()); // deep copy so can modify without concurrent modification exception
-//
 
 		for (Map.Entry<String, List<KeyRelationship>> entry : group.getKeyRelationshipsMap().entrySet()) {
 
 			for(KeyRelationship kr : entry.getValue()) {
 
-				List<KeyRelationship> krsCopy = new ArrayList<>(entry.getValue());
-
 				if(request.getTargetLockIds().contains(kr.getKey().getLockId())) {
 
 					// found a kr that needs to be removed
 					keyRelationshipsToRemove.add(kr);
-//					removeLockByLockIdFromList(krsMap.get(kr.getUser().getId()), request.getTargetLockIds());
-
-//					entry.setValue(Collections.emptyList());
 				}
 			}
 		}
 
-
-
-		// need to then go through the map and remove hte keys with empty lists
-
-//		Iterator<Map.Entry<String,List<KeyRelationship>>> iter = group.getKeyRelationshipsMap().entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<String,List<KeyRelationship>> entry = iter.next();
-//
-//			for(KeyRelationship kr : entry.getValue()) {
-//
-//				if(request.getTargetLockIds().contains(kr.getKey().getLockId())) {
-//
-//					// found a kr that needs to be removed
-//					keyRelationshipsToRemove.add(kr);
-////					group.getKeyRelationshipsMap().get(kr.getUser().getId()).remove(kr);
-//					krsMap.get(kr.getUser().getId()).remove(kr);
-//				}
-//			}
-//		}
-
-//		group.getKeyRelationshipsMap().entrySet().removeIf(entry -> request.getTargetLockIds().contains( (KeyRelationship)entry.getValue()));
-//		group.getKeyRelationshipsMap().entrySet().removeIf(entry -> request.getTargetLockIds().contains( (KeyRelationship)entry.getValue()));
-
-
-
 		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
 
-		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), krsMap);
-//		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), group.getKeyRelationships(), request.getTargetLockIds(), group.getKeyRelationshipsMap());
+		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), krsMap, Collections.emptySet());
 	}
 
-	private void removeLockByLockIdFromList(List<KeyRelationship> krs, List<String> lockIds) {
-		Iterator itr = krs.iterator();
-		while (itr.hasNext())
-		{
-			KeyRelationship x = (KeyRelationship)itr.next();
-			if(lockIds.contains(x.getKey().getLockId())) {
-				itr.remove();
-			}
-		}
-
-//		for( KeyRelationship kr : krs ) {
-//			if(lockIds.contains(kr.getKey().getLockId())) {
-//				krs.remove(kr);
-//			}
-//		}
-	}
-
+	/**
+	 * @see ICoreEngine#removeSelfFromGroup(UserGroupRequest)
+	 * Note: Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
+	 *
+	 * @throws UserGroupAdminPermissionsException
+	 */
 	@Override
 	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
@@ -315,14 +305,11 @@ public class CoreEngine implements ICoreEngine {
 		User user = request.getTargetUsers().get(0); // should be singular if not something is wrong... todo throw exception
 		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
 
-		// Actually do NOT want to delete krs from the group service due to not having triggering the db hooks that currently only live in parse world
-//		for(KeyRelationship keyRelationship: userGroupKrs) {
-//			keyRelationshipService.deleteKeyRelationship(keyRelationship.getId()); // TODO figure out a batch delete method
-//		}
+		// TODO NEED TO confirm that not removing the last "admin"
 
 		group.getKeyRelationshipsMap().remove(user.getId());
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
 	}
 
 	@Override

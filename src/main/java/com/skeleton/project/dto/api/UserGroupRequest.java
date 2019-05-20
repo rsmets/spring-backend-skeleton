@@ -22,7 +22,7 @@ public class UserGroupRequest {
 
     User requestingUser;
     List<User> targetUsers;
-    List<User> targetAdmins;
+    Set<User> targetAdmins;
     List<String> targetLockIds;
     Set<KeyRelationship> keyRelationships;
     Map<String, List<KeyRelationship>> keyRelationshipsMap;

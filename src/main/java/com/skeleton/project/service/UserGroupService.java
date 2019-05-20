@@ -156,10 +156,14 @@ public class UserGroupService implements IUserGroupService {
      * @return
      */
     @Override
-    public UserGroup additiveGroupModification(final UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships, final List<String> lockIds, Map<String, List<KeyRelationship>> krMaps) {
+    public UserGroup additiveGroupModification(UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships,
+                                               final List<String> lockIds, Map<String, List<KeyRelationship>> krMaps, final Set<User> admins) {
         // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
             addUsers(userGroup, users);
+
+        if (admins != null && !admins.isEmpty())
+            addAdmins(userGroup, admins);
 
         if (lockIds != null && !lockIds.isEmpty())
             addLocks(userGroup, lockIds);
@@ -169,7 +173,8 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
-    public UserGroup reductiveGroupModification(final UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps) {
+    public UserGroup reductiveGroupModification(UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationships,
+                                                final List<String> lockIds, final Map<String, List<KeyRelationship>> krMaps, final Set<User> admins) {
         // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
             removeUsers(userGroup, users);
@@ -259,6 +264,12 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
+    public UserGroup addAdmins(UserGroup group, Set<User> admins) {
+        _addAdmins(group, admins);
+        return _updateUserGroup(group, "admins", group.getAdmins());
+    }
+
+    @Override
     public UserGroup removeUsers(UserGroup group, List<User> users) {
         _removeUsers(group, users);
 
@@ -310,6 +321,10 @@ public class UserGroupService implements IUserGroupService {
 
     private void _addUsers(UserGroup group, List<User> users) {
         group.getUsers().addAll(users);
+    }
+
+    private void _addAdmins(UserGroup group, Set<User> admins) {
+        group.getAdmins().addAll(admins);
     }
 
     private void _removeUsers(UserGroup group, final List<User> users) {

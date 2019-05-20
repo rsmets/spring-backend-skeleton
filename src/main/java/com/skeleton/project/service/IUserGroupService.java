@@ -44,7 +44,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps);
+    UserGroup additiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps, Set<User> admins);
 
     /**
      * Reducing modification to existing user group. Validation is performed in core engine
@@ -52,7 +52,7 @@ public interface IUserGroupService {
      * @param userGroup - with settings wanted to persist
      * @return
      */
-    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps);
+    UserGroup reductiveGroupModification(UserGroup userGroup, List<User> users, Set<KeyRelationship> keyRelationships, List<String> lockIds, Map<String, List<KeyRelationship>> krMaps, Set<User> admins);
 
 
     /**
@@ -69,6 +69,12 @@ public interface IUserGroupService {
      */
     UserGroup addUsers(String id, List<User> user);
     UserGroup addUsers(UserGroup group, List<User> users);
+
+    /**
+     * Add admins to the specified group.
+     * Validation is done in the core engine
+     */
+    UserGroup addAdmins(UserGroup group, Set<User> admin);
 
     /**
      * Removes users from the specified group.
