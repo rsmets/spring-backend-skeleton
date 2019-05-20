@@ -1,15 +1,14 @@
 package com.skeleton.project;
 
+import com.skeleton.project.core.ICoreEngine;
 import com.skeleton.project.dto.api.UserGroupRequest;
-import com.skeleton.project.dto.entity.Schedule;
-import com.skeleton.project.dto.entity.User;
-import com.skeleton.project.dto.entity.KeyRelationship;
-import com.skeleton.project.dto.entity.UserGroup;
+import com.skeleton.project.dto.entity.*;
 import com.skeleton.project.service.IKeyRelationshipService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
 import dev.morphia.Key;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @Profile("test")
 @SpringBootTest
 public class SpringBackendSkeletonApplicationTests {
+
+	@Autowired
+	ICoreEngine coreEngine;
 
 	@Autowired
 	IUserGroupService userGroupService;
@@ -34,15 +39,22 @@ public class SpringBackendSkeletonApplicationTests {
 	@Autowired
 	IKeyRelationshipService keyRelationshipService;
 
+	String testGroupId;
 	/**
 	 * TODO make this the first step in the testing process so that the id can be used for the testing through out
 	 */
-	@Test
+	@Before
 	public void createUserGroup() {
+
+		if (testGroupId != null) return;
 
 		List<String> adminIds = new ArrayList<>();
 
+		User owner = new User();
+		owner.setId("CZn2XuFJf3");
+
 		Set<String> lockIds = new HashSet<>();
+		lockIds.add("4703");
 
 		Schedule schedule = new Schedule();
 		schedule.setId("GnOHW6uvA8");
@@ -50,46 +62,55 @@ public class SpringBackendSkeletonApplicationTests {
 		schedule2.setId("3nxeEYEJi7");
 		List<Schedule> schedules = Arrays.asList(schedule, schedule2);
 
-//		User user = User.builder().id("pKPes1hdQE").build();
-//		User user2 = User.builder().id("FgJCRVDiB5").build();
 		User user = new User();
 		user.setId("FgJCRVDiB5");
 		User user2 = new User();
 		user2.setId("pKPes1hdQE");
 		Set<User> users = new HashSet<>(Arrays.asList(user, user2));
 
-
 		boolean canUsersRemoteUnlock = true;
 		boolean canUsersUnlockUntil = false;
 
-//		UserGroup userGroupToAdd = UserGroup.builder()
-//				.name("TestGroup")
-//				.canRemoteUnlock(canUsersRemoteUnlock)
-//				.canUnlockUntil(canUsersUnlockUntil)
-//				.lockIds(lockIds)
-//				.users(users)
-//				.admins(new ArrayList<>())
-//				.schedule(schedules)
-//				.keyRelationships(Collections.emptyList())
-//				.build();
+		Lock lock = new Lock();
+		lock.setLockId("4703");
+
+		KeyRelationship ownerKr = new KeyRelationship();
+		ownerKr.setId("id1");
+		ownerKr.setKey(lock);
+		ownerKr.setUser(owner);
+
+		KeyRelationship userKr = new KeyRelationship();
+		userKr.setId("id2");
+		userKr.setKey(lock);
+		userKr.setUser(user);
+
+		KeyRelationship user2Kr = new KeyRelationship();
+		user2Kr.setId("id3");
+		user2Kr.setKey(lock);
+		user2Kr.setUser(user2);
+
+		Set<KeyRelationship> keyRelationships = new HashSet<>();
+		keyRelationships.add(ownerKr);
+		keyRelationships.add(userKr);
+		keyRelationships.add(user2Kr);
+
 		UserGroup userGroupToAdd = new UserGroup();
 		userGroupToAdd.setName("testGroupies");
+		userGroupToAdd.setOwner(owner);
 		userGroupToAdd.setCanUnlockUntil(canUsersUnlockUntil);
 		userGroupToAdd.setCanRemoteUnlock(canUsersRemoteUnlock);
 		userGroupToAdd.setLockIds(lockIds);
 		userGroupToAdd.setUsers(users);
 		userGroupToAdd.setSchedule(schedules);
-		try {
-//			UserGroup userGroup = userGroupService.createUserGroup(adminIds, lockIds, schedules, userIds, canUsersRemoteUnlock, canUsersUnlockUntil);
-//			UserGroup dbUserGroup = userGroupService.getUserGroup(userGroup.getId());
-//			Assert.assertEquals(userGroup, dbUserGroup);
+		userGroupToAdd.setKeyRelationships(keyRelationships);
 
+		try {
 			UserGroup obj = userGroupService.createUserGroup(userGroupToAdd);
-//			String id = obj.getId().toHexString();
-//			UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
 			UserGroup dbUserGroup = userGroupService.getUserGroup(obj.getId());
 
 			Assert.assertEquals(userGroupToAdd, dbUserGroup);
+
+			testGroupId = obj.getId();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,8 +120,8 @@ public class SpringBackendSkeletonApplicationTests {
 
 	@Test
 	public void getUserGroup() {
-		UserGroup group = userGroupService.getUserGroup("5cba1e8b7bcaefbeea1c634d");
-		Assert.assertEquals("raysUserGroup", group.getName());
+		UserGroup group = userGroupService.getUserGroup(testGroupId);
+		Assert.assertEquals("testGroupies", group.getName());
 	}
 
 	@Test
@@ -109,11 +130,26 @@ public class SpringBackendSkeletonApplicationTests {
 		user.setFirstName("New");
 		user.setLastName("Human");
 
-		UserGroup res = userGroupService.addUsers("5cba1e8b7bcaefbeea1c634d", Arrays.asList(user));
+		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user));
 		Assert.assertEquals(3, res.getUsers().size());
 
-		UserGroup grabbed = userGroupService.getUserGroup("5cba1e8b7bcaefbeea1c634d");
+		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
 		Assert.assertEquals(3, grabbed.getUsers().size());
+	}
+
+	@Test
+	public void deleteGroup() throws Exception {
+
+		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
+
+		User user = new User();
+		user.setId("CZn2XuFJf3");
+
+		UserGroupRequest request = new UserGroupRequest();
+		request.setGroupId(testGroupId);
+		request.setRequestingUser(user);
+		Set<KeyRelationship> res = coreEngine.deleteUserGroup(request);
+		Assert.assertEquals(grabbed.getKeyRelationships().size(), res.size());
 	}
 
 	@Test
@@ -137,7 +173,7 @@ public class SpringBackendSkeletonApplicationTests {
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
-	@Test
+//	@Test
 	public void getKeyRelationship() {
 
 		KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");

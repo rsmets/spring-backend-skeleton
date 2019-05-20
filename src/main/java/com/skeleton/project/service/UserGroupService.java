@@ -226,17 +226,17 @@ public class UserGroupService implements IUserGroupService {
         Set<KeyRelationship> newKRset = group.getKeyRelationships();
         newKRset.removeAll(keyRelationships);
 
-//        krsMap.forEach((k, v) -> {
-//            List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(k);
-//            if (krs == null)
-//                krs = new ArrayList<>();
-//            krs.removeAll(v);
-//
-//            if (krs.isEmpty())
-//                group.getKeyRelationshipsMap().remove(k);
-//            else
-//                group.getKeyRelationshipsMap().put(k, krs);
-//        });
+        krsMap.forEach((k, v) -> {
+            List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(k);
+            if (krs == null)
+                krs = new ArrayList<>();
+            krs.removeAll(keyRelationships);
+
+            if (krs.isEmpty())
+                group.getKeyRelationshipsMap().remove(k);
+            else
+                group.getKeyRelationshipsMap().put(k, krs);
+        });
         group.setKeyRelationshipsMap(krsMap);
 
         _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), newKRset);
@@ -267,7 +267,7 @@ public class UserGroupService implements IUserGroupService {
         Set<String> lockIdsSet = group.getLockIds();
         lockIdsSet.removeAll(lockIds);
 
-        return _updateUserGroup(group, User.getAttributeNamePlural(), lockIdsSet);
+        return _updateUserGroup(group, "lockIds", lockIdsSet);
     }
 
     /**

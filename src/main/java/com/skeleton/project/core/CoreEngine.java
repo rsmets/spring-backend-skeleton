@@ -22,6 +22,7 @@ import com.skeleton.project.service.ILockService;
 import com.skeleton.project.service.IUserGroupService;
 import com.skeleton.project.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,11 +107,14 @@ public class CoreEngine implements ICoreEngine {
 	}
 
 	/**
-	 * @see ICoreEngine#deleteUserGroup(String)
+	 * @see ICoreEngine#deleteUserGroup(UserGroupRequest)
 	 */
 	@Override
-	public WriteResult deleteUserGroup(final String id) {
-		WriteResult result = userGroupService.deleteUserGroup(id);
+	public WriteResult deleteUserGroup(final UserGroupRequest request) {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+		WriteResult result = userGroupService.deleteUserGroup(group.getId());
 
 		return result;
 	}
@@ -166,6 +170,12 @@ public class CoreEngine implements ICoreEngine {
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		Set<KeyRelationship> userGroupKrs = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
+			List<KeyRelationship> userKrs = group.getKeyRelationshipsMap().get(user.getId());
+
+			if (userKrs == null) {
+				throw new EntityNotFoundException("No user with object id " + user.getId() + " not found in group");
+			}
+
 			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
 
 			// remove user from the key relationship map
@@ -188,21 +198,73 @@ public class CoreEngine implements ICoreEngine {
 
 		// Need to grab all the key relationships for said user and remove them from group. Deletion taking place in the key relationship service (aka parse) so the db hooks can fire
 		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
-		Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap()); // deep copy so can modify without concurrent modification exception
+		Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap());
+//		Map<String, List<KeyRelationship>> krsMap = (Map<String, List<KeyRelationship>>) SerializationUtils.clone(group.getKeyRelationshipsMap()); // deep copy so can modify without concurrent modification exception
+//
+
 		for (Map.Entry<String, List<KeyRelationship>> entry : group.getKeyRelationshipsMap().entrySet()) {
+
 			for(KeyRelationship kr : entry.getValue()) {
-				if(request.getTargetLockIds().contains(kr.getKey().getId())) {
+
+				List<KeyRelationship> krsCopy = new ArrayList<>(entry.getValue());
+
+				if(request.getTargetLockIds().contains(kr.getKey().getLockId())) {
+
 					// found a kr that needs to be removed
 					keyRelationshipsToRemove.add(kr);
-					krsMap.get(kr.getUser().getId()).remove(kr);
+//					removeLockByLockIdFromList(krsMap.get(kr.getUser().getId()), request.getTargetLockIds());
+
+//					entry.setValue(Collections.emptyList());
 				}
 			}
 		}
 
+
+
+		// need to then go through the map and remove hte keys with empty lists
+
+//		Iterator<Map.Entry<String,List<KeyRelationship>>> iter = group.getKeyRelationshipsMap().entrySet().iterator();
+//		while (iter.hasNext()) {
+//			Map.Entry<String,List<KeyRelationship>> entry = iter.next();
+//
+//			for(KeyRelationship kr : entry.getValue()) {
+//
+//				if(request.getTargetLockIds().contains(kr.getKey().getLockId())) {
+//
+//					// found a kr that needs to be removed
+//					keyRelationshipsToRemove.add(kr);
+////					group.getKeyRelationshipsMap().get(kr.getUser().getId()).remove(kr);
+//					krsMap.get(kr.getUser().getId()).remove(kr);
+//				}
+//			}
+//		}
+
+//		group.getKeyRelationshipsMap().entrySet().removeIf(entry -> request.getTargetLockIds().contains( (KeyRelationship)entry.getValue()));
+//		group.getKeyRelationshipsMap().entrySet().removeIf(entry -> request.getTargetLockIds().contains( (KeyRelationship)entry.getValue()));
+
+
+
 		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
 
-		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), group.getKeyRelationships(), request.getTargetLockIds(), krsMap);
+		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), krsMap);
 //		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), group.getKeyRelationships(), request.getTargetLockIds(), group.getKeyRelationshipsMap());
+	}
+
+	private void removeLockByLockIdFromList(List<KeyRelationship> krs, List<String> lockIds) {
+		Iterator itr = krs.iterator();
+		while (itr.hasNext())
+		{
+			KeyRelationship x = (KeyRelationship)itr.next();
+			if(lockIds.contains(x.getKey().getLockId())) {
+				itr.remove();
+			}
+		}
+
+//		for( KeyRelationship kr : krs ) {
+//			if(lockIds.contains(kr.getKey().getLockId())) {
+//				krs.remove(kr);
+//			}
+//		}
 	}
 
 	@Override
@@ -239,7 +301,9 @@ public class CoreEngine implements ICoreEngine {
 	public UserGroup removeKeyRelationships(UserGroupRequest request) {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
-		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships());
+		//TODO need to figure this out... I think the kr map minipulation should live here.
+
+		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships(), Collections.emptyMap());
 	}
 
 	@Override
