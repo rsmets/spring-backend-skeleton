@@ -36,7 +36,7 @@ public interface IUserGroupService {
      * @param userId
      * @return
      */
-    List<UserGroup> getUserGroupsForUser(String userId);
+    List<UserGroup> getUserGroupsForUser(String userId, boolean administrativeAccessOnly);
 
     /**
      * Additive modification to existing user group. Validation is performed in core engine

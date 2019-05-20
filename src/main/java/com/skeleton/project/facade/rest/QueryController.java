@@ -64,14 +64,15 @@ public class QueryController {
 
 	@GetMapping("/v1.0/userGroup/getForUser/{userId}")
 	public List<UserGroup> getAllUserGroupsForUser(@PathVariable String userId) {
-		List<com.skeleton.project.dto.entity.UserGroup>  result = _coreEngine.getUserGroupsForUser(userId);
+		List<com.skeleton.project.dto.entity.UserGroup>  result = _coreEngine.getUserGroupsForUser(userId, false);
 
 		return result;
 	}
 
 	@PostMapping("/v1.0/userGroup/fetch")
 	public Set<UserGroup> fetchUserGroups(@RequestBody UserGroupRequest request) {
-		Set<UserGroup> result = _coreEngine.fetchUserGroups(request.getRequestingUser(), request.getTargetUsers());
+//		Set<UserGroup> result = _coreEngine.fetchUserGroups(request.getRequestingUser(), request.getTargetUsers(), request.isAdministrativeAccessOnly());
+		Set<UserGroup> result = _coreEngine.fetchUserGroups(request);
 
 		return result;
 	}

@@ -55,14 +55,15 @@ public interface ICoreEngine {
 	 * @param requestedUsers
 	 * @return
 	 */
-	Set<UserGroup> fetchUserGroups(User requestingUser, List<User> requestedUsers);
+	Set<UserGroup> fetchUserGroups(User requestingUser, List<User> requestedUsers, boolean administrativeAccessOnly);
+	Set<UserGroup> fetchUserGroups(UserGroupRequest request);
 
 	/**
 	 * Gets all user groups associated with a given user id of which they are an owner or and admin
 	 * @param userId
 	 * @return
 	 */
-	List<UserGroup> getUserGroupsForUser(String userId);
+	List<UserGroup> getUserGroupsForUser(String userId, boolean administrativeAccessOnly);
 
 	/**
 	 * Adds targetUsers of the UserGroupRequest to the provided user group id. Including key relationships.

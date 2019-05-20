@@ -78,21 +78,21 @@ public class CoreEngine implements ICoreEngine {
 	}
 
 	/**
-	 * @see ICoreEngine#fetchUserGroups(User, List)
+	 * @see ICoreEngine#fetchUserGroups(User, List, boolean)
 	 */
 	@Override
-	public Set<UserGroup> fetchUserGroups(User requestingUser, List<User> requestedUsers) {
+	public Set<UserGroup> fetchUserGroups(final User requestingUser, final List<User> requestedUsers, final boolean administrativeAccessOnly) {
 
 		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
 		if (requestedUsers == null || requestedUsers.isEmpty()) {
-			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId()));
+			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly));
 		}
 
-		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId());
+		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly);
 
 		Set<UserGroup> requestedUsersGroups = new HashSet<>();
 		for(User user : requestedUsers) {
-			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId()));
+			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), administrativeAccessOnly));
 		}
 
 		requestedUsersGroups.retainAll(requestingUsersGroups);
@@ -101,11 +101,33 @@ public class CoreEngine implements ICoreEngine {
 	}
 
 	/**
-	 * @see ICoreEngine#getUserGroupsForUser(String)
+	 * @see ICoreEngine#fetchUserGroups(UserGroupRequest)
 	 */
 	@Override
-	public List<UserGroup> getUserGroupsForUser(final String userId) {
-		return userGroupService.getUserGroupsForUser(userId);
+	public Set<UserGroup> fetchUserGroups(UserGroupRequest request) {
+		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
+		if (request.getTargetUsers() == null || request.getTargetUsers().isEmpty()) {
+			return new HashSet<>(userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly()));
+		}
+
+		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly());
+
+		Set<UserGroup> requestedUsersGroups = new HashSet<>();
+		for(User user : request.getTargetUsers()) {
+			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), request.isAdministrativeAccessOnly()));
+		}
+
+		requestedUsersGroups.retainAll(requestingUsersGroups);
+
+		return requestedUsersGroups;
+	}
+
+	/**
+	 * @see ICoreEngine#getUserGroupsForUser(String, boolean)
+	 */
+	@Override
+	public List<UserGroup> getUserGroupsForUser(final String userId, final boolean administrativeAccessOnly) {
+		return userGroupService.getUserGroupsForUser(userId, administrativeAccessOnly);
 	}
 
 	/**
@@ -447,6 +469,9 @@ public class CoreEngine implements ICoreEngine {
 	 * @return
 	 */
 	private boolean isUserActingOnSelf(UserGroupRequest request) {
+		if (request.getTargetUsers() == null || request.getTargetUsers().isEmpty())
+			return true;
+
 		for (User user : request.getTargetUsers()) {
 			if ( !StringUtils.equals(request.getRequestingUser().getId(), user.getId()) ) {
 				return false;

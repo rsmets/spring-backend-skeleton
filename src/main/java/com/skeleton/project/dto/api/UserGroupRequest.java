@@ -29,4 +29,5 @@ public class UserGroupRequest {
     String groupId;
     String newGroupName;
     boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists
+    boolean administrativeAccessOnly;
 }
