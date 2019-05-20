@@ -179,6 +179,9 @@ public class UserGroupService implements IUserGroupService {
         if (users != null && !users.isEmpty())
             removeUsers(userGroup, users);
 
+        if (admins != null && !admins.isEmpty())
+            removeAdmins(userGroup, admins);
+
         if (lockIds != null && !lockIds.isEmpty())
             removeLocks(userGroup, lockIds);
 
@@ -277,6 +280,13 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
+    public UserGroup removeAdmins(UserGroup group, Set<User> admins) {
+        _removeAdmins(group, admins);
+
+        return _updateUserGroup(group, "admins", group.getAdmins());
+    }
+
+    @Override
     public UserGroup addLocks(UserGroup group, final List<String> lockIds) {
         _addLocks(group, lockIds);
         return _updateUserGroup(group, UserGroup.getLocksIdsAttrbibuteName(), group.getLockIds());
@@ -284,10 +294,9 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup removeLocks(UserGroup group, final List<String> lockIds) {
-        Set<String> lockIdsSet = group.getLockIds();
-        lockIdsSet.removeAll(lockIds);
+        _removeLocks(group, lockIds);
 
-        return _updateUserGroup(group, "lockIds", lockIdsSet);
+        return _updateUserGroup(group, "lockIds", group.getLockIds());
     }
 
     /**
@@ -329,6 +338,10 @@ public class UserGroupService implements IUserGroupService {
 
     private void _removeUsers(UserGroup group, final List<User> users) {
         group.getUsers().removeAll(users);
+    }
+
+    private void _removeAdmins(UserGroup group, final Set<User> admins) {
+        group.getAdmins().removeAll(admins);
     }
 
     private void _removeLocks(UserGroup group, final List<String> lockIds) {

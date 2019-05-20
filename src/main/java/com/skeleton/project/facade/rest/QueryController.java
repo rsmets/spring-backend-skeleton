@@ -171,6 +171,21 @@ public class QueryController {
 	 * @param userGroupRequest
 	 * @return modified UserGroup obj
 	 */
+	@PostMapping("/v1.0/userGroup/removeAdmins")
+	public UserGroup removeAdmins(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.removeAdminsFromGroup(userGroupRequest);
+
+		log.info("user group with removed users: " + result.toString());
+
+		return result;
+	}
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
 	@PostMapping("/v1.0/userGroup/removeLocks")
 	public UserGroup removeLocks(@RequestBody final UserGroupRequest userGroupRequest)
 	{

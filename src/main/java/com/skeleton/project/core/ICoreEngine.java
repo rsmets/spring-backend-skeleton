@@ -102,6 +102,15 @@ public interface ICoreEngine {
 	UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
+	 * Removes targetUsers of the UserGroupRequest from the provided user group id. Including key relationships.
+	 * Validation is required for this batch operation.
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup removeAdminsFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+
+	/**
 	 * Removes locks from the provided user group id. Including key relationships.
 	 * Validation is required for this batch operation.
 	 * @param request

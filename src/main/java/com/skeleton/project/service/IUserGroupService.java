@@ -83,6 +83,12 @@ public interface IUserGroupService {
     UserGroup removeUsers(UserGroup group, List<User> users);
 
     /**
+     * Removes admins from the specified group.
+     * Validation is done in the core engine
+     */
+    UserGroup removeAdmins(UserGroup group, Set<User> admins);
+
+    /**
      * Add locks to the specified group.
      * Validation is done in the core engine.
      */

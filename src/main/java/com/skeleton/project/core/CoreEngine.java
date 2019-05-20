@@ -242,7 +242,7 @@ public class CoreEngine implements ICoreEngine {
 			List<KeyRelationship> userKrs = group.getKeyRelationshipsMap().get(user.getId());
 
 			if (userKrs == null) {
-				throw new EntityNotFoundException("No user with object id " + user.getId() + " not found in group");
+				throw new EntityNotFoundException("No user with object id " + user.getId() + " found in group");
 			}
 
 			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
@@ -254,6 +254,32 @@ public class CoreEngine implements ICoreEngine {
 		// TODO NEED TO confirm that not removing the last "admin"
 
 		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), Collections.emptySet());
+	}
+
+	@Override
+	public UserGroup removeAdminsFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		// Need to grab all the key relationships for said user, delete them, and remove them from group
+		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		for(User user : request.getTargetAdmins()) {
+			List<KeyRelationship> userKrs = group.getKeyRelationshipsMap().get(user.getId());
+
+			if (userKrs == null) {
+				throw new EntityNotFoundException("No admin with object id " + user.getId() + " found in group");
+			}
+
+			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
+
+			// remove user from the key relationship map
+			group.getKeyRelationshipsMap().remove(user.getId());
+		}
+
+		// TODO NEED TO confirm that not removing the last "admin"
+
+		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
 	}
 
 	@Override
@@ -303,13 +329,21 @@ public class CoreEngine implements ICoreEngine {
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		User user = request.getTargetUsers().get(0); // should be singular if not something is wrong... todo throw exception
-		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+
+//		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
+		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		try {
+			userGroupKrs = new HashSet<>(group.getKeyRelationshipsMap().get(user.getId()));
+		} catch(Exception e) {
+			log.warn("The group doesn't have that user in it anymore.");
+			return group;
+		}
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
 		group.getKeyRelationshipsMap().remove(user.getId());
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), new HashSet<>(request.getTargetUsers()));
 	}
 
 	@Override
