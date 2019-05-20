@@ -280,6 +280,12 @@ public class CoreEngine implements ICoreEngine {
 	@Override
 	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+
+		// handle gracefully the situation this is called and the group has already been nuked (and this was triggered via post kr deletions
+		if (group == null) {
+			return null;
+		}
+
 		// verify a valid operation: special in the sense if the user is acting on his self it is valid too
 		verifyUserRequest(request, group);
 

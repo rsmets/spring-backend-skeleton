@@ -175,7 +175,7 @@ public class QueryController {
 	{
 		UserGroup result = _coreEngine.removeSelfFromGroup(userGroupRequest);
 
-		log.info("user group with removed (self) user: " + result.toString());
+		log.info("removed users " + userGroupRequest.getTargetUsers() + " from group " + userGroupRequest.getGroupId());
 
 		return result;
 	}
