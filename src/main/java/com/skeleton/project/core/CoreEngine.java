@@ -26,14 +26,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.net.CookieHandler;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -163,9 +157,10 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		// inflate the user list (this generally if coming from the stand alone request to add users to group)
-		if (request.isNeedToInflate()) {
-			List<User> inflatedUsers = new ArrayList<>();
-			for (User user : request.getTargetUsers()) {
+//		if (request.isNeedToInflate()) {
+		List<User> inflatedUsers = new ArrayList<>();
+		for (User user : request.getTargetUsers()) {
+			if (request.isNeedToInflate()) {
 				if (user.getPrimaryPhone() != null)
 					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
 				else if (user.getPrimaryEmail() != null)
@@ -173,6 +168,18 @@ public class CoreEngine implements ICoreEngine {
 				else
 					log.warn("No user identifier provided in " + request);
 			}
+
+			if(group.getAdmins().contains(user)) {
+				UserGroupRequest removeRequest = new UserGroupRequest();
+				removeRequest.setTargetAdmins(new HashSet<>(Arrays.asList(user)));
+				removeRequest.setRequestingUser(request.getRequestingUser());
+				removeRequest.setGroupId(request.getGroupId());
+
+				group = removeAdminsFromGroup(removeRequest);
+			}
+		}
+
+		if (request.isNeedToInflate()) {
 			request.setTargetUsers(inflatedUsers);
 		}
 
@@ -279,7 +286,11 @@ public class CoreEngine implements ICoreEngine {
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
-		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
+		return _removeAdminsFromGroup(group, Collections.emptyList(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
+	}
+
+	private UserGroup _removeAdminsFromGroup(UserGroup group, List<User> users, Set<KeyRelationship> userGroupKrs, List<String> lockIds, Map<String, List<KeyRelationship>> krMap, Set<User> admins) {
+		return userGroupService.reductiveGroupModification(group, users, userGroupKrs, lockIds, krMap, admins);
 	}
 
 	@Override

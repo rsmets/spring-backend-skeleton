@@ -9,8 +9,10 @@ import com.skeleton.project.service.IUserService;
 import dev.morphia.Key;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
@@ -25,6 +27,7 @@ import java.util.Set;
 @RunWith(SpringRunner.class)
 @Profile("test")
 @SpringBootTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SpringBackendSkeletonApplicationTests {
 
 	@Autowired
@@ -53,6 +56,10 @@ public class SpringBackendSkeletonApplicationTests {
 		User owner = new User();
 		owner.setId("CZn2XuFJf3");
 
+		User admin = new User();
+		admin.setId("3l6FvM305C");
+		Set<User> admins = new HashSet<>(Arrays.asList(admin));
+
 		Set<String> lockIds = new HashSet<>();
 		lockIds.add("4703");
 
@@ -75,7 +82,7 @@ public class SpringBackendSkeletonApplicationTests {
 		lock.setLockId("4703");
 
 		KeyRelationship ownerKr = new KeyRelationship();
-		ownerKr.setId("id1");
+		ownerKr.setId("ownerKr");
 		ownerKr.setKey(lock);
 		ownerKr.setUser(owner);
 
@@ -89,10 +96,16 @@ public class SpringBackendSkeletonApplicationTests {
 		user2Kr.setKey(lock);
 		user2Kr.setUser(user2);
 
+		KeyRelationship adminKr = new KeyRelationship();
+		adminKr.setId("krAdmin");
+		adminKr.setKey(lock);
+		adminKr.setUser(admin);
+
 		Set<KeyRelationship> keyRelationships = new HashSet<>();
 		keyRelationships.add(ownerKr);
 		keyRelationships.add(userKr);
 		keyRelationships.add(user2Kr);
+		keyRelationships.add(adminKr);
 
 		UserGroup userGroupToAdd = new UserGroup();
 		userGroupToAdd.setName("testGroupies");
@@ -101,6 +114,7 @@ public class SpringBackendSkeletonApplicationTests {
 		userGroupToAdd.setCanRemoteUnlock(canUsersRemoteUnlock);
 		userGroupToAdd.setLockIds(lockIds);
 		userGroupToAdd.setUsers(users);
+		userGroupToAdd.setAdmins(admins);
 		userGroupToAdd.setSchedule(schedules);
 		userGroupToAdd.setKeyRelationships(keyRelationships);
 
@@ -122,6 +136,14 @@ public class SpringBackendSkeletonApplicationTests {
 	public void getUserGroup() {
 		UserGroup group = userGroupService.getUserGroup(testGroupId);
 		Assert.assertEquals("testGroupies", group.getName());
+		Assert.assertEquals(1, group.getAdmins().size());
+
+		Set<User> admins = group.getAdmins();
+
+		User admin = new User();
+		admin.setId("3l6FvM305C");
+
+		Assert.assertTrue(admins.contains(admin));
 	}
 
 	@Test
@@ -129,12 +151,43 @@ public class SpringBackendSkeletonApplicationTests {
 		User user = new User();
 		user.setFirstName("New");
 		user.setLastName("Human");
+		user.setId("useridz1");
 
-		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user));
-		Assert.assertEquals(3, res.getUsers().size());
+		User admin = new User();
+		admin.setId("3l6FvM305C");
+
+		UserGroupRequest request = new UserGroupRequest();
+		request.setGroupId(testGroupId);
+
+		User owner = new User();
+		owner.setId("CZn2XuFJf3");
+
+		Lock lock = new Lock();
+		lock.setLockId("4703");
+
+		KeyRelationship adminKr = new KeyRelationship();
+		adminKr.setId("krAdmin");
+		adminKr.setKey(lock);
+		adminKr.setUser(admin);
+
+		KeyRelationship userKr = new KeyRelationship();
+		userKr.setId("userKr");
+		userKr.setKey(lock);
+		userKr.setUser(user);
+
+		request.setKeyRelationships(new HashSet<>(Arrays.asList(adminKr, userKr)));
+
+		request.setRequestingUser(owner);
+		request.setTargetUsers(Arrays.asList(user, admin));
+
+		UserGroup res = coreEngine.addUsersToGroup(request);
+//		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user, admin));
+		Assert.assertEquals(4, res.getUsers().size());
+		Assert.assertEquals(0, res.getAdmins().size());
 
 		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
-		Assert.assertEquals(3, grabbed.getUsers().size());
+		Assert.assertEquals(4, grabbed.getUsers().size());
+		Assert.assertEquals(0, grabbed.getAdmins().size());
 	}
 
 	@Test
