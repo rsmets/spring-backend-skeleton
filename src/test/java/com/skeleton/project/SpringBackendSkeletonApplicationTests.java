@@ -59,6 +59,7 @@ public class SpringBackendSkeletonApplicationTests {
 
 		Set<String> lockIds = new HashSet<>();
 		lockIds.add("4703");
+		lockIds.add("4602");
 
 		Schedule schedule = new Schedule();
 		schedule.setId("GnOHW6uvA8");
@@ -78,31 +79,57 @@ public class SpringBackendSkeletonApplicationTests {
 		Lock lock = new Lock();
 		lock.setLockId("4703");
 
-		KeyRelationship ownerKr = new KeyRelationship();
-		ownerKr.setId("ownerKr");
-		ownerKr.setKey(lock);
-		ownerKr.setUser(owner);
+		Lock lock2 = new Lock();
+		lock.setLockId("4602");
+
+		// Owner key relationship does live in group land
+//		KeyRelationship ownerKr = new KeyRelationship();
+//		ownerKr.setId("ownerKr");
+//		ownerKr.setKey(lock);
+//		ownerKr.setUser(owner);
+//
+//		KeyRelationship ownerKr2 = new KeyRelationship();
+//		ownerKr.setId("ownerKr");
+//		ownerKr.setKey(lock2);
+//		ownerKr.setUser(owner);
 
 		KeyRelationship userKr = new KeyRelationship();
-		userKr.setId("id2");
+		userKr.setId("id1");
 		userKr.setKey(lock);
 		userKr.setUser(user);
 
+		KeyRelationship userKr2 = new KeyRelationship();
+		userKr2.setId("id12");
+		userKr2.setKey(lock2);
+		userKr2.setUser(user);
+
 		KeyRelationship user2Kr = new KeyRelationship();
-		user2Kr.setId("id3");
+		user2Kr.setId("id2");
 		user2Kr.setKey(lock);
 		user2Kr.setUser(user2);
+
+		KeyRelationship user2Kr2 = new KeyRelationship();
+		user2Kr2.setId("id22");
+		user2Kr2.setKey(lock2);
+		user2Kr2.setUser(user2);
 
 		KeyRelationship adminKr = new KeyRelationship();
 		adminKr.setId("krAdmin");
 		adminKr.setKey(lock);
 		adminKr.setUser(admin);
 
+		KeyRelationship adminKr2 = new KeyRelationship();
+		adminKr2.setId("krAdmin2");
+		adminKr2.setKey(lock2);
+		adminKr2.setUser(admin);
+
 		Set<KeyRelationship> keyRelationships = new HashSet<>();
-		keyRelationships.add(ownerKr);
 		keyRelationships.add(userKr);
+		keyRelationships.add(userKr2);
 		keyRelationships.add(user2Kr);
+		keyRelationships.add(user2Kr2);
 		keyRelationships.add(adminKr);
+		keyRelationships.add(adminKr2);
 
 		UserGroup userGroupToAdd = new UserGroup();
 		userGroupToAdd.setName("testGroupies");
@@ -134,6 +161,7 @@ public class SpringBackendSkeletonApplicationTests {
 		UserGroup group = userGroupService.getUserGroup(testGroupId);
 		Assert.assertEquals("testGroupies", group.getName());
 		Assert.assertEquals(1, group.getAdmins().size());
+		Assert.assertEquals(6, group.getKeyRelationships().size());
 
 		Set<User> admins = group.getAdmins();
 
@@ -150,11 +178,8 @@ public class SpringBackendSkeletonApplicationTests {
 		user.setLastName("Human");
 		user.setId("useridz1");
 
-		User admin = new User();
-		admin.setId("3l6FvM305C");
-
-		UserGroupRequest request = new UserGroupRequest();
-		request.setGroupId(testGroupId);
+//		User admin = new User();
+//		admin.setId("3l6FvM305C");
 
 		User owner = new User();
 		owner.setId("CZn2XuFJf3");
@@ -162,41 +187,84 @@ public class SpringBackendSkeletonApplicationTests {
 		Lock lock = new Lock();
 		lock.setLockId("4703");
 
-		KeyRelationship adminKr = new KeyRelationship();
-		adminKr.setId("krAdmin");
-		adminKr.setKey(lock);
-		adminKr.setUser(admin);
+		Lock lock2 = new Lock();
+		lock.setLockId("4602");
+
+//		KeyRelationship adminKr = new KeyRelationship();
+//		adminKr.setId("krAdmin");
+//		adminKr.setKey(lock);
+//		adminKr.setUser(admin);
 
 		KeyRelationship userKr = new KeyRelationship();
 		userKr.setId("userKr");
 		userKr.setKey(lock);
 		userKr.setUser(user);
 
-		request.setKeyRelationships(new HashSet<>(Arrays.asList(adminKr, userKr)));
+		KeyRelationship userKr2 = new KeyRelationship();
+		userKr2.setId("userKr2");
+		userKr2.setKey(lock2);
+		userKr2.setUser(user);
 
+		// create request
+		UserGroupRequest request = new UserGroupRequest();
 		request.setRequestingUser(owner);
-		request.setTargetUsers(Arrays.asList(user, admin));
+		request.setGroupId(testGroupId);
+//		request.setKeyRelationships(new HashSet<>(Arrays.asList(adminKr, userKr)));
+		request.setKeyRelationships(new HashSet<>(Arrays.asList(userKr, userKr2)));
+//		request.setTargetUsers(Arrays.asList(user, admin));
+		request.setTargetUsers(Arrays.asList(user));
+
+		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
+		Assert.assertEquals(2, grabbed.getUsers().size());
+		Assert.assertEquals(1, grabbed.getAdmins().size());
+		Assert.assertEquals(6, grabbed.getKeyRelationships().size());
 
 		UserGroup res = coreEngine.addUsersToGroup(request);
 //		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user, admin));
-		Assert.assertEquals(4, res.getUsers().size());
-		Assert.assertEquals(0, res.getAdmins().size());
+//		Assert.assertEquals(4, res.getUsers().size());
+		Assert.assertEquals(3, res.getUsers().size());
+		Assert.assertEquals(1, res.getAdmins().size());
+		Assert.assertEquals(8, res.getKeyRelationships().size());
 
-		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
-		Assert.assertEquals(4, grabbed.getUsers().size());
-		Assert.assertEquals(0, grabbed.getAdmins().size());
+		grabbed = userGroupService.getUserGroup(testGroupId);
+//		Assert.assertEquals(4, grabbed.getUsers().size());
+		Assert.assertEquals(3, grabbed.getUsers().size());
+		Assert.assertEquals(1, grabbed.getAdmins().size());
+		Assert.assertEquals(8, grabbed.getKeyRelationships().size());
 
-		request.setTargetAdmins(new HashSet<>(Arrays.asList(user, admin)));
+//		request.setTargetAdmins(new HashSet<>(Arrays.asList(user, admin)));
+		request.setTargetAdmins(new HashSet<>(Arrays.asList(user)));
 		request.setTargetUsers(Collections.emptyList());
 
 		res = coreEngine.addAdminsToGroup(request);
 //		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user, admin));
 		Assert.assertEquals(2, res.getUsers().size());
 		Assert.assertEquals(2, res.getAdmins().size());
+		Assert.assertEquals(8, res.getKeyRelationships().size());
 
 		grabbed = userGroupService.getUserGroup(testGroupId);
 		Assert.assertEquals(2, grabbed.getUsers().size());
 		Assert.assertEquals(2, grabbed.getAdmins().size());
+		Assert.assertEquals(8, grabbed.getKeyRelationships().size());
+	}
+
+	@Test
+	public void aa_deleteLock() {
+		UserGroupRequest request = new UserGroupRequest();
+		request.setGroupId(testGroupId);
+		request.setTargetLockIds(Arrays.asList("4602"));
+
+		User owner = new User(); //TODO MAKE A GLOBAL VARIABLE
+		owner.setId("CZn2XuFJf3");
+
+		request.setRequestingUser(owner);
+
+		UserGroup group = coreEngine.removeLocksFromGroup(request);
+		Assert.assertEquals(3, group.getKeyRelationships().size());
+
+		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
+		Assert.assertEquals(2, grabbed.getUsers().size());
+		Assert.assertEquals(1, grabbed.getLockIds().size());
 	}
 
 	@Test
@@ -235,7 +303,7 @@ public class SpringBackendSkeletonApplicationTests {
 		Assert.assertEquals(dbUser.getLastName(), "Smets");
 	}
 
-//	@Test
+	//	@Test
 	public void getKeyRelationship() {
 
 		KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
