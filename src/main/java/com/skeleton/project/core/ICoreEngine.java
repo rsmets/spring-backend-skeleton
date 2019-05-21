@@ -6,8 +6,10 @@ import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
+import com.skeleton.project.exceptions.ModifcationException;
 import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -126,7 +128,7 @@ public interface ICoreEngine {
 	 * @return
 	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+	UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException;
 
 	/**
 	 * Modifies group name. Request permissions validation performed.

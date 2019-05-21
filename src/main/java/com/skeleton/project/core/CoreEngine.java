@@ -254,7 +254,7 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
-		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
 			List<KeyRelationship> userKrs = group.getKeyRelationshipsMap().get(user.getId());
 
@@ -262,15 +262,15 @@ public class CoreEngine implements ICoreEngine {
 				throw new EntityNotFoundException("No user with object id " + user.getId() + " found in group");
 			}
 
-			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
+			keyRelationshipsToRemove.addAll(group.getKeyRelationshipsMap().get(user.getId()));
 
-			// remove user from the key relationship map
-			group.getKeyRelationshipsMap().remove(user.getId());
+			// remove user from the key relationship map ACTUALLY DO NOT... SHOULD HAPPEN DOWN THE LINE. JUST NEED TO PASS WHAT SHOULD BE REMOVED THE LIST AND MAP UPDATES SHOULD HAPPEN AT SAME TIME
+//			group.getKeyRelationshipsMap().remove(user.getId());
 		}
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), Collections.emptySet());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), keyRelationshipsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), Collections.emptySet());
 	}
 
 	@Override
@@ -280,7 +280,7 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
-		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
 		for(User user : request.getTargetAdmins()) {
 			List<KeyRelationship> userKrs = group.getKeyRelationshipsMap().get(user.getId());
 
@@ -288,15 +288,15 @@ public class CoreEngine implements ICoreEngine {
 				throw new EntityNotFoundException("No admin with object id " + user.getId() + " found in group");
 			}
 
-			userGroupKrs.addAll(group.getKeyRelationshipsMap().get(user.getId()));
+			keyRelationshipsToRemove.addAll(group.getKeyRelationshipsMap().get(user.getId()));
 
-			// remove user from the key relationship map
-			group.getKeyRelationshipsMap().remove(user.getId());
+			// remove user from the key relationship map ACTUALLY DO NOT... SHOULD HAPPEN DOWN THE LINE. JUST NEED TO PASS WHAT SHOULD BE REMOVED THE LIST AND MAP UPDATES SHOULD HAPPEN AT SAME TIME
+//			group.getKeyRelationshipsMap().remove(user.getId());
 		}
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
-		return _removeAdminsFromGroup(group, Collections.emptyList(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
+		return _removeAdminsFromGroup(group, Collections.emptyList(), keyRelationshipsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
 	}
 
 	private UserGroup _removeAdminsFromGroup(UserGroup group, List<User> users, Set<KeyRelationship> userGroupKrs, List<String> lockIds, Map<String, List<KeyRelationship>> krMap, Set<User> admins) {
@@ -325,7 +325,8 @@ public class CoreEngine implements ICoreEngine {
 			}
 		}
 
-		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
+		// remove userS key relationship ACTUALLY DO NOT... SHOULD HAPPEN DOWN THE LINE. JUST NEED TO PASS WHAT SHOULD BE REMOVED THE LIST AND MAP UPDATES SHOULD HAPPEN AT SAME TIME
+//		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
 
 		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), krsMap, Collections.emptySet());
 	}
@@ -337,7 +338,7 @@ public class CoreEngine implements ICoreEngine {
 	 * @throws UserGroupAdminPermissionsException
 	 */
 	@Override
-	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
 		// handle gracefully the situation this is called and the group has already been nuked (and this was triggered via post kr deletions
@@ -352,19 +353,20 @@ public class CoreEngine implements ICoreEngine {
 		User user = request.getTargetUsers().get(0); // should be singular if not something is wrong... todo throw exception
 
 //		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
-		Set<KeyRelationship> userGroupKrs = new HashSet<>();
+		Set<KeyRelationship> userGroupKrsToRemove = new HashSet<>();
 		try {
-			userGroupKrs = new HashSet<>(group.getKeyRelationshipsMap().get(user.getId()));
+			userGroupKrsToRemove = new HashSet<>(group.getKeyRelationshipsMap().get(user.getId()));
 		} catch(Exception e) {
 			log.warn("The group doesn't have that user in it anymore.");
 			return group;
 		}
 
-		// TODO NEED TO confirm that not removing the last "admin"
+		// TODO NEED TO confirm that not removing owner
 
-		group.getKeyRelationshipsMap().remove(user.getId());
+//		group.getKeyRelationshipsMap().remove(user.getId()); // yes?!?!? // rjs is this really necessary can just down the line with the kr to remove list...
+		// fucks things up for none user removal (i.e. lock removal) using the same methods
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrs, Collections.emptyList(), group.getKeyRelationshipsMap(), new HashSet<>(request.getTargetUsers()));
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), new HashSet<>(request.getTargetUsers()));
 	}
 
 	@Override
@@ -470,7 +472,7 @@ public class CoreEngine implements ICoreEngine {
 	 * @param request
 	 * @param group
 	 */
-	private void verifyUserRequest(UserGroupRequest request, UserGroup group) throws UserGroupAdminPermissionsException, EntityNotFoundException {
+	private void verifyUserRequest(UserGroupRequest request, UserGroup group) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
 
 		if (group == null) {
 			String message = "Requested group with id " + request.getGroupId() + " does not exist";
