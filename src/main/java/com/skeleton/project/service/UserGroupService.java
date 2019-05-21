@@ -208,6 +208,12 @@ public class UserGroupService implements IUserGroupService {
         return _updateUserGroup(group, "name", newName);
     }
 
+    @Override
+    public UserGroup modifyGroupSchedule(UserGroup group, List<Schedule> schedule) {
+        group.setSchedule(schedule);
+        return _updateUserGroup(group, "schedule", schedule);
+    }
+
     /**
      * @see IUserGroupService#addKeyRelationships(UserGroup, Set, Map)
      */

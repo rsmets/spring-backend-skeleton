@@ -2,6 +2,7 @@ package com.skeleton.project.service;
 
 import com.mongodb.WriteResult;
 import com.skeleton.project.dto.entity.KeyRelationship;
+import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
 
@@ -57,11 +58,19 @@ public interface IUserGroupService {
 
     /**
      * Modify group name
-     * @param groupId
+     * @param group
      * @param newName
      * @return
      */
-    UserGroup modifyGroupName(UserGroup groupId, String newName);
+    UserGroup modifyGroupName(UserGroup group, String newName);
+
+    /**
+     * Modify group schedule
+     * @param group
+     * @param schedule
+     * @return
+     */
+    UserGroup modifyGroupSchedule(UserGroup group, List<Schedule> schedule);
 
     /**
      * Add users to the specified group.

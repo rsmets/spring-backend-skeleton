@@ -25,9 +25,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.net.CookieHandler;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -367,6 +372,15 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		return userGroupService.modifyGroupName(group, request.getNewGroupName());
+	}
+
+	@Override
+	public UserGroup modifyGroupSchedule(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		return userGroupService.modifyGroupSchedule(group, request.getSchedule());
 	}
 
 	@Override

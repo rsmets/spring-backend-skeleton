@@ -140,6 +140,15 @@ public interface ICoreEngine {
 	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
+	 * Modifies group name. Request permissions validation performed.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup modifyGroupSchedule(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+
+	/**
 	 * Removes key relationship from group. NO request validation performed.
 	 * TODO: figure out a secret auth for these requests that have no requestingUser
 	 *

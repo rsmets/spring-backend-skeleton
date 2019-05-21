@@ -1,7 +1,7 @@
 package com.skeleton.project.facade.rest;
 
-import com.mongodb.WriteResult;
-import com.skeleton.project.domain.*;
+import com.skeleton.project.domain.BaseResponse;
+import com.skeleton.project.domain.QueryResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.UserGroup;
@@ -141,10 +141,25 @@ public class QueryController {
 	 * @param userGroupRequest
 	 * @return modified UserGroup obj
 	 */
-	@PostMapping("/v1.0/userGroup/{id}/modifyName")
-	public UserGroup modifyGroupName(@PathVariable final String id, @RequestBody final UserGroupRequest userGroupRequest)
+	@PostMapping("/v1.0/userGroup/modifyName")
+	public UserGroup modifyGroupName(@RequestBody final UserGroupRequest userGroupRequest)
 	{
 		UserGroup result = _coreEngine.modifyGroupName(userGroupRequest);
+
+		log.info("user group with new name: " + result.toString());
+
+		return result;
+	}
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
+	@PostMapping("/v1.0/userGroup/modifySchedule")
+	public UserGroup modifyGroupSchedule(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.modifyGroupSchedule(userGroupRequest);
 
 		log.info("user group with new name: " + result.toString());
 
