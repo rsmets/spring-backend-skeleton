@@ -270,7 +270,7 @@ public class CoreEngine implements ICoreEngine {
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), keyRelationshipsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), Collections.emptySet());
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), keyRelationshipsToRemove, Collections.emptyList(), Collections.emptySet());
 	}
 
 	@Override
@@ -289,18 +289,15 @@ public class CoreEngine implements ICoreEngine {
 			}
 
 			keyRelationshipsToRemove.addAll(group.getKeyRelationshipsMap().get(user.getId()));
-
-			// remove user from the key relationship map ACTUALLY DO NOT... SHOULD HAPPEN DOWN THE LINE. JUST NEED TO PASS WHAT SHOULD BE REMOVED THE LIST AND MAP UPDATES SHOULD HAPPEN AT SAME TIME
-//			group.getKeyRelationshipsMap().remove(user.getId());
 		}
 
 		// TODO NEED TO confirm that not removing the last "admin"
 
-		return _removeAdminsFromGroup(group, Collections.emptyList(), keyRelationshipsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), request.getTargetAdmins());
+		return _removeAdminsFromGroup(group, Collections.emptyList(), keyRelationshipsToRemove, Collections.emptyList(), request.getTargetAdmins());
 	}
 
-	private UserGroup _removeAdminsFromGroup(UserGroup group, List<User> users, Set<KeyRelationship> userGroupKrs, List<String> lockIds, Map<String, List<KeyRelationship>> krMap, Set<User> admins) {
-		return userGroupService.reductiveGroupModification(group, users, userGroupKrs, lockIds, krMap, admins);
+	private UserGroup _removeAdminsFromGroup(UserGroup group, List<User> users, Set<KeyRelationship> userGroupKrs, List<String> lockIds, Set<User> admins) {
+		return userGroupService.reductiveGroupModification(group, users, userGroupKrs, lockIds, admins);
 	}
 
 	@Override
@@ -311,7 +308,6 @@ public class CoreEngine implements ICoreEngine {
 
 		// Need to grab all the key relationships for said user and remove them from group. Deletion taking place in the key relationship service (aka parse) so the db hooks can fire
 		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
-		Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap());
 
 		for (Map.Entry<String, List<KeyRelationship>> entry : group.getKeyRelationshipsMap().entrySet()) {
 
@@ -325,10 +321,7 @@ public class CoreEngine implements ICoreEngine {
 			}
 		}
 
-		// remove userS key relationship ACTUALLY DO NOT... SHOULD HAPPEN DOWN THE LINE. JUST NEED TO PASS WHAT SHOULD BE REMOVED THE LIST AND MAP UPDATES SHOULD HAPPEN AT SAME TIME
-//		group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
-
-		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), krsMap, Collections.emptySet());
+		return userGroupService.reductiveGroupModification(group, Collections.emptyList(), keyRelationshipsToRemove, request.getTargetLockIds(), Collections.emptySet());
 	}
 
 	/**
@@ -363,10 +356,7 @@ public class CoreEngine implements ICoreEngine {
 
 		// TODO NEED TO confirm that not removing owner
 
-//		group.getKeyRelationshipsMap().remove(user.getId()); // yes?!?!? // rjs is this really necessary can just down the line with the kr to remove list...
-		// fucks things up for none user removal (i.e. lock removal) using the same methods
-
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), group.getKeyRelationshipsMap(), new HashSet<>(request.getTargetUsers()));
+		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), new HashSet<>(request.getTargetUsers()));
 	}
 
 	@Override
@@ -385,7 +375,7 @@ public class CoreEngine implements ICoreEngine {
 
 		//TODO need to figure this out... I think the kr map minipulation should live here.
 
-		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships(), Collections.emptyMap());
+		return userGroupService.removeKeyRelationships(group, request.getKeyRelationships());
 	}
 
 	@Override

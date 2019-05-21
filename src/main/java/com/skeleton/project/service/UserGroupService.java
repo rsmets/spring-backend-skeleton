@@ -174,7 +174,7 @@ public class UserGroupService implements IUserGroupService {
 
     @Override
     public UserGroup reductiveGroupModification(UserGroup userGroup, final List<User> users, final Set<KeyRelationship> keyRelationshipsToRemove,
-                                                final List<String> lockIds, final Map<String, List<KeyRelationship>> krMaps, final Set<User> admins) {
+                                                final List<String> lockIds, final Set<User> admins) {
         // TODO figure out a way to do batch update (right now making 2 calls to db)... probably just want to upsert the group obj itself
         if (users != null && !users.isEmpty())
             removeUsers(userGroup, users);
@@ -186,8 +186,7 @@ public class UserGroupService implements IUserGroupService {
             removeLocks(userGroup, lockIds);
 
         // keyRelationships should always be populate by nature of either new users or locks having new krs
-//        return removeKeyRelationships(userGroup, keyRelationshipsToRemove, krMaps); new HashMap<>(group.getKeyRelationshipsMap());
-        return removeKeyRelationships(userGroup, keyRelationshipsToRemove, krMaps);
+        return removeKeyRelationships(userGroup, keyRelationshipsToRemove);
     }
 
     /**
@@ -237,15 +236,14 @@ public class UserGroupService implements IUserGroupService {
     }
 
     /**
-     * @see IUserGroupService#removeKeyRelationships(UserGroup, Set, Map)
+     * @see IUserGroupService#removeKeyRelationships(UserGroup, Set)
      */
     @Override
-    public UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationshipsToRemove, Map<String, List<KeyRelationship>> krsMap2) {
+    public UserGroup removeKeyRelationships(UserGroup group, Set<KeyRelationship> keyRelationshipsToRemove) {
         group.getKeyRelationships().removeAll(keyRelationshipsToRemove);
 
         Map<String, List<KeyRelationship>> krsMap = new HashMap<>(group.getKeyRelationshipsMap()); // to avoid concurrent modification exception make a deep copy
         krsMap.forEach((k, v) -> {
-//        group.getKeyRelationshipsMap().forEach((k,v) -> {
             List<KeyRelationship> krs = group.getKeyRelationshipsMap().get(k);
             if (krs == null)
                 krs = new ArrayList<>();
@@ -256,7 +254,6 @@ public class UserGroupService implements IUserGroupService {
             else
                 group.getKeyRelationshipsMap().put(k, krs);
         });
-//        group.setKeyRelationshipsMap(krsMap);
 
         _updateUserGroup(group, KeyRelationship.getAttributeNamePlural(), group.getKeyRelationships());
         return _updateUserGroup(group, "keyRelationshipsMap", group.getKeyRelationshipsMap());
