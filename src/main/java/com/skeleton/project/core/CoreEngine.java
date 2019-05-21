@@ -157,7 +157,6 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		// inflate the user list (this generally if coming from the stand alone request to add users to group)
-//		if (request.isNeedToInflate()) {
 		List<User> inflatedUsers = new ArrayList<>();
 		for (User user : request.getTargetUsers()) {
 			if (request.isNeedToInflate()) {
@@ -200,9 +199,9 @@ public class CoreEngine implements ICoreEngine {
 		verifyRequest(request, group);
 
 		// inflate the user list (this generally if coming from the stand alone request to add users to group)
-		if (request.isNeedToInflate()) {
-			List<User> inflatedUsers = new ArrayList<>();
-			for (User user : request.getTargetAdmins()) {
+		List<User> inflatedUsers = new ArrayList<>();
+		for (User user : request.getTargetAdmins()) {
+			if (request.isNeedToInflate()) {
 				if (user.getPrimaryPhone() != null)
 					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
 				else if (user.getPrimaryEmail() != null)
@@ -210,6 +209,17 @@ public class CoreEngine implements ICoreEngine {
 				else
 					log.warn("No user identifier provided in " + request);
 			}
+
+			if(group.getUsers().contains(user)) {
+				UserGroupRequest removeRequest = new UserGroupRequest();
+				removeRequest.setTargetUsers(Arrays.asList(user));
+				removeRequest.setRequestingUser(request.getRequestingUser());
+				removeRequest.setGroupId(request.getGroupId());
+
+				group = removeUsersFromGroup(removeRequest);
+			}
+		}
+		if (request.isNeedToInflate()) {
 			request.setTargetUsers(inflatedUsers);
 		}
 

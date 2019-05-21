@@ -18,11 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collector;
 
 @RunWith(SpringRunner.class)
 @Profile("test")
@@ -188,6 +185,18 @@ public class SpringBackendSkeletonApplicationTests {
 		UserGroup grabbed = userGroupService.getUserGroup(testGroupId);
 		Assert.assertEquals(4, grabbed.getUsers().size());
 		Assert.assertEquals(0, grabbed.getAdmins().size());
+
+		request.setTargetAdmins(new HashSet<>(Arrays.asList(user, admin)));
+		request.setTargetUsers(Collections.emptyList());
+
+		res = coreEngine.addAdminsToGroup(request);
+//		UserGroup res = userGroupService.addUsers(testGroupId, Arrays.asList(user, admin));
+		Assert.assertEquals(2, res.getUsers().size());
+		Assert.assertEquals(2, res.getAdmins().size());
+
+		grabbed = userGroupService.getUserGroup(testGroupId);
+		Assert.assertEquals(2, grabbed.getUsers().size());
+		Assert.assertEquals(2, grabbed.getAdmins().size());
 	}
 
 	@Test
