@@ -42,7 +42,7 @@ How to push the image to docker hub
     docker push rsmets/skeleton:0.0.1-SNAPSHOT
     
     OR if used the maven install way of building and tagging then:
-    docker push rsmets/spring-backend-skeleton:0.0.1-SNAPSHOT
+    docker push rsmets/nk-grouping-service:0.0.6-SNAPSHOT
 
 How to pull the image from docker hub and run
 
