@@ -22,6 +22,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
 
     User owner;
     String name;
+    String description;
 
     Set<String> lockIds = Collections.emptySet();
     List<Schedule> schedule = Collections.emptyList();
@@ -64,6 +65,7 @@ public class UserGroup { //todo extend an abstract group class that has a notion
 //                .canRemoteUnlock(dto.getCanRemoteUnlock())
 //                .canUnlockUntil(dto.getCanUnlockUntil())
                 .name(dto.getName())
+                .description(dto.getDescription())
                 .createdAt(dto.getCreatedAt())
                 .updatedAt(dto.getUpdatedAt())
                 .build();

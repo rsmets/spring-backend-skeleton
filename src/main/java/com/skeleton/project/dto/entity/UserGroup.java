@@ -25,6 +25,13 @@ public class UserGroup {
     @Id
     String id;
 
+    String name;
+    String description;
+
+    // special user level abilities
+    boolean canRemoteUnlock;
+    boolean canUnlockUntil;
+
     Set<String> lockIds = new HashSet<>();
 
     @Embedded("schedule")
@@ -45,15 +52,9 @@ public class UserGroup {
     @Embedded("keyRelationshipsMap")
     Map<String, List<KeyRelationship>> keyRelationshipsMap = new HashMap<>(); // userId, kr
 
-    String name;
-
     // todo put this stuff the parent class
 //    TreeNode groupParent;
 //    List<TreeNode> groupChildren;
-
-    // special user level abilities
-    boolean canRemoteUnlock;
-    boolean canUnlockUntil;
 
     // TODO with morpia 'hook' annotations...
     @Property("_updated_at")
