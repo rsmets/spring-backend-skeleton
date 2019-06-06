@@ -156,6 +156,21 @@ public class QueryController {
 	 * @param userGroupRequest
 	 * @return modified UserGroup obj
 	 */
+	@PostMapping("/v1.0/userGroup/modifyDetails")
+	public UserGroup modifyGroupDetails(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+		UserGroup result = _coreEngine.modifyGroupDetails(userGroupRequest);
+
+		log.info("user group with new details: " + result.toString());
+
+		return result;
+	}
+
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return modified UserGroup obj
+	 */
 	@PostMapping("/v1.0/userGroup/modifySchedule")
 	public UserGroup modifyGroupSchedule(@RequestBody final UserGroupRequest userGroupRequest)
 	{

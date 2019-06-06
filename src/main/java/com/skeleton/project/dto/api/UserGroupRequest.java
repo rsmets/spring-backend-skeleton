@@ -30,6 +30,10 @@ public class UserGroupRequest {
     Map<String, List<KeyRelationship>> keyRelationshipsMap;
     String groupId;
     String newGroupName;
+    String newGroupDescription;
     boolean needToInflate; // boolean indicating weather need to inflate (aka grab all attributes for) the user and kr lists
     boolean administrativeAccessOnly;
+
+    Boolean usersCanRemoteUnlock;
+    Boolean usersCanUnlockUntil;
 }

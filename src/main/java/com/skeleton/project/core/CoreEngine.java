@@ -375,6 +375,15 @@ public class CoreEngine implements ICoreEngine {
 	}
 
 	@Override
+	public UserGroup modifyGroupDetails(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
+		// verify a valid operation
+		verifyRequest(request, group);
+
+		return userGroupService.modifyGroupDetails(group, request.getNewGroupName(), request.getNewGroupDescription(), request.getUsersCanRemoteUnlock(), request.getUsersCanUnlockUntil());
+	}
+
+	@Override
 	public UserGroup modifyGroupSchedule(UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation

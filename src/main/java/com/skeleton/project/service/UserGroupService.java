@@ -9,6 +9,7 @@ import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
 import dev.morphia.query.UpdateResults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonDBCollection;
 import org.parse4j.ParseException;
@@ -206,6 +207,45 @@ public class UserGroupService implements IUserGroupService {
     public UserGroup modifyGroupName(final UserGroup group, final String newName) {
         group.setName(newName); // TODO figure out the proper update and fetch in one go. Till then this is a little hack to return the seemingly new db group obj
         return _updateUserGroup(group, "name", newName);
+    }
+
+    @Override
+    public UserGroup modifyGroupDescription(UserGroup group, String newDescription) {
+        group.setDescription(newDescription); // TODO figure out the proper update and fetch in one go. Till then this is a little hack to return the seemingly new db group obj
+        return _updateUserGroup(group, "description", newDescription);
+    }
+
+    @Override
+    public UserGroup modifyGroupSpecialPower(UserGroup group, Boolean remoteUnlock, Boolean unlockUntil) {
+        if (remoteUnlock != null) {
+            group.setCanRemoteUnlock(remoteUnlock);
+            _updateUserGroup(group, "canRemoteUnlock", remoteUnlock);
+        }
+
+        if (unlockUntil != null) {
+            group.setCanRemoteUnlock(unlockUntil);
+            _updateUserGroup(group, "canUnlockUntil", unlockUntil);
+        }
+
+        return group;
+    }
+
+    @Override
+    public UserGroup modifyGroupDetails(UserGroup group, String newName, String newDescription, Boolean remoteUnlock, Boolean unlockUntil) {
+        if (newName != null) {
+            modifyGroupName(group, newName);
+        }
+
+        if (newDescription != null) {
+            modifyGroupDescription(group, newDescription);
+        }
+
+        if (remoteUnlock != null || unlockUntil != null) {
+            modifyGroupSpecialPower(group, remoteUnlock, unlockUntil);
+        }
+
+
+        return group;
     }
 
     @Override

@@ -65,6 +65,30 @@ public interface IUserGroupService {
     UserGroup modifyGroupName(UserGroup group, String newName);
 
     /**
+     * Modify group name
+     * @param group
+     * @param newDescription
+     * @return
+     */
+    UserGroup modifyGroupDescription(UserGroup group, String newDescription);
+
+    /**
+     * Modify group name
+     * @param group
+     * @param remoteUnlock, unlockUntil
+     * @return
+     */
+    UserGroup modifyGroupSpecialPower(UserGroup group, Boolean remoteUnlock, Boolean unlockUntil);
+
+    /**
+     * Modify group name
+     * @param group
+     * @param newName
+     * @return
+     */
+    UserGroup modifyGroupDetails(UserGroup group, String newName, String newDescription, Boolean remoteUnlock, Boolean unlockUntil);
+
+    /**
      * Modify group schedule
      * @param group
      * @param schedule

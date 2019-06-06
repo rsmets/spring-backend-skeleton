@@ -140,6 +140,15 @@ public interface ICoreEngine {
 	UserGroup modifyGroupName(UserGroupRequest request) throws UserGroupAdminPermissionsException;
 
 	/**
+	 * Modifies group details. Request permissions validation performed.
+	 *
+	 * @param request
+	 * @return
+	 * @throws UserGroupAdminPermissionsException
+	 */
+	UserGroup modifyGroupDetails(UserGroupRequest request) throws UserGroupAdminPermissionsException;
+
+	/**
 	 * Modifies group name. Request permissions validation performed.
 	 *
 	 * @param request
