@@ -1,12 +1,13 @@
 package com.skeleton.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.skeleton.project.dto.entity.Pointer;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Property;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.mongojack.ObjectId;
 
 import java.util.ArrayList;
@@ -16,12 +17,12 @@ import java.util.List;
 @Data
 @Builder
 @Entity("Schedule")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Schedule {
 
-    @JsonProperty("_id")
-    @ObjectId
     @Property("_id")
     @Id
+    @EqualsAndHashCode.Include // id is the only attribute used for equals and hashcode methods
     String id;
 
     Date endDate;
@@ -40,6 +41,21 @@ public class Schedule {
     Date updatedAt;
     @Property("_created_at")
     Date createdAt;
+
+    @JsonSetter("objectId")
+    public void setObjectId(String id) {
+        this.id = id;
+    }
+
+    @ObjectId
+    @JsonSetter("_id")
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @ObjectId
+    @JsonSetter("_id")
+    public String getId() { return this.id;}
 
     public static Schedule convertFromDto(com.skeleton.project.dto.entity.Schedule dto){
         if (dto == null)

@@ -40,7 +40,7 @@ public class UserGroup {
     Set<User> users = new HashSet<>();
 
     @Embedded("keyRelationships")
-    Set<KeyRelationship> keyRelationships = new HashSet<>(); // TODO make Map<String, Set<KeyRelationships>, a lockId -> kr map
+    Set<KeyRelationship> keyRelationships = new HashSet<>();
 
     @Embedded("keyRelationshipsMap")
     Map<String, List<KeyRelationship>> keyRelationshipsMap = new HashMap<>(); // userId, kr
