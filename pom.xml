@@ -9,7 +9,7 @@
 	<version>0.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>backened-java-service-skeleton</name>
+	<name>nk-grouping-service</name>
 	<description>skeleton project for a java service</description>
 
 	<parent>
