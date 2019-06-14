@@ -249,9 +249,17 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
-    public UserGroup modifyGroupSchedule(UserGroup group, List<Schedule> schedule) {
-        group.setSchedule(schedule);
-        return _updateUserGroup(group, "schedule", schedule);
+    public UserGroup modifyGroupSchedule(UserGroup group, List<Schedule> schedules) {
+        // Need to handle grabbing nested attribute objects due to not being able to handle the list of schedule parse pointers (or really just choosing not to)
+        List<Schedule> schedulesInflated = new ArrayList<>();
+        // TODO figure out a batch grab
+        for(Schedule schedule : schedules) {
+            Schedule schedulePopulated = _scheduleService.getSchedule(schedule.getId());
+            schedulesInflated.add(schedulePopulated);
+        }
+        group.setSchedule(schedulesInflated);
+
+        return _updateUserGroup(group, "schedule", schedules);
     }
 
     /**
