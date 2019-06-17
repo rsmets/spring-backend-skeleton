@@ -259,7 +259,7 @@ public class UserGroupService implements IUserGroupService {
         }
         group.setSchedule(schedulesInflated);
 
-        return _updateUserGroup(group, "schedule", schedules);
+        return _updateUserGroup(group, "schedule", group.getSchedule());
     }
 
     /**
