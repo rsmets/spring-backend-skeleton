@@ -11,9 +11,6 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 public class SpringBackendSkeletonApplication {
 
 	public static void main(String[] args) {
-
-//		Parse.initialize("bLg3XZ2X8KurMX0h8hKcBvcPvJ6MUz7zq2zP3V8s", "iPHmGfFhryIWrmSMnxIRyaAnnoIaqdXjWZFhvtLa", "http://localhost:1337");
-
 		SpringApplication.run(SpringBackendSkeletonApplication.class, args);
 
 	}

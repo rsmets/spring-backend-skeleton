@@ -1,8 +1,6 @@
 package com.skeleton.project.core;
 
-import com.mongodb.DB;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.mongodb.client.MongoDatabase;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
@@ -34,6 +32,9 @@ public class DatabaseDriver implements IDatabaseDriver{
     @Value("${db.pw:}") // defaults to empty string
     private String _dbPw;
 
+    @Value("${db.new:false}")
+    private boolean _dbNew;
+
     private MongoDatabase _database;
     private com.mongodb.MongoClient _mongoClient;
     private Datastore _datastore;
@@ -47,11 +48,23 @@ public class DatabaseDriver implements IDatabaseDriver{
     public Datastore getDatastore() {
         if (_mongoClient == null) {
             // TODO should really make various implementation based on the spring profile...
-            if (StringUtils.isEmpty(_dbUser) || StringUtils.isEmpty(_dbPw) || StringUtils.isEmpty(_dbName)) {
-                _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+
+            if (_dbNew) {
+                MongoClientURI uri = new MongoClientURI(
+                        "mongodb+srv://" + _dbUser + ":" + _dbPw + "@" + _dbHost + "/" + _dbName + "?retryWrites=true&w=majority");
+                _mongoClient = new MongoClient(uri);
             } else {
-                _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential(_dbUser, _dbName, _dbPw.toCharArray())));
+
+                if (StringUtils.isEmpty(_dbUser) || StringUtils.isEmpty(_dbPw) || StringUtils.isEmpty(_dbName)) {
+                    _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+                } else {
+                    _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential(_dbUser, _dbName, _dbPw.toCharArray())));
+                }
+
             }
+
+
+
         }
 
         if (_datastore == null)
@@ -64,6 +77,7 @@ public class DatabaseDriver implements IDatabaseDriver{
      * @see IDatabaseDriver#getDatabase()
      */
     @Override
+    @Deprecated
     public MongoDatabase getDatabase(){
 
         // I know there is a cleaner way todo this... but this works for now

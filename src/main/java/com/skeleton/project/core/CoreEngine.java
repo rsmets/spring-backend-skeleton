@@ -164,6 +164,9 @@ public class CoreEngine implements ICoreEngine {
 		// inflate the user list (this generally if coming from the stand alone request to add users to group)
 		List<User> inflatedUsers = new ArrayList<>();
 		for (User user : request.getTargetUsers()) {
+
+		    // handling the case where the user is already in the group
+
 			if (request.isNeedToInflate()) {
 				if (user.getPrimaryPhone() != null)
 					inflatedUsers.add(userService.getUserByPhone(user.getPrimaryPhone()));
@@ -173,6 +176,7 @@ public class CoreEngine implements ICoreEngine {
 					log.warn("No user identifier provided in " + request);
 			}
 
+			// handling case where the user requested used to be an admin of the group
 			if(group.getAdmins().contains(user)) {
 				UserGroupRequest removeRequest = new UserGroupRequest();
 				removeRequest.setTargetAdmins(new HashSet<>(Arrays.asList(user)));

@@ -21,6 +21,8 @@ TO RUN THE CONTAINER:
     docker run -e DB_HOST='host.docker.internal' -e DB_PORT='27017' -e DB_NAME='nexkey' -e DB_USER='' -e DB_PW='' -e KEY_PW='' -p 8433:8433 -p 27017:27017 rsmets/spring-backend-skeleton:0.0.1-SNAPSHOT
     
     docker run -e DB_HOST='ds241369-a0.mlab.com' -e DB_PORT='41369' -e DB_NAME='nexkey-sandbox' -e DB_USER='user' -e DB_PW='pw' -p 8433:8433 -p 41369:41369 rsmets/spring-backend-skeleton:0.0.2
+    
+    docker run -d -e DB_PORT='27017' -e DB_NEW='true' -e DB_HOST='nexkey-staging-iypuv.mongodb.net' -e DB_NAME='nexkey-sandbox' -e DB_USER='' -e DB_PW='' -e KEY_PW='' -p 8433:8433 -p 41369:41369 rsmets/nk-grouping-service:0.1.0-SNAPSHOT
 
 OLD NONE MAVEN WAY TO DO DOCKER ACTIONS:
 
