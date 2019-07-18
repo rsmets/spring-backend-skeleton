@@ -11,6 +11,7 @@ import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ICoreEngine {
@@ -128,7 +129,7 @@ public interface ICoreEngine {
 	 * @return
 	 * @throws UserGroupAdminPermissionsException
 	 */
-	UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException;
+	String removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException;
 
 	/**
 	 * Modifies group name. Request permissions validation performed.

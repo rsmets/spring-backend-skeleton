@@ -340,7 +340,7 @@ public class CoreEngine implements ICoreEngine {
 	 * @throws UserGroupAdminPermissionsException
 	 */
 	@Override
-	public UserGroup removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
+	public String removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
 		// handle gracefully the situation this is called and the group has already been nuked (and this was triggered via post kr deletions
@@ -354,18 +354,27 @@ public class CoreEngine implements ICoreEngine {
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		User user = request.getTargetUsers().get(0); // should be singular if not something is wrong... todo throw exception
 
-//		Set<KeyRelationship> userGroupKrs = new HashSet<>(keyRelationshipService.getKeyRelationshipsByUserAndGroup(user.getId(), request.getGroupId()));
 		Set<KeyRelationship> userGroupKrsToRemove = new HashSet<>();
 		try {
 			userGroupKrsToRemove = new HashSet<>(group.getKeyRelationshipsMap().get(user.getId()));
 		} catch(Exception e) {
 			log.warn("The group doesn't have that user in it anymore.");
-			return group;
+			return null; // still need TODO keep track of owner kr in the grouping service
 		}
+
+		// checking what level the 'self' user is and should return
+		boolean isUser = group.getUsers().contains(user);
+		boolean isAdmin = group.getAdmins().contains(user);
+		boolean isOwner = group.getOwner().equals(user);
 
 		// TODO NEED TO confirm that not removing owner
 
-		return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), new HashSet<>(request.getTargetUsers()));
+		userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), new HashSet<>(request.getTargetUsers()));
+
+		if (isUser) return "User";
+		else if (isAdmin) return "Admin";
+		else if(isOwner) return "Owner";
+		return null;
 	}
 
 	@Override

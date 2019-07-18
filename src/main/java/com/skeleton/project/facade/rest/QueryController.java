@@ -232,11 +232,11 @@ public class QueryController {
 	 * @return modified UserGroup obj
 	 */
 	@PostMapping("/v1.0/userGroup/removeSelf")
-	public UserGroup removeSelf(@RequestBody final UserGroupRequest userGroupRequest)
+	public String removeSelf(@RequestBody final UserGroupRequest userGroupRequest)
 	{
-		UserGroup result = _coreEngine.removeSelfFromGroup(userGroupRequest);
+		String result = _coreEngine.removeSelfFromGroup(userGroupRequest);
 
-		log.info("removed users " + userGroupRequest.getTargetUsers() + " from group " + userGroupRequest.getGroupId());
+		log.info("removed (" + result + ") user, " + userGroupRequest.getTargetUsers() + ", from group " + userGroupRequest.getGroupId());
 
 		return result;
 	}
