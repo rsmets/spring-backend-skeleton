@@ -69,6 +69,22 @@ public class QueryController {
 		return result;
 	}
 
+	/**
+	 * @since 1.0
+	 * @param userGroupRequest
+	 * @return list of groups the targetPerson is an owner of
+	 */
+	@PostMapping("/v1.0/userGroup/getOwnerGroups")
+	public List<UserGroup> getOwnerGroups(@RequestBody final UserGroupRequest userGroupRequest)
+	{
+
+		List<UserGroup> result = _coreEngine.getOwnerGroups(userGroupRequest);
+
+		log.info("user " + userGroupRequest.getTargetPerson().getPrimaryEmail() + " is a group owner of groups: " + result.toString());
+
+		return result;
+	}
+
 	@PostMapping("/v1.0/userGroup/fetch")
 	public Set<UserGroup> fetchUserGroups(@RequestBody UserGroupRequest request) {
 //		Set<UserGroup> result = _coreEngine.fetchUserGroups(request.getRequestingUser(), request.getTargetUsers(), request.isAdministrativeAccessOnly());

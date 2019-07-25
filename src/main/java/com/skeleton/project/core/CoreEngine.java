@@ -1,11 +1,9 @@
-package com.skeleton.project.service;
+package com.skeleton.project.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
-import com.skeleton.project.core.DatabaseDriver;
-import com.skeleton.project.core.ICoreEngine;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.KeyRelationship;
@@ -17,6 +15,10 @@ import com.skeleton.project.exceptions.ModifcationException;
 import com.skeleton.project.exceptions.UserGroupAdminPermissionsException;
 import com.skeleton.project.facade.rest.IClient;
 import com.skeleton.project.jackson.UserDeserializer;
+import com.skeleton.project.service.IKeyRelationshipService;
+import com.skeleton.project.service.ILockService;
+import com.skeleton.project.service.IUserGroupService;
+import com.skeleton.project.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -85,14 +87,14 @@ public class CoreEngine implements ICoreEngine {
 
 		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
 		if (requestedUsers == null || requestedUsers.isEmpty()) {
-			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly));
+			return new HashSet<>(userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly, false));
 		}
 
-		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly);
+		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(requestingUser.getId(), administrativeAccessOnly, false);
 
 		Set<UserGroup> requestedUsersGroups = new HashSet<>();
 		for(User user : requestedUsers) {
-			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), administrativeAccessOnly));
+			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), administrativeAccessOnly, false));
 		}
 
 		requestedUsersGroups.retainAll(requestingUsersGroups);
@@ -107,14 +109,14 @@ public class CoreEngine implements ICoreEngine {
 	public Set<UserGroup> fetchUserGroups(UserGroupRequest request) {
 		// iff the requestedUser list is empty this means that the request is just meant to grab the requesting user's groups
 		if (request.getTargetUsers() == null || request.getTargetUsers().isEmpty()) {
-			return new HashSet<>(userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly()));
+			return new HashSet<>(userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly(), false));
 		}
 
-		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly());
+		List<UserGroup> requestingUsersGroups = userGroupService.getUserGroupsForUser(request.getRequestingUser().getId(), request.isAdministrativeAccessOnly(), false);
 
 		Set<UserGroup> requestedUsersGroups = new HashSet<>();
 		for(User user : request.getTargetUsers()) {
-			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), request.isAdministrativeAccessOnly()));
+			requestedUsersGroups.addAll(userGroupService.getUserGroupsForUser(user.getId(), request.isAdministrativeAccessOnly(), false));
 		}
 
 		requestedUsersGroups.retainAll(requestingUsersGroups);
@@ -127,7 +129,19 @@ public class CoreEngine implements ICoreEngine {
 	 */
 	@Override
 	public List<UserGroup> getUserGroupsForUser(final String userId, final boolean administrativeAccessOnly) {
-		return userGroupService.getUserGroupsForUser(userId, administrativeAccessOnly);
+		return userGroupService.getUserGroupsForUser(userId, administrativeAccessOnly, false);
+	}
+
+	/**
+	 * @see ICoreEngine#getOwnerGroups(UserGroupRequest)
+	 */
+	@Override
+	public List<UserGroup> getOwnerGroups(UserGroupRequest request) {
+		// verify is a just a service to service call... todo
+//		verifyRequest(request, group);
+
+		List<UserGroup> groups = userGroupService.getUserGroupsForUser(request.getTargetPerson().getId(), false, true);
+		return groups;
 	}
 
 	/**

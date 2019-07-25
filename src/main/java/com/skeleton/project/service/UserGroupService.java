@@ -86,10 +86,14 @@ public class UserGroupService implements IUserGroupService {
     }
 
     @Override
-    public List<UserGroup> getUserGroupsForUser(final String userId, final boolean administrativeAccessOnly) {
+    public List<UserGroup> getUserGroupsForUser(final String userId, final boolean administrativeAccessOnly, final boolean ownerAccessOnly) {
         final Query<UserGroup> query = _database.getDatastore().createQuery(UserGroup.class);
 
-        if (administrativeAccessOnly) {
+        // TODO make the two booleans in into one enum comparison
+
+        if (ownerAccessOnly) {
+            query.criteria("owner._id").equal(userId);
+        } else if (administrativeAccessOnly) {
             query.or (
                     query.criteria("owner._id").equal(userId),
                     query.criteria("admins._id").equal(userId)

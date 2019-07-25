@@ -22,6 +22,7 @@ import java.util.Set;
 public class UserGroupRequest {
 
     User requestingUser;
+    User targetPerson;
     List<User> targetUsers;
     Set<User> targetAdmins;
     List<String> targetLockIds;

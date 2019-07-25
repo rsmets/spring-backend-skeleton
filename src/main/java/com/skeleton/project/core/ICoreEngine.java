@@ -69,6 +69,13 @@ public interface ICoreEngine {
 	List<UserGroup> getUserGroupsForUser(String userId, boolean administrativeAccessOnly);
 
 	/**
+	 * Grabs set of groups that the targetPerson of UserGroupRequest is an owner of
+	 * @param request
+	 * @return
+	 */
+	List<UserGroup> getOwnerGroups(UserGroupRequest request);
+
+	/**
 	 * Adds targetUsers of the UserGroupRequest to the provided user group id. Including key relationships.
 	 *
 	 * @param request

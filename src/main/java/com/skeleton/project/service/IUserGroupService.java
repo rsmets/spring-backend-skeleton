@@ -1,6 +1,7 @@
 package com.skeleton.project.service;
 
 import com.mongodb.WriteResult;
+import com.skeleton.project.dto.api.UserGroupRequest;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.Schedule;
 import com.skeleton.project.dto.entity.User;
@@ -37,7 +38,7 @@ public interface IUserGroupService {
      * @param userId
      * @return
      */
-    List<UserGroup> getUserGroupsForUser(String userId, boolean administrativeAccessOnly);
+    List<UserGroup> getUserGroupsForUser(String userId, boolean administrativeAccessOnly, boolean ownerAccessOnly);
 
     /**
      * Additive modification to existing user group. Validation is performed in core engine
