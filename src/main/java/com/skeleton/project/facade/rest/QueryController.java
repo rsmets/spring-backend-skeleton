@@ -3,6 +3,7 @@ package com.skeleton.project.facade.rest;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.domain.QueryResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.api.UserGroupResponse;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.UserGroup;
 import com.skeleton.project.core.ICoreEngine;
@@ -248,9 +249,9 @@ public class QueryController {
 	 * @return modified UserGroup obj
 	 */
 	@PostMapping("/v1.0/userGroup/removeSelf")
-	public String removeSelf(@RequestBody final UserGroupRequest userGroupRequest)
+	public UserGroupResponse removeSelf(@RequestBody final UserGroupRequest userGroupRequest)
 	{
-		String result = _coreEngine.removeSelfFromGroup(userGroupRequest);
+		UserGroupResponse result = _coreEngine.removeSelfFromGroup(userGroupRequest);
 
 		log.info("removed (" + result + ") user, " + userGroupRequest.getTargetUsers() + ", from group " + userGroupRequest.getGroupId());
 

@@ -3,6 +3,7 @@ package com.skeleton.project.core;
 import com.mongodb.WriteResult;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.api.UserGroupResponse;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.User;
 import com.skeleton.project.dto.entity.UserGroup;
@@ -136,7 +137,7 @@ public interface ICoreEngine {
 	 * @return
 	 * @throws UserGroupAdminPermissionsException
 	 */
-	String removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException;
+	UserGroupResponse removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException;
 
 	/**
 	 * Modifies group name. Request permissions validation performed.

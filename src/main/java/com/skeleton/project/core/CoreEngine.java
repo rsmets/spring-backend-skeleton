@@ -6,6 +6,7 @@ import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
 import com.skeleton.project.domain.BaseResponse;
 import com.skeleton.project.dto.api.UserGroupRequest;
+import com.skeleton.project.dto.api.UserGroupResponse;
 import com.skeleton.project.dto.entity.KeyRelationship;
 import com.skeleton.project.dto.entity.Lock;
 import com.skeleton.project.dto.entity.User;
@@ -354,7 +355,7 @@ public class CoreEngine implements ICoreEngine {
 	 * @throws UserGroupAdminPermissionsException
 	 */
 	@Override
-	public String removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
+	public UserGroupResponse removeSelfFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException, EntityNotFoundException, ModifcationException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 
 		// handle gracefully the situation this is called and the group has already been nuked (and this was triggered via post kr deletions
@@ -385,10 +386,15 @@ public class CoreEngine implements ICoreEngine {
 
 		userGroupService.reductiveGroupModification(group, request.getTargetUsers(), userGroupKrsToRemove, Collections.emptyList(), new HashSet<>(request.getTargetUsers()));
 
-		if (isUser) return "User";
-		else if (isAdmin) return "Admin";
-		else if(isOwner) return "Owner";
-		return null;
+		UserGroupResponse result = new UserGroupResponse();
+		result.setName(group.getName());
+		result.setId(group.getId());
+
+		if (isUser) result.setUserType("User");
+		else if (isAdmin) result.setUserType("Admin");
+		else if(isOwner) result.setUserType("Owner");
+
+		return result;
 	}
 
 	@Override
