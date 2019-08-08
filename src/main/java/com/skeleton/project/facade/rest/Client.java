@@ -5,6 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * Placeholder Client class.
+ * No need for a real implementation yet.
+ */
+
 @Slf4j
 @Service
 public class Client extends AbstractRestfulClient implements IClient {
@@ -23,7 +28,6 @@ public class Client extends AbstractRestfulClient implements IClient {
 		String url = _baseUrl + _actionPath + example;
 
 		// TODO add Hystrix to the project to handle external calls gracefully
-//		String response = _restTemplate.getForObject(url, String.class);
 
 		String response = "no internet";
 		log.info("Response from external services: " + response);

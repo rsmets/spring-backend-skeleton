@@ -118,7 +118,7 @@ public class QueryController {
     {
         UserGroup result = _coreEngine.addUsersToGroup(userGroupRequest);
 
-        log.info("new user group: " + result.toString());
+        log.info("new users add to group: " + result.toString());
 
         return result;
     }
@@ -133,7 +133,7 @@ public class QueryController {
 	{
 		UserGroup result = _coreEngine.addAdminsToGroup(userGroupRequest);
 
-		log.info("new admins' group: " + result.toString());
+		log.info("new admins add to group: " + result.toString());
 
 		return result;
 	}
@@ -148,7 +148,7 @@ public class QueryController {
 	{
 		UserGroup result = _coreEngine.addLocksToGroup(userGroupRequest);
 
-		log.info("new user group: " + result.toString());
+		log.info("new locks add to group: " + result.toString());
 
 		return result;
 	}
@@ -193,7 +193,7 @@ public class QueryController {
 	{
 		UserGroup result = _coreEngine.modifyGroupSchedule(userGroupRequest);
 
-		log.info("user group with new name: " + result.toString());
+		log.info("user group with new schedule: " + result.toString());
 
 		return result;
 	}
@@ -223,7 +223,7 @@ public class QueryController {
 	{
 		UserGroup result = _coreEngine.removeAdminsFromGroup(userGroupRequest);
 
-		log.info("user group with removed users: " + result.toString());
+		log.info("user group with removed admins: " + result.toString());
 
 		return result;
 	}
