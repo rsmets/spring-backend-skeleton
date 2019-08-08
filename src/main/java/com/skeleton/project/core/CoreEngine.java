@@ -272,10 +272,32 @@ public class CoreEngine implements ICoreEngine {
 	 * @throws UserGroupAdminPermissionsException
 	 */
 	@Override
-	public UserGroup removeUsersFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+	public UserGroup removeUsersFromGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
+
+		if (group.getKeyRelationshipsMap().isEmpty()) {
+			// the case where users are in a group with no locks
+
+			if (!group.getUsers().containsAll(request.getTargetUsers())) {
+				// case where the request contained users actually not in the group
+				// find out which of those users were incorrectly thought to be in the group
+				Set <User> notInGroupUsers = new HashSet<>(request.getTargetUsers());
+				notInGroupUsers.removeAll(group.getUsers());
+
+				/* Opting to let the is request succeed even though incorrect and just log the inconsistency.
+				throw new EntityNotFoundException("Requested user(s) not in group " + notInGroupUsers.toString() + " remove failed for all.");
+				*/
+				log.error("Remove requested user(s) " + notInGroupUsers.toString() + " not in group " + group.getId());
+			}
+
+			boolean anyoneRemoved = group.getUsers().removeAll(request.getTargetUsers()); // returns true if there is at least one hit
+			if (anyoneRemoved)
+				return userGroupService.reductiveGroupModification(group, request.getTargetUsers(), Collections.emptySet(), Collections.emptyList(), Collections.emptySet());
+			else
+				return group;
+		}
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
@@ -298,10 +320,32 @@ public class CoreEngine implements ICoreEngine {
 	}
 
 	@Override
-	public UserGroup removeAdminsFromGroup(UserGroupRequest request) throws UserGroupAdminPermissionsException {
+	public UserGroup removeAdminsFromGroup(final UserGroupRequest request) throws UserGroupAdminPermissionsException {
 		UserGroup group = userGroupService.getUserGroup(request.getGroupId());
 		// verify a valid operation
 		verifyRequest(request, group);
+
+		if (group.getKeyRelationshipsMap().isEmpty()) {
+			// the case where users are in a group with no locks
+
+			if (!group.getAdmins().containsAll(request.getTargetAdmins())) {
+				// case where the request contained users actually not in the group
+				// find out which of those users were incorrectly thought to be in the group
+				Set <User> notInGroupAdmins = new HashSet<>(request.getTargetAdmins());
+				notInGroupAdmins.removeAll(group.getAdmins());
+
+				/* Opting to let the is request succeed even though incorrect and just log the inconsistency.
+				throw new EntityNotFoundException("Requested admins(s) not in group " + notInGroupAdmins.toString() + " remove failed for all.");
+				*/
+				log.error("Remove requested admin(s) " + notInGroupAdmins.toString() + " not in group " + group.getId());
+			}
+
+			boolean anyoneRemoved = group.getAdmins().removeAll(request.getTargetAdmins()); // return true if one set item is a hit
+			if (anyoneRemoved)
+				return _removeAdminsFromGroup(group, Collections.emptyList(), Collections.emptySet(), Collections.emptyList(), request.getTargetAdmins());
+			else
+				return group;
+		}
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
 		Set<KeyRelationship> keyRelationshipsToRemove = new HashSet<>();
@@ -363,7 +407,6 @@ public class CoreEngine implements ICoreEngine {
 			return null;
 		}
 
-		// verify a valid operation: special in the sense if the user is acting on his self it is valid too
 		verifyUserRequest(request, group);
 
 		// Need to grab all the key relationships for said user, delete them, and remove them from group
