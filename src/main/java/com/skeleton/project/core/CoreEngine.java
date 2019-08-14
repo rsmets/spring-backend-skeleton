@@ -492,26 +492,6 @@ public class CoreEngine implements ICoreEngine {
 		return userGroupKrs;
 	}
 
-	@Override
-	public BaseResponse executeAction(final Object example) {
-
-		try{
-			BaseResponse response = _client.doAction(example);
-
-			com.skeleton.project.domain.User fullUser = (com.skeleton.project.domain.User) getDbFullObject(example);
-
-			KeyRelationship kr = keyRelationshipService.getKeyRelationship("3dy7V2SSoN");
-
-
-			return BaseResponse.builder().example(kr).build();
-		} catch (Exception e) {
-			log.error("That request did not work... ", e);
-		}
-
-		return null;
-
-	}
-
 	/**
 	 * Verifies that the group owner has the proper key relationship with group's locks
 	 * @param group
@@ -631,25 +611,4 @@ public class CoreEngine implements ICoreEngine {
 		return keyRelationshipMap;
 	}
 
-	private Object getDbFullObject(final Object search) {
-		MongoCollection<Document>  userCollection = database.getDatabase().getCollection("_User");
-
-		Document doc = userCollection.find().first();
-		log.info("doc from db: " + doc.toJson());
-
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
-		module.addDeserializer(com.skeleton.project.domain.User.class, new UserDeserializer());
-		mapper.registerModule(module);
-
-		com.skeleton.project.domain.User user = null;
-		try {
-			user = mapper.readValue(doc.toJson(), com.skeleton.project.domain.User.class);
-			log.info("doc from jacksonified db: " + user.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return user;
-	}
 }

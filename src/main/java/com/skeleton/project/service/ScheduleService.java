@@ -63,21 +63,6 @@ public class ScheduleService implements IScheduleService {
         return schedule; //rjs this should always be one entry
     }
 
-    /**
-     * Only works for new objects with 24 char objects ids. Barfs with the 10 char object ids.
-     * @param objectId
-     * @return
-     */
-    private Schedule getScheduleWithMongoJack(String objectId){
-        DBCollection krCollection = _database.getDB().getCollection("Schedule");
-        JacksonDBCollection<Schedule, String> collection = JacksonDBCollection.wrap(krCollection, Schedule.class, String.class);
-        Schedule schedule = collection.findOneById(objectId);
-
-        log.info("key relationship from jacksonified db: " + schedule);
-
-        return schedule;
-    }
-
     private Schedule getWithParse(String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Schedule");
         try {

@@ -181,14 +181,6 @@ public interface ICoreEngine {
 	 * @return
 	 */
 	Set<KeyRelationship> getGroupKeyRelationshipsForUsers(UserGroupRequest request);
-
-	/**
-	 * Dummy function that should probably be deleted..
-	 *
-	 * @param example
-	 * @return List of {@link BaseResponse}
-	 */
-	BaseResponse executeAction(Object example);
 }
 
 

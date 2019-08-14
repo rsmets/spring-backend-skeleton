@@ -22,25 +22,6 @@ public class QueryController {
 	
 	@Autowired
 	private ICoreEngine _coreEngine;
-	
-	/**
-	 * @since 0.0
-	 * @param search
-	 * @return List of {@QueryResponse}
-	 */
-	@RequestMapping(value = "/v1.0/example", method = RequestMethod.GET, produces = "application/json")
-	public QueryResponse query(@RequestParam(value="search", defaultValue="BallmerPeak") final Object search)
-	{
-		BaseResponse baseResponse = _coreEngine.executeAction(search);
-
-		// oh look a dog...
-
-		QueryResponse result = QueryResponse.builder()
-				.example(baseResponse.getExample())
-				.build();
-
-		return result;
-	}
 
 	/**
 	 * @since 1.0

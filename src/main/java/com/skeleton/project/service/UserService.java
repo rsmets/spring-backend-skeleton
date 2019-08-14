@@ -70,16 +70,6 @@ public class UserService implements IUserService {
         return user;
     }
 
-    private User getUserWithMongoJack(String objectId) {
-        DBCollection userCollection = _database.getDB().getCollection("_User");
-        JacksonDBCollection<User, String> collection = JacksonDBCollection.wrap(userCollection, User.class, String.class);
-        User user = collection.findOneById(objectId);
-
-        log.info("key relationship from jacksonified db: " + user);
-
-        return user;
-    }
-
     private User getWithParse(String objectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
         query.getInBackground(objectId, new GetCallback<ParseObject>() {

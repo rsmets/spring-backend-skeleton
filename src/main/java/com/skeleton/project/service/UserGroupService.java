@@ -133,16 +133,6 @@ public class UserGroupService implements IUserGroupService {
         return null;
     }
 
-    private UserGroup getUserGroupWithMongoJack(final String objectId){
-        DBCollection userGroupCollection = _database.getDB().getCollection("UserGroup");
-        JacksonDBCollection<UserGroup, String> collection = JacksonDBCollection.wrap(userGroupCollection, UserGroup.class, String.class);
-        UserGroup ug = collection.findOneById(objectId);
-
-        log.info("user group from jacksonified db: " + ug);
-
-        return ug;
-    }
-
     private UserGroup getUserGroupWithMorphia(final String objectId) {
         final UserGroup ug = _database.getDatastore().get(UserGroup.class, new ObjectId(objectId));
 

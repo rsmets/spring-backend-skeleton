@@ -59,7 +59,11 @@ public class DatabaseDriver implements IDatabaseDriver{
                     _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
                 } else {
                     _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential(_dbUser, _dbName, _dbPw.toCharArray())));
+
+//                    MongoClientURI uri = new MongoClientURI("mongodb://" + _dbUser + ":" + _dbPw + "@" + _dbHost + "/" + _dbName + _dbPort);
+//                    _mongoClient = new MongoClient(uri);
                 }
+
 
             }
 
@@ -71,45 +75,5 @@ public class DatabaseDriver implements IDatabaseDriver{
             _datastore = morphia.createDatastore(_mongoClient, _dbName);
 
         return _datastore;
-    }
-
-    /**
-     * @see IDatabaseDriver#getDatabase()
-     */
-    @Override
-    @Deprecated
-    public MongoDatabase getDatabase(){
-
-        // I know there is a cleaner way todo this... but this works for now
-        if (_database == null) {
-            log.debug("init db interface");
-
-            if (_mongoClient == null) {
-                _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential(_dbUser, _dbName, _dbPw.toCharArray())));
-            }
-
-            _database = _mongoClient.getDatabase(_dbName);
-        }
-
-        return _database;
-    }
-
-    /**
-     * @see IDatabaseDriver#getDB()
-     */
-    @Deprecated
-    public DB getDB(){
-
-        // I know there is a cleaner way todo this... but this works for now
-        if (_db == null) {
-            log.debug("init db interface");
-
-            com.mongodb.MongoClient mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
-            _mongoClient = mongoClient;
-
-            _db = mongoClient.getDB(_dbName);
-        }
-
-        return _db;
     }
 }
