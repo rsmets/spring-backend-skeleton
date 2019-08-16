@@ -20,8 +20,8 @@ public class DatabaseDriver implements IDatabaseDriver{
     @Value("${db.host}")
     private String _dbHost;
 
-    @Value("${db.port}")
-    private int _dbPort;
+    @Value("${db.settings}")
+    private String _dbSettings;
 
     @Value("${db.name}")
     private String _dbName;
@@ -56,18 +56,15 @@ public class DatabaseDriver implements IDatabaseDriver{
             } else {
 
                 if (StringUtils.isEmpty(_dbUser) || StringUtils.isEmpty(_dbPw) || StringUtils.isEmpty(_dbName)) {
-                    _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort));
+                    MongoClientURI uri = new MongoClientURI("mongodb://" + _dbHost + "/" + _dbName + _dbSettings);
+                    _mongoClient = new MongoClient(uri);
+
                 } else {
-                    _mongoClient = new com.mongodb.MongoClient(new ServerAddress(_dbHost, _dbPort), Collections.singletonList(MongoCredential.createCredential(_dbUser, _dbName, _dbPw.toCharArray())));
+                    MongoClientURI uri = new MongoClientURI("mongodb://" + _dbUser + ":" + _dbPw + "@" + _dbHost + "/" + _dbName + _dbSettings);
+                    _mongoClient = new MongoClient(uri);
 
-//                    MongoClientURI uri = new MongoClientURI("mongodb://" + _dbUser + ":" + _dbPw + "@" + _dbHost + "/" + _dbName + _dbPort);
-//                    _mongoClient = new MongoClient(uri);
                 }
-
-
             }
-
-
 
         }
 

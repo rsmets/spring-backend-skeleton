@@ -4,12 +4,12 @@ MAINTAINER ray.smets@nexkey.com
 
 # Populating the java run env via the docker env variables
 ENV DB_HOST=**DB_HOST**
-ENV DB_PORT=**DB_PORT**
+ENV DB_SETTINGS=**DB_SETTINGS**
 ENV DB_NAME=**DB_NAME**
 ENV DB_USER=**DB_USER**
 ENV DB_PW=**DB_PW**
 ENV DB_NEW=**DB_NEW**
-ARG ENV_VARS="-DDB_HOST=${DB_HOST} -DDB_PORT=${DB_PORT} -DDB_NAME=${DB_NAME} -DDB_USER=${DB_USER} -DDB_PW=${DB_PW} -DDB_NEW=${DB_NEW}"
+ARG ENV_VARS="-DDB_HOST=${DB_HOST} -DDB_SETTINGS=${DB_SETTINGS} -DDB_NAME=${DB_NAME} -DDB_USER=${DB_USER} -DDB_PW=${DB_PW} -DDB_NEW=${DB_NEW}"
 
 ## Expose port to the world outside the container
 EXPOSE 8080
